@@ -7,6 +7,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <link href="/vendor/flowbite/flowbite.min.css" rel="stylesheet">
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
   </head>
 
@@ -38,5 +39,6 @@
     <footer class="site-footer">
       <p>Removlo dashboard © <%= Time.current.year %></p>
     </footer>
+    <script src="/vendor/flowbite/flowbite.min.js"></script>
   </body>
 </html>

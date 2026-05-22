@@ -1,20 +1,111 @@
-<section class="hero">
-  <h2>Welcome to Removlo</h2>
-  <p>Public landing page content that everyone can reach. Explore the app and sign in or sign up to access your dashboard.</p>
+<header class="bg-white">
+  <div class="mx-auto max-w-7xl py-12 px-4 sm:px-6 lg:flex lg:items-center lg:justify-between lg:py-16 lg:px-8">
+    <h1 class="text-3xl font-bold tracking-tight text-gray-900">Removlo — UK Relocation Specialists</h1>
 
-  <% if user_signed_in? %>
-    <p><%= link_to "Go to your dashboard", dashboard_path, class: "button primary" %></p>
-  <% else %>
-    <p><%= link_to "Create an account", new_user_registration_path, class: "button primary" %></p>
-    <p><%= link_to "Already have an account? Sign in", new_user_session_path, class: "button secondary" %></p>
-  <% end %>
-</section>
+    <div class="mt-8 flex lg:mt-0 lg:flex-shrink-0">
+      <div class="inline-flex rounded-md shadow">
+        <% if user_signed_in? %>
+          <%= link_to "Dashboard", dashboard_path, class: "inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700" %>
+        <% else %>
+          <%= link_to "Get Started", new_user_registration_path, class: "inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700" %>
+        <% end %>
+      </div>
+      <div class="ml-3 inline-flex rounded-md shadow">
+        <% unless user_signed_in? %>
+          <%= link_to "Sign in", new_user_session_path, class: "inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</header>
 
-<section class="features">
-  <h3>What you get</h3>
-  <ul>
-    <li>Public landing page for visitors</li>
-    <li>Authenticated dashboard for signed-in users</li>
-    <li>Secure session handling with Devise</li>
-  </ul>
-</section>
+<main class="bg-gray-50">
+  <div class="mx-auto max-w-7xl py-12 px-4 sm:px-6 lg:px-8">
+    <div class="lg:grid lg:grid-cols-2 lg:gap-8">
+      <div>
+        <h2 class="text-base font-semibold uppercase tracking-wide text-indigo-600">Moving made simple</h2>
+        <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Trusted UK relocation services for individuals and businesses</p>
+        <p class="mt-4 text-lg text-gray-600">From packing and transport to settling-in services and visa guidance, Removlo delivers end-to-end relocation support tailored to your needs.</p>
+
+        <dl class="mt-8 space-y-6">
+          <div class="relative">
+            <dt>
+              <p class="ml-16 text-lg font-medium leading-6 text-gray-900">UK-wide coverage</p>
+            </dt>
+            <dd class="mt-2 ml-16 text-base text-gray-600">Local teams across the UK ensure smooth, compliant moves wherever you are relocating.</dd>
+          </div>
+
+          <div class="relative">
+            <dt>
+              <p class="ml-16 text-lg font-medium leading-6 text-gray-900">Dedicated move coordinator</p>
+            </dt>
+            <dd class="mt-2 ml-16 text-base text-gray-600">A single point of contact manages logistics, timelines and customer communications.</dd>
+          </div>
+
+          <div class="relative">
+            <dt>
+              <p class="ml-16 text-lg font-medium leading-6 text-gray-900">End-to-end services</p>
+            </dt>
+            <dd class="mt-2 ml-16 text-base text-gray-600">Packing, customs, storage, pet relocation, and settling-in assistance included.</dd>
+          </div>
+        </dl>
+
+        <div class="mt-8">
+          <% if user_signed_in? %>
+            <%= link_to "Open your dashboard", dashboard_path, class: "inline-flex items-center rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-700" %>
+          <% else %>
+            <%= link_to "Request a quote", new_user_registration_path, class: "inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700" %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="mt-10 lg:mt-0">
+        <div class="flow-root rounded-lg bg-white shadow-lg">
+          <div class="-mt-6">
+            <div class="px-6 py-6 sm:px-10">
+              <h3 class="text-lg font-medium leading-6 text-gray-900">Quick quote</h3>
+              <p class="mt-2 text-sm text-gray-600">Get an approximate move cost in minutes.</p>
+
+              <%= form_with url: '#', method: :get, local: true, class: "mt-6 space-y-4" do |f| %>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">From (postcode)</label>
+                  <%= f.text_field :from_postcode, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">To (postcode)</label>
+                  <%= f.text_field :to_postcode, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Move size</label>
+                  <%= f.select :size, [['Studio','studio'], ['1 bed','1bed'], ['2 bed','2bed'], ['3+ bed','3plus']], {}, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm" %>
+                </div>
+                <div>
+                  <%= f.submit "Estimate", class: "w-full inline-flex justify-center rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700" %>
+                </div>
+              <% end %>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="mt-12">
+      <h3 class="text-xl font-bold text-gray-900">Why customers choose Removlo</h3>
+      <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="rounded-lg bg-white p-6 shadow">
+          <h4 class="text-lg font-semibold">Safe and insured</h4>
+          <p class="mt-2 text-sm text-gray-600">Full insurance options tailored to your move.</p>
+        </div>
+        <div class="rounded-lg bg-white p-6 shadow">
+          <h4 class="text-lg font-semibold">Transparent pricing</h4>
+          <p class="mt-2 text-sm text-gray-600">No hidden fees. Clear quotes and milestones.</p>
+        </div>
+        <div class="rounded-lg bg-white p-6 shadow">
+          <h4 class="text-lg font-semibold">Settling-in support</h4>
+          <p class="mt-2 text-sm text-gray-600">Local orientation, utilities setup and school guidance.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
