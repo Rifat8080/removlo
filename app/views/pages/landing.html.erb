@@ -1,0 +1,20 @@
+<section class="hero">
+  <h2>Welcome to Removlo</h2>
+  <p>Public landing page content that everyone can reach. Explore the app and sign in or sign up to access your dashboard.</p>
+
+  <% if user_signed_in? %>
+    <p><%= link_to "Go to your dashboard", dashboard_path, class: "button primary" %></p>
+  <% else %>
+    <p><%= link_to "Create an account", new_user_registration_path, class: "button primary" %></p>
+    <p><%= link_to "Already have an account? Sign in", new_user_session_path, class: "button secondary" %></p>
+  <% end %>
+</section>
+
+<section class="features">
+  <h3>What you get</h3>
+  <ul>
+    <li>Public landing page for visitors</li>
+    <li>Authenticated dashboard for signed-in users</li>
+    <li>Secure session handling with Devise</li>
+  </ul>
+</section>

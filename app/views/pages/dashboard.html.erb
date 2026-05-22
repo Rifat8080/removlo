@@ -1,0 +1,10 @@
+<section class="dashboard-header">
+  <h2>Dashboard</h2>
+  <p>Welcome back, <strong><%= current_user.email %></strong>.</p>
+</section>
+
+<section class="dashboard-actions">
+  <p>This page is protected by authentication. Only signed-in users can view it.</p>
+  <p><%= link_to "Edit profile", edit_user_registration_path, class: "button primary" %></p>
+  <p><%= link_to "Sign out", destroy_user_session_path, method: :delete, class: "button secondary" %></p>
+</section>

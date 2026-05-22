@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Dashboard | Removlo" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+  </head>
+
+  <body class="dashboard-layout">
+    <header class="dashboard-header">
+      <div class="brand">
+        <h1>Dashboard</h1>
+        <p>Private workspace for signed-in users</p>
+      </div>
+
+      <nav class="dashboard-nav">
+        <span>Signed in as <strong><%= current_user.email %></strong></span>
+        <%= link_to "Edit profile", edit_user_registration_path %>
+        <%= button_to "Sign out", destroy_user_session_path, method: :delete, form: { style: 'display:inline' } %>
+      </nav>
+    </header>
+
+    <main class="content">
+      <% if notice.present? %>
+        <p class="notice"><%= notice %></p>
+      <% end %>
+      <% if alert.present? %>
+        <p class="alert"><%= alert %></p>
+      <% end %>
+
+      <%= yield %>
+    </main>
+
+    <footer class="site-footer">
+      <p>Removlo dashboard © <%= Time.current.year %></p>
+    </footer>
+  </body>
+</html>

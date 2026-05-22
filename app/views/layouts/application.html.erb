@@ -22,6 +22,21 @@
   </head>
 
   <body>
+    <nav>
+      <% if user_signed_in? %>
+        <p>Signed in as <%= current_user.email %>. <%= button_to "Sign out", destroy_user_session_path, method: :delete, form: { style: 'display:inline' } %></p>
+      <% else %>
+        <p><%= link_to "Sign in", new_user_session_path %> | <%= link_to "Sign up", new_user_registration_path %></p>
+      <% end %>
+    </nav>
+
+    <% if notice.present? %>
+      <p class="notice"><%= notice %></p>
+    <% end %>
+    <% if alert.present? %>
+      <p class="alert"><%= alert %></p>
+    <% end %>
+
     <%= yield %>
   </body>
 </html>

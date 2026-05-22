@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Removlo" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+  </head>
+
+  <body class="landing-layout">
+    <header class="site-header">
+      <div class="brand">
+        <h1>Removlo</h1>
+        <p>Clean landing page for everyone</p>
+      </div>
+
+      <nav class="site-nav">
+        <% if user_signed_in? %>
+          <%= link_to "Dashboard", dashboard_path %>
+          <%= button_to "Sign out", destroy_user_session_path, method: :delete, form: { style: 'display:inline' } %>
+        <% else %>
+          <%= link_to "Sign in", new_user_session_path %>
+          <%= link_to "Sign up", new_user_registration_path %>
+        <% end %>
+      </nav>
+    </header>
+
+    <main class="content">
+      <% if notice.present? %>
+        <p class="notice"><%= notice %></p>
+      <% end %>
+      <% if alert.present? %>
+        <p class="alert"><%= alert %></p>
+      <% end %>
+
+      <%= yield %>
+    </main>
+
+    <footer class="site-footer">
+      <p>Removlo © <%= Time.current.year %></p>
+    </footer>
+  </body>
+</html>
