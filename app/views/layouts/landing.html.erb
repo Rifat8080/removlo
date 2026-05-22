@@ -11,37 +11,90 @@
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
   </head>
 
-  <body class="landing-layout">
-    <header class="site-header">
-      <div class="brand">
-        <h1>Removlo</h1>
-        <p>Clean landing page for everyone</p>
-      </div>
+  <body class="landing-layout bg-slate-900">
+    <!-- Modern Navigation -->
+    <nav class="sticky top-0 z-50 bg-gradient-to-r from-slate-900/95 via-slate-800/95 to-slate-900/95 backdrop-blur-md border-b border-slate-700/50 shadow-lg">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <!-- Logo -->
+          <div class="flex-shrink-0">
+            <%= link_to root_path, class: "flex items-center group" do %>
+              <span class="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent group-hover:from-cyan-300 group-hover:to-blue-400 transition-all">Removlo</span>
+            <% end %>
+          </div>
 
-      <nav class="site-nav">
-        <% if user_signed_in? %>
-          <%= link_to "Dashboard", dashboard_path %>
-          <%= button_to "Sign out", destroy_user_session_path, method: :delete, form: { style: 'display:inline' } %>
-        <% else %>
-          <%= link_to "Sign in", new_user_session_path %>
-          <%= link_to "Sign up", new_user_registration_path %>
-        <% end %>
-      </nav>
-    </header>
+          <!-- Center Navigation Links -->
+          <div class="hidden md:flex items-center gap-8">
+            <%= link_to "Home", root_path, class: "text-slate-300 hover:text-cyan-400 transition-colors duration-200 font-medium" %>
+            <%= link_to "Services", "#services", class: "text-slate-300 hover:text-cyan-400 transition-colors duration-200 font-medium" %>
+            <%= link_to "Why Choose Us", "#features", class: "text-slate-300 hover:text-cyan-400 transition-colors duration-200 font-medium" %>
+            <%= link_to "Contact", "#contact", class: "text-slate-300 hover:text-cyan-400 transition-colors duration-200 font-medium" %>
+          </div>
+
+          <!-- Right Side - Auth Buttons -->
+          <div class="flex items-center gap-3">
+            <% if user_signed_in? %>
+              <div class="text-slate-300 text-sm hidden sm:block">
+                <%= current_user.email %>
+              </div>
+              <%= link_to "Dashboard", dashboard_path, class: "px-4 py-2 text-cyan-400 hover:text-cyan-300 transition-colors font-medium" %>
+              <%= button_to "Sign out", destroy_user_session_path, method: :delete, form: { class: 'inline' }, class: "px-4 py-2 rounded-lg bg-red-600/20 text-red-400 border border-red-500/30 hover:bg-red-600/30 transition-all font-medium" %>
+            <% else %>
+              <%= link_to "Sign in", new_user_session_path, class: "px-4 py-2 text-slate-300 hover:text-white transition-colors font-medium" %>
+              <%= link_to "Get Started", new_user_registration_path, class: "px-6 py-2 rounded-lg bg-gradient-to-r from-cyan-400 to-blue-500 text-white font-semibold hover:shadow-lg hover:shadow-cyan-500/20 transition-all duration-300 hover:scale-105" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </nav>
 
     <main class="content">
       <% if notice.present? %>
-        <p class="notice"><%= notice %></p>
+        <p class="notice bg-green-900/30 border border-green-700/50 text-green-300 px-4 py-3 rounded-lg m-4 backdrop-blur-sm"><%= notice %></p>
       <% end %>
       <% if alert.present? %>
-        <p class="alert"><%= alert %></p>
+        <p class="alert bg-red-900/30 border border-red-700/50 text-red-300 px-4 py-3 rounded-lg m-4 backdrop-blur-sm"><%= alert %></p>
       <% end %>
 
       <%= yield %>
     </main>
 
-    <footer class="site-footer">
-      <p>Removlo © <%= Time.current.year %></p>
+    <footer class="site-footer bg-slate-950 border-t border-slate-800 py-12 mt-20">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <div>
+            <h3 class="text-lg font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-4">Removlo</h3>
+            <p class="text-slate-400 text-sm">UK Relocation Specialists providing end-to-end moving solutions.</p>
+          </div>
+          <div>
+            <h4 class="text-white font-semibold mb-4">Quick Links</h4>
+            <ul class="space-y-2 text-slate-400 text-sm">
+              <li><%= link_to "Home", root_path, class: "hover:text-cyan-400 transition-colors" %></li>
+              <li><%= link_to "Services", "#services", class: "hover:text-cyan-400 transition-colors" %></li>
+              <li><%= link_to "Contact", "#contact", class: "hover:text-cyan-400 transition-colors" %></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-white font-semibold mb-4">Support</h4>
+            <ul class="space-y-2 text-slate-400 text-sm">
+              <li><a href="#" class="hover:text-cyan-400 transition-colors">FAQ</a></li>
+              <li><a href="#" class="hover:text-cyan-400 transition-colors">Help Center</a></li>
+              <li><a href="#" class="hover:text-cyan-400 transition-colors">Blog</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-white font-semibold mb-4">Legal</h4>
+            <ul class="space-y-2 text-slate-400 text-sm">
+              <li><a href="#" class="hover:text-cyan-400 transition-colors">Privacy Policy</a></li>
+              <li><a href="#" class="hover:text-cyan-400 transition-colors">Terms & Conditions</a></li>
+              <li><a href="#" class="hover:text-cyan-400 transition-colors">Contact</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="border-t border-slate-800 pt-8">
+          <p class="text-center text-slate-400 text-sm">Removlo © <%= Time.current.year %>. All rights reserved.</p>
+        </div>
+      </div>
     </footer>
     <script src="/vendor/flowbite/flowbite.min.js"></script>
   </body>
