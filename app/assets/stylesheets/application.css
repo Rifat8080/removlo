@@ -1,1 +1,45 @@
-/* Styles are provided by Tailwind (app/assets/tailwind/application.css) and Flowbite. */
+/* Removlo global styles — Tailwind utilities come from app/assets/builds/tailwind.css */
+
+body {
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+::selection {
+  background-color: #c7d2fe;
+  color: #312e81;
+}
+
+html {
+  scroll-padding-top: 5rem;
+}
+
+/* Scroll-reveal (enabled only when JS adds .js to <html>) */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .animate-pulse,
+  .animate-ping {
+    animation: none !important;
+  }
+
+  html {
+    scroll-behavior: auto !important;
+  }
+}

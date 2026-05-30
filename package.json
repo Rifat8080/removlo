@@ -14,6 +14,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@hotwired/stimulus": "^3.2.2",
     "flowbite": "^1.6.5"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0"
   }
 }
