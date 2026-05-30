@@ -1,1 +1,4 @@
 @import "tailwindcss";
+
+/* Flowbite: scan component classes; styles from /vendor/flowbite/flowbite.min.css */
+@source "../../../node_modules/flowbite/**/*.js";

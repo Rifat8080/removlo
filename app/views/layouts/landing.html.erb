@@ -1,101 +1,136 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" class="scroll-smooth">
   <head>
-    <title><%= content_for(:title) || "Removlo" %></title>
+    <title><%= content_for(:title) || "Removlo — Smart UK Relocation" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="Removlo is the smart way to move in the UK — intelligent logistics, transparent pricing, and a dedicated coordinator from quote to settling in.">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <link href="/vendor/flowbite/flowbite.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <script>document.documentElement.classList.add('js')</script>
+    <style>
+      body{font-family:'Inter',ui-sans-serif,system-ui,sans-serif}
+      ::selection{background-color:#c7d2fe;color:#312e81}
+      html{scroll-padding-top:5rem}
+      .js .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+      .js .reveal.is-visible{opacity:1;transform:none}
+      @media (prefers-reduced-motion: reduce){
+        .js .reveal{opacity:1!important;transform:none!important;transition:none!important}
+        .animate-pulse,.animate-ping{animation:none!important}
+        html{scroll-behavior:auto!important}
+      }
+    </style>
   </head>
 
-  <body class="landing-layout bg-slate-900">
-    <!-- Modern Navigation -->
-    <nav class="sticky top-0 z-50 bg-gradient-to-r from-slate-900/95 via-slate-800/95 to-slate-900/95 backdrop-blur-md border-b border-slate-700/50 shadow-lg">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-          <!-- Logo -->
-          <div class="flex-shrink-0">
-            <%= link_to root_path, class: "flex items-center group" do %>
-              <span class="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent group-hover:from-cyan-300 group-hover:to-blue-400 transition-all">Removlo</span>
-            <% end %>
-          </div>
+  <body class="flex min-h-screen flex-col bg-slate-50 text-slate-700 antialiased" data-turbo="false">
+    <!-- Ambient background -->
+    <div class="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
+      <div class="absolute -left-40 top-0 h-[28rem] w-[28rem] animate-pulse rounded-full bg-indigo-300/30 blur-[120px]"></div>
+      <div class="absolute -right-40 top-1/4 h-[24rem] w-[24rem] animate-pulse rounded-full bg-sky-300/30 blur-[120px] [animation-delay:1.2s]"></div>
+      <div class="absolute bottom-0 left-1/3 h-[22rem] w-[22rem] animate-pulse rounded-full bg-blue-300/20 blur-[120px] [animation-delay:0.6s]"></div>
+      <div class="absolute inset-0 bg-[linear-gradient(to_right,#6366f110_1px,transparent_1px),linear-gradient(to_bottom,#6366f110_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]"></div>
+    </div>
 
-          <!-- Center Navigation Links -->
-          <div class="hidden md:flex items-center gap-8">
-            <%= link_to "Home", root_path, class: "text-slate-300 hover:text-cyan-400 transition-colors duration-200 font-medium" %>
-            <%= link_to "Services", "#services", class: "text-slate-300 hover:text-cyan-400 transition-colors duration-200 font-medium" %>
-            <%= link_to "Why Choose Us", "#features", class: "text-slate-300 hover:text-cyan-400 transition-colors duration-200 font-medium" %>
-            <%= link_to "Contact", "#contact", class: "text-slate-300 hover:text-cyan-400 transition-colors duration-200 font-medium" %>
-          </div>
+    <!-- Navbar -->
+    <nav id="site-nav" class="fixed top-0 z-50 w-full border-b border-slate-200/60 bg-white/70 backdrop-blur-xl transition-[background-color,box-shadow,border-color] duration-300">
+      <div class="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+        <%= link_to root_path, class: "flex items-center gap-2.5" do %>
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-600/30">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8h4l3 3v5a1 1 0 01-1 1h-1m-4 0a1 1 0 001 1h1"/></svg>
+          </span>
+          <span class="self-center whitespace-nowrap text-xl font-extrabold tracking-tight text-slate-900">Removlo</span>
+        <% end %>
 
-          <!-- Right Side - Auth Buttons -->
-          <div class="flex items-center gap-3">
-            <% if user_signed_in? %>
-              <div class="text-slate-300 text-sm hidden sm:block">
-                <%= current_user.email %>
-              </div>
-              <%= link_to "Dashboard", dashboard_path, class: "px-4 py-2 text-cyan-400 hover:text-cyan-300 transition-colors font-medium" %>
-              <%= button_to "Sign out", destroy_user_session_path, method: :delete, form: { class: 'inline' }, class: "px-4 py-2 rounded-lg bg-red-600/20 text-red-400 border border-red-500/30 hover:bg-red-600/30 transition-all font-medium" %>
-            <% else %>
-              <%= link_to "Sign in", new_user_session_path, class: "px-4 py-2 text-slate-300 hover:text-white transition-colors font-medium" %>
-              <%= link_to "Get Started", new_user_registration_path, class: "px-6 py-2 rounded-lg bg-gradient-to-r from-cyan-400 to-blue-500 text-white font-semibold hover:shadow-lg hover:shadow-cyan-500/20 transition-all duration-300 hover:scale-105" %>
+        <div class="flex items-center gap-2 md:order-2">
+          <% if user_signed_in? %>
+            <%= link_to "Dashboard", dashboard_path, class: "hidden rounded-lg px-4 py-2 text-sm font-semibold text-slate-700 transition hover:text-indigo-700 sm:inline-flex" %>
+            <%= button_to "Sign out", destroy_user_session_path, method: :delete, form: { class: "hidden sm:inline" }, class: "rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" %>
+          <% else %>
+            <%= link_to "Sign in", new_user_session_path, class: "hidden rounded-lg px-4 py-2 text-sm font-semibold text-slate-700 transition hover:text-indigo-700 sm:inline-flex" %>
+            <%= link_to "Get a quote", new_user_registration_path, class: "inline-flex items-center gap-2 rounded-lg bg-gradient-to-br from-indigo-600 to-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 transition hover:shadow-xl hover:shadow-indigo-600/40 focus:outline-none focus:ring-4 focus:ring-indigo-300" %>
+          <% end %>
+
+          <button data-collapse-toggle="landing-navbar" type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-lg p-2 text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-200 md:hidden" aria-controls="landing-navbar" aria-expanded="false">
+            <span class="sr-only">Open main menu</span>
+            <svg class="h-5 w-5" aria-hidden="true" fill="none" viewBox="0 0 17 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/></svg>
+          </button>
+        </div>
+
+        <div class="hidden w-full items-center justify-between md:order-1 md:flex md:w-auto" id="landing-navbar">
+          <ul class="mt-4 flex flex-col gap-1 rounded-xl border border-slate-100 bg-white p-4 font-medium shadow-sm md:mt-0 md:flex-row md:gap-1 md:border-0 md:bg-transparent md:p-0 md:shadow-none">
+            <% [["Services", "#services"], ["How it works", "#how-it-works"], ["Reviews", "#reviews"], ["FAQ", "#faq"], ["Contact", "#contact"]].each do |label, href| %>
+              <li>
+                <%= link_to label, href, class: "relative block rounded-lg px-3 py-2 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-indigo-700 md:hover:bg-transparent md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded-full md:after:bg-indigo-600 md:after:transition-all md:after:duration-300 md:hover:after:w-[calc(100%-1.5rem)]" %>
+              </li>
             <% end %>
-          </div>
+            <li class="mt-2 border-t border-slate-100 pt-3 md:hidden">
+              <% if user_signed_in? %>
+                <%= link_to "Dashboard", dashboard_path, class: "block rounded-lg bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white" %>
+              <% else %>
+                <%= link_to "Sign in", new_user_session_path, class: "block rounded-lg px-3 py-2 text-sm text-slate-600" %>
+              <% end %>
+            </li>
+          </ul>
         </div>
       </div>
     </nav>
 
-    <main class="content">
-      <% if notice.present? %>
-        <p class="notice bg-green-900/30 border border-green-700/50 text-green-300 px-4 py-3 rounded-lg m-4 backdrop-blur-sm"><%= notice %></p>
-      <% end %>
-      <% if alert.present? %>
-        <p class="alert bg-red-900/30 border border-red-700/50 text-red-300 px-4 py-3 rounded-lg m-4 backdrop-blur-sm"><%= alert %></p>
-      <% end %>
-
-      <%= yield %>
-    </main>
-
-    <footer class="site-footer bg-slate-950 border-t border-slate-800 py-12 mt-20">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          <div>
-            <h3 class="text-lg font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-4">Removlo</h3>
-            <p class="text-slate-400 text-sm">UK Relocation Specialists providing end-to-end moving solutions.</p>
-          </div>
-          <div>
-            <h4 class="text-white font-semibold mb-4">Quick Links</h4>
-            <ul class="space-y-2 text-slate-400 text-sm">
-              <li><%= link_to "Home", root_path, class: "hover:text-cyan-400 transition-colors" %></li>
-              <li><%= link_to "Services", "#services", class: "hover:text-cyan-400 transition-colors" %></li>
-              <li><%= link_to "Contact", "#contact", class: "hover:text-cyan-400 transition-colors" %></li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="text-white font-semibold mb-4">Support</h4>
-            <ul class="space-y-2 text-slate-400 text-sm">
-              <li><a href="#" class="hover:text-cyan-400 transition-colors">FAQ</a></li>
-              <li><a href="#" class="hover:text-cyan-400 transition-colors">Help Center</a></li>
-              <li><a href="#" class="hover:text-cyan-400 transition-colors">Blog</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="text-white font-semibold mb-4">Legal</h4>
-            <ul class="space-y-2 text-slate-400 text-sm">
-              <li><a href="#" class="hover:text-cyan-400 transition-colors">Privacy Policy</a></li>
-              <li><a href="#" class="hover:text-cyan-400 transition-colors">Terms & Conditions</a></li>
-              <li><a href="#" class="hover:text-cyan-400 transition-colors">Contact</a></li>
-            </ul>
-          </div>
-        </div>
-        <div class="border-t border-slate-800 pt-8">
-          <p class="text-center text-slate-400 text-sm">Removlo © <%= Time.current.year %>. All rights reserved.</p>
+    <!-- Flash -->
+    <% if notice.present? %>
+      <div class="fixed left-1/2 top-20 z-[60] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2" role="alert">
+        <div class="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-medium text-emerald-800 shadow-lg">
+          <svg class="h-5 w-5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          <%= notice %>
         </div>
       </div>
-    </footer>
+    <% end %>
+    <% if alert.present? %>
+      <div class="fixed left-1/2 top-20 z-[60] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2" role="alert">
+        <div class="flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-800 shadow-lg">
+          <svg class="h-5 w-5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+          <%= alert %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="flex flex-1 flex-col">
+      <%= yield %>
+    </div>
+
     <script src="/vendor/flowbite/flowbite.min.js"></script>
+    <script>
+      (function () {
+        var els = document.querySelectorAll('.reveal');
+        if (!('IntersectionObserver' in window)) {
+          els.forEach(function (el) { el.classList.add('is-visible'); });
+        } else {
+          var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+              if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
+            });
+          }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+          els.forEach(function (el) { io.observe(el); });
+        }
+
+        var nav = document.getElementById('site-nav');
+        if (nav) {
+          var onScroll = function () {
+            var scrolled = window.scrollY > 8;
+            nav.classList.toggle('bg-white/90', scrolled);
+            nav.classList.toggle('bg-white/70', !scrolled);
+            nav.classList.toggle('shadow-lg', scrolled);
+            nav.classList.toggle('shadow-slate-900/5', scrolled);
+            nav.classList.toggle('border-slate-200/80', scrolled);
+          };
+          onScroll();
+          window.addEventListener('scroll', onScroll, { passive: true });
+        }
+      })();
+    </script>
   </body>
 </html>

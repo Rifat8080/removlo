@@ -1,388 +1,398 @@
-<!-- Modern Blue Header -->
-<header class="relative overflow-hidden bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 shadow-2xl">
-  <!-- Animated background elements - Blue only -->
-  <div class="absolute inset-0 overflow-hidden">
-    <div class="absolute top-0 right-0 w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob"></div>
-    <div class="absolute bottom-0 left-0 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob animation-delay-2000"></div>
-    <div class="absolute top-1/2 left-1/2 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-4000"></div>
-  </div>
+<main class="flex-1 pt-16">
+  <!-- Hero -->
+  <section class="relative px-4 pb-16 pt-12 sm:px-6 lg:px-8 lg:pb-24 lg:pt-20">
+    <div class="mx-auto max-w-screen-xl">
+      <div class="lg:grid lg:grid-cols-12 lg:items-center lg:gap-12">
+        <div class="reveal lg:col-span-7">
+          <span class="mb-5 inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50/80 px-3.5 py-1.5 text-xs font-semibold text-indigo-700 shadow-sm shadow-indigo-900/5 backdrop-blur">
+            <span class="relative flex h-2 w-2">
+              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-indigo-500 opacity-75"></span>
+              <span class="relative inline-flex h-2 w-2 rounded-full bg-indigo-600"></span>
+            </span>
+            Rated 4.9/5 · 15,000+ moves delivered
+          </span>
 
-  <div class="relative mx-auto max-w-7xl py-12 px-4 sm:px-6 lg:flex lg:items-center lg:justify-between lg:py-24 lg:px-8">
-    <div class="flex flex-col">
-      <h1 class="text-5xl sm:text-6xl font-bold tracking-tight text-white mb-3">Removlo</h1>
-      <p class="text-xl text-blue-100 font-light">UK Relocation Specialists</p>
-      <p class="mt-3 text-base text-blue-200 max-w-lg">Experience seamless, professional relocation services tailored to your unique needs</p>
-    </div>
+          <h1 class="mb-5 text-balance text-4xl font-extrabold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+            Moving home,
+            <span class="relative whitespace-nowrap">
+              <span class="bg-gradient-to-r from-indigo-600 via-blue-600 to-sky-500 bg-clip-text text-transparent">made smart</span>
+              <svg class="absolute -bottom-2 left-0 w-full" height="12" viewBox="0 0 300 12" fill="none" preserveAspectRatio="none"><path d="M2 9C75 3 225 3 298 9" stroke="url(#g)" stroke-width="4" stroke-linecap="round"/><defs><linearGradient id="g" x1="0" x2="300" y1="0" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#6366f1"/><stop offset="1" stop-color="#0ea5e9"/></linearGradient></defs></svg>
+            </span>
+          </h1>
+          <p class="mb-8 max-w-xl text-pretty text-lg leading-relaxed text-slate-600">
+            Removlo blends intelligent logistics with real human support. One dedicated coordinator, transparent pricing, and full coverage from your first quote to settling into your new home.
+          </p>
 
-    <div class="mt-10 flex gap-4 lg:mt-0 lg:flex-shrink-0">
-      <% if user_signed_in? %>
-        <%= link_to "Dashboard", dashboard_path, class: "inline-flex items-center justify-center rounded-lg bg-blue-500 hover:bg-blue-600 px-8 py-4 text-base font-semibold text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300" %>
-      <% else %>
-        <%= link_to "Get Started", new_user_registration_path, class: "inline-flex items-center justify-center rounded-lg bg-blue-500 hover:bg-blue-600 px-8 py-4 text-base font-semibold text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300" %>
-      <% end %>
-      <% unless user_signed_in? %>
-        <%= link_to "Sign in", new_user_session_path, class: "inline-flex items-center justify-center rounded-lg border-2 border-white bg-white/10 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm hover:bg-white/20 transition-all duration-300" %>
-      <% end %>
-    </div>
-  </div>
-</header>
-
-<main class="bg-gradient-to-b from-slate-50 via-blue-50 to-slate-50">
-  <!-- Hero Section with Quote Form -->
-  <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20">
-    <div class="lg:grid lg:grid-cols-2 lg:gap-16 lg:items-center">
-      <!-- Left Column -->
-      <div class="flex flex-col justify-center">
-        <div class="inline-flex items-center rounded-full bg-blue-100 px-4 py-2 w-fit">
-          <span class="text-sm font-semibold text-blue-700">✓ Trusted by Thousands</span>
-        </div>
-
-        <h2 class="mt-6 text-5xl font-bold tracking-tight text-gray-900 sm:text-5xl leading-tight">
-          Moving Made <span class="text-blue-600">Simple & Stress-Free</span>
-        </h2>
-        
-        <p class="mt-6 text-xl text-gray-600 leading-relaxed">From packing and transport to settling-in services and visa guidance, Removlo delivers comprehensive relocation support tailored to your needs.</p>
-
-        <!-- Feature List -->
-        <ul class="mt-10 space-y-4">
-          <li class="flex items-start gap-4">
-            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center mt-1">
-              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
-              </svg>
-            </div>
-            <div>
-              <h3 class="font-semibold text-gray-900">UK-wide Coverage</h3>
-              <p class="text-gray-600 text-sm mt-1">Local teams across the UK ensuring smooth, compliant moves</p>
-            </div>
-          </li>
-          <li class="flex items-start gap-4">
-            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center mt-1">
-              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
-              </svg>
-            </div>
-            <div>
-              <h3 class="font-semibold text-gray-900">Dedicated Support</h3>
-              <p class="text-gray-600 text-sm mt-1">Single point of contact for logistics and communications</p>
-            </div>
-          </li>
-          <li class="flex items-start gap-4">
-            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center mt-1">
-              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
-              </svg>
-            </div>
-            <div>
-              <h3 class="font-semibold text-gray-900">End-to-End Services</h3>
-              <p class="text-gray-600 text-sm mt-1">Packing, customs, storage, and settling-in assistance included</p>
-            </div>
-          </li>
-        </ul>
-
-        <div class="mt-10">
-          <% if user_signed_in? %>
-            <%= link_to "Open Dashboard", dashboard_path, class: "inline-flex items-center rounded-lg bg-blue-600 hover:bg-blue-700 px-8 py-3 text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300" %>
-          <% else %>
-            <%= link_to "Request a Quote", new_user_registration_path, class: "inline-flex items-center rounded-lg bg-blue-600 hover:bg-blue-700 px-8 py-3 text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300" %>
-          <% end %>
-        </div>
-      </div>
-
-      <!-- Right Column - Quote Form -->
-      <div class="mt-14 lg:mt-0">
-        <div class="relative group">
-          <div class="absolute inset-0 bg-gradient-to-br from-blue-200 to-blue-100 rounded-2xl blur-lg opacity-40 group-hover:opacity-60 transition duration-500"></div>
-          
-          <div class="relative bg-white rounded-2xl px-8 py-10 shadow-2xl border border-blue-100 hover:border-blue-200 transition-all duration-300">
-            <div class="flex items-center gap-3 mb-6">
-              <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-              </div>
-              <div>
-                <h3 class="text-2xl font-bold text-gray-900">Quick Quote</h3>
-                <p class="text-sm text-gray-600">Get a cost estimate in minutes</p>
-              </div>
-            </div>
-
-            <%= form_with url: '#', method: :get, local: true, class: "space-y-5" do |f| %>
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">From (postcode)</label>
-                <%= f.text_field :from_postcode, placeholder: "e.g. SW1A 1AA", class: "w-full rounded-lg border border-blue-200 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all" %>
-              </div>
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">To (postcode)</label>
-                <%= f.text_field :to_postcode, placeholder: "e.g. M1 1AD", class: "w-full rounded-lg border border-blue-200 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all" %>
-              </div>
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Move Size</label>
-                <%= f.select :size, [['Studio','studio'], ['1 Bedroom','1bed'], ['2 Bedrooms','2bed'], ['3+ Bedrooms','3plus']], {}, class: "w-full rounded-lg border border-blue-200 px-4 py-3 text-gray-900 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all appearance-none cursor-pointer" %>
-              </div>
-              <div>
-                <%= f.submit "Get Estimate", class: "w-full mt-6 inline-flex justify-center items-center rounded-lg bg-blue-600 hover:bg-blue-700 px-6 py-3 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer" %>
-              </div>
-            <% end %>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Process Section -->
-  <section class="py-20 bg-white">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16">
-        <h2 class="text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
-        <p class="text-xl text-gray-600">Simple, transparent, and stress-free relocation process</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        <div class="text-center relative">
-          <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2z"></path>
-            </svg>
-          </div>
-          <h3 class="text-lg font-semibold text-gray-900">Get a Quote</h3>
-          <p class="mt-2 text-gray-600 text-sm">Enter your details and get an instant cost estimate</p>
-          <div class="hidden lg:block absolute top-20 right-0 w-20 h-1 bg-gradient-to-r from-blue-300 to-transparent"></div>
-        </div>
-
-        <div class="text-center relative">
-          <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-          </div>
-          <h3 class="text-lg font-semibold text-gray-900">Plan & Book</h3>
-          <p class="mt-2 text-gray-600 text-sm">Meet with our coordinator to arrange your move</p>
-          <div class="hidden lg:block absolute top-20 right-0 w-20 h-1 bg-gradient-to-r from-blue-300 to-transparent"></div>
-        </div>
-
-        <div class="text-center relative">
-          <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m0 0l8 4m-8-4v10l8 4m0-10l8 4m-8-4v10"></path>
-            </svg>
-          </div>
-          <h3 class="text-lg font-semibold text-gray-900">Professional Move</h3>
-          <p class="mt-2 text-gray-600 text-sm">Our team handles packing, transport, and logistics</p>
-          <div class="hidden lg:block absolute top-20 right-0 w-20 h-1 bg-gradient-to-r from-blue-300 to-transparent"></div>
-        </div>
-
-        <div class="text-center">
-          <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-          </div>
-          <h3 class="text-lg font-semibold text-gray-900">Settle In</h3>
-          <p class="mt-2 text-gray-600 text-sm">We support you through utilities, schools, and orientation</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Services Section -->
-  <section class="py-20">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16">
-        <h2 class="text-4xl font-bold text-gray-900 mb-4">Our Services</h2>
-        <p class="text-xl text-gray-600">Comprehensive solutions for every stage of your move</p>
-      </div>
-
-      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        <div class="relative group overflow-hidden rounded-xl">
-          <div class="absolute inset-0 bg-gradient-to-br from-blue-100 to-blue-50 opacity-0 group-hover:opacity-100 transition duration-500"></div>
-          <div class="relative p-8 bg-white border border-blue-100 rounded-xl hover:border-blue-200 transition-all duration-300">
-            <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mb-4">
-              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9-4v4m0 0v4"></path>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold text-gray-900">Packing & Boxing</h3>
-            <p class="mt-3 text-gray-600">Professional packing with premium materials to protect your belongings</p>
-          </div>
-        </div>
-
-        <div class="relative group overflow-hidden rounded-xl">
-          <div class="absolute inset-0 bg-gradient-to-br from-blue-100 to-blue-50 opacity-0 group-hover:opacity-100 transition duration-500"></div>
-          <div class="relative p-8 bg-white border border-blue-100 rounded-xl hover:border-blue-200 transition-all duration-300">
-            <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mb-4">
-              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold text-gray-900">Transportation</h3>
-            <p class="mt-3 text-gray-600">Safe and efficient transport with GPS tracking for your peace of mind</p>
-          </div>
-        </div>
-
-        <div class="relative group overflow-hidden rounded-xl">
-          <div class="absolute inset-0 bg-gradient-to-br from-blue-100 to-blue-50 opacity-0 group-hover:opacity-100 transition duration-500"></div>
-          <div class="relative p-8 bg-white border border-blue-100 rounded-xl hover:border-blue-200 transition-all duration-300">
-            <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mb-4">
-              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold text-gray-900">Storage Solutions</h3>
-            <p class="mt-3 text-gray-600">Secure, climate-controlled storage for short or long-term needs</p>
-          </div>
-        </div>
-
-        <div class="relative group overflow-hidden rounded-xl">
-          <div class="absolute inset-0 bg-gradient-to-br from-blue-100 to-blue-50 opacity-0 group-hover:opacity-100 transition duration-500"></div>
-          <div class="relative p-8 bg-white border border-blue-100 rounded-xl hover:border-blue-200 transition-all duration-300">
-            <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mb-4">
-              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold text-gray-900">Insurance Coverage</h3>
-            <p class="mt-3 text-gray-600">Comprehensive insurance tailored to protect your valuables</p>
-          </div>
-        </div>
-
-        <div class="relative group overflow-hidden rounded-xl">
-          <div class="absolute inset-0 bg-gradient-to-br from-blue-100 to-blue-50 opacity-0 group-hover:opacity-100 transition duration-500"></div>
-          <div class="relative p-8 bg-white border border-blue-100 rounded-xl hover:border-blue-200 transition-all duration-300">
-            <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mb-4">
-              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold text-gray-900">Pet Relocation</h3>
-            <p class="mt-3 text-gray-600">Safe and caring transport for your beloved pets</p>
-          </div>
-        </div>
-
-        <div class="relative group overflow-hidden rounded-xl">
-          <div class="absolute inset-0 bg-gradient-to-br from-blue-100 to-blue-50 opacity-0 group-hover:opacity-100 transition duration-500"></div>
-          <div class="relative p-8 bg-white border border-blue-100 rounded-xl hover:border-blue-200 transition-all duration-300">
-            <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mb-4">
-              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold text-gray-900">Settling-in Support</h3>
-            <p class="mt-3 text-gray-600">Local orientation, utilities setup, and school guidance</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Testimonials Section -->
-  <section class="py-20 bg-white">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16">
-        <h2 class="text-4xl font-bold text-gray-900 mb-4">What Our Customers Say</h2>
-        <p class="text-xl text-gray-600">Join thousands of satisfied customers</p>
-      </div>
-
-      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        <div class="bg-gradient-to-br from-blue-50 to-white rounded-xl p-8 border border-blue-100 hover:border-blue-200 transition-all">
-          <div class="flex items-center gap-1 mb-4">
-            <span class="text-yellow-400">★</span>
-            <span class="text-yellow-400">★</span>
-            <span class="text-yellow-400">★</span>
-            <span class="text-yellow-400">★</span>
-            <span class="text-yellow-400">★</span>
-          </div>
-          <p class="text-gray-600 mb-4">"Removlo made our move incredibly smooth. The team was professional, punctual, and took great care of our belongings. Highly recommended!"</p>
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-blue-200"></div>
-            <div>
-              <p class="font-semibold text-gray-900">Sarah Mitchell</p>
-              <p class="text-sm text-gray-600">London to Manchester</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-gradient-to-br from-blue-50 to-white rounded-xl p-8 border border-blue-100 hover:border-blue-200 transition-all">
-          <div class="flex items-center gap-1 mb-4">
-            <span class="text-yellow-400">★</span>
-            <span class="text-yellow-400">★</span>
-            <span class="text-yellow-400">★</span>
-            <span class="text-yellow-400">★</span>
-            <span class="text-yellow-400">★</span>
-          </div>
-          <p class="text-gray-600 mb-4">"The quote was accurate, transparent, and there were no hidden fees. The customer service was exceptional throughout the process."</p>
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-blue-300"></div>
-            <div>
-              <p class="font-semibold text-gray-900">James Thompson</p>
-              <p class="text-sm text-gray-600">Manchester to Bristol</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-gradient-to-br from-blue-50 to-white rounded-xl p-8 border border-blue-100 hover:border-blue-200 transition-all">
-          <div class="flex items-center gap-1 mb-4">
-            <span class="text-yellow-400">★</span>
-            <span class="text-yellow-400">★</span>
-            <span class="text-yellow-400">★</span>
-            <span class="text-yellow-400">★</span>
-            <span class="text-yellow-400">★</span>
-          </div>
-          <p class="text-gray-600 mb-4">"Best moving experience ever! They handled everything from packing to settling-in support. Worth every penny!"</p>
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-blue-100"></div>
-            <div>
-              <p class="font-semibold text-gray-900">Emma Wilson</p>
-              <p class="text-sm text-gray-600">Edinburgh to London</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Stats Section -->
-  <section class="py-20 bg-gradient-to-r from-blue-600 to-blue-800">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 text-center">
-        <div>
-          <div class="text-5xl font-bold text-white mb-2">15K+</div>
-          <p class="text-blue-100">Successful Moves</p>
-        </div>
-        <div>
-          <div class="text-5xl font-bold text-white mb-2">98%</div>
-          <p class="text-blue-100">Satisfaction Rate</p>
-        </div>
-        <div>
-          <div class="text-5xl font-bold text-white mb-2">50+</div>
-          <p class="text-blue-100">Cities Covered</p>
-        </div>
-        <div>
-          <div class="text-5xl font-bold text-white mb-2">20+</div>
-          <p class="text-blue-100">Years Experience</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA Section -->
-  <section class="py-20">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="relative group">
-        <div class="absolute inset-0 bg-gradient-to-br from-blue-200 to-blue-100 rounded-2xl blur-lg opacity-40 group-hover:opacity-60 transition duration-500"></div>
-        <div class="relative bg-white rounded-2xl px-8 py-16 text-center border-2 border-blue-200 hover:border-blue-300 transition-all">
-          <h3 class="text-4xl font-bold text-gray-900 mb-4">Ready to Start Your Journey?</h3>
-          <p class="text-xl text-gray-600 mb-8">Take the first step towards a stress-free relocation with Removlo</p>
-          <div class="flex gap-4 justify-center flex-wrap">
+          <div class="mb-8 flex flex-wrap gap-4">
             <% if user_signed_in? %>
-              <%= link_to "Go to Dashboard", dashboard_path, class: "inline-flex items-center rounded-lg bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300" %>
+              <%= link_to dashboard_path, class: "group inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 transition duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-indigo-600/40 focus:outline-none focus:ring-4 focus:ring-indigo-300 active:translate-y-0 active:scale-[.98]" do %>
+                Open dashboard
+                <svg class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+              <% end %>
             <% else %>
-              <%= link_to "Get Your Free Quote", new_user_registration_path, class: "inline-flex items-center rounded-lg bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300" %>
-              <%= link_to "Sign In", new_user_session_path, class: "inline-flex items-center rounded-lg border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-3 font-semibold transition-all duration-300" %>
+              <%= link_to new_user_registration_path, class: "group inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 transition duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-indigo-600/40 focus:outline-none focus:ring-4 focus:ring-indigo-300 active:translate-y-0 active:scale-[.98]" do %>
+                Get your free quote
+                <svg class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+              <% end %>
+              <a href="#how-it-works" class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white/80 px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-sm backdrop-blur transition duration-200 hover:-translate-y-0.5 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 active:translate-y-0">
+                See how it works
+              </a>
             <% end %>
           </div>
+
+          <div class="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-slate-500">
+            <% ["Fully insured", "No hidden fees", "UK-wide coverage"].each do |item| %>
+              <span class="inline-flex items-center gap-2">
+                <svg class="h-5 w-5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                <%= item %>
+              </span>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Quote card -->
+        <div class="reveal mt-12 lg:col-span-5 lg:mt-0" style="transition-delay:120ms" id="quote">
+          <div class="group/card relative">
+            <div class="absolute -inset-1 rounded-3xl bg-gradient-to-br from-indigo-500/25 via-blue-500/10 to-sky-400/25 blur-xl transition duration-500 group-hover/card:from-indigo-500/35 group-hover/card:to-sky-400/35"></div>
+            <span class="absolute -right-3 -top-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-indigo-700 shadow-lg shadow-indigo-900/10 ring-1 ring-indigo-100">
+              <svg class="h-3.5 w-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              2-min form
+            </span>
+            <div class="relative w-full rounded-2xl border border-slate-200/80 bg-white/90 p-6 shadow-2xl shadow-indigo-900/10 backdrop-blur sm:p-8">
+              <div class="mb-6 flex items-center gap-3 border-b border-slate-100 pb-5">
+                <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-600/30">
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                </span>
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-wide text-indigo-600">Instant estimate</p>
+                  <h2 class="text-lg font-bold text-slate-900">Get your quick quote</h2>
+                </div>
+              </div>
+
+              <%= form_with url: "#", method: :get, local: true, class: "space-y-5" do |f| %>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label for="from_postcode" class="mb-2 block text-sm font-medium text-slate-900">From</label>
+                    <%= f.text_field :from_postcode, id: "from_postcode", placeholder: "SW1A 1AA", class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 placeholder-slate-400 transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200" %>
+                  </div>
+                  <div>
+                    <label for="to_postcode" class="mb-2 block text-sm font-medium text-slate-900">To</label>
+                    <%= f.text_field :to_postcode, id: "to_postcode", placeholder: "M1 1AD", class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 placeholder-slate-400 transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200" %>
+                  </div>
+                </div>
+                <div>
+                  <label for="size" class="mb-2 block text-sm font-medium text-slate-900">Move size</label>
+                  <%= f.select :size, [["Studio", "studio"], ["1 bedroom", "1bed"], ["2 bedrooms", "2bed"], ["3+ bedrooms", "3plus"], ["Office / commercial", "office"]], {}, id: "size", class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200" %>
+                </div>
+                <div>
+                  <label for="move_date" class="mb-2 block text-sm font-medium text-slate-900">Preferred date</label>
+                  <%= f.date_field :move_date, id: "move_date", class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200" %>
+                </div>
+                <%= f.submit "Calculate my estimate", class: "w-full cursor-pointer rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 transition duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-indigo-600/40 focus:outline-none focus:ring-4 focus:ring-indigo-300 active:translate-y-0 active:scale-[.99]" %>
+                <p class="text-center text-xs text-slate-500">No obligation · Response within 24 hours</p>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust bar -->
+  <section class="border-y border-slate-200/70 bg-white/60 py-8 backdrop-blur">
+    <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+      <p class="reveal mb-6 text-center text-xs font-semibold uppercase tracking-widest text-slate-400">Trusted by movers across the UK</p>
+      <div class="grid grid-cols-2 gap-8 sm:grid-cols-4">
+        <% [["15K+", "Homes moved"], ["4.9/5", "Average rating"], ["50+", "Cities covered"], ["20+", "Years experience"]].each_with_index do |(stat, label), i| %>
+          <div class="reveal group text-center" style="transition-delay:<%= i * 70 %>ms">
+            <p class="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-3xl font-extrabold text-transparent transition-transform duration-300 group-hover:scale-110 sm:text-4xl"><%= stat %></p>
+            <p class="mt-1 text-xs font-semibold uppercase tracking-wider text-slate-500"><%= label %></p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section id="services" class="py-16 sm:py-24">
+    <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+      <div class="reveal mx-auto mb-14 max-w-2xl text-center">
+        <p class="mb-2 text-sm font-semibold uppercase tracking-wide text-indigo-600">Services</p>
+        <h2 class="mb-4 text-balance text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Everything your move needs</h2>
+        <p class="text-pretty text-lg text-slate-600">Mix and match, or hand us the whole relocation. We scale to your move.</p>
+      </div>
+
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <% [
+          ["box", "Packing", "Premium materials, trained packers, and careful fragile-item protocols.", "from-indigo-500 to-blue-500"],
+          ["truck", "Transport", "GPS-tracked fleet, careful loading, and reliable UK-wide routes.", "from-blue-500 to-sky-500"],
+          ["archive", "Storage", "Secure, climate-aware units for short or long-term storage.", "from-sky-500 to-cyan-500"],
+          ["shield", "Insurance", "Coverage matched to your inventory and explained upfront.", "from-violet-500 to-indigo-500"],
+          ["heart", "Pet moving", "Compliant, low-stress relocation for your animals.", "from-fuchsia-500 to-violet-500"],
+          ["home", "Settling-in", "Schools, utilities, and local orientation once you arrive.", "from-emerald-500 to-teal-500"]
+        ].each_with_index do |(icon, title, desc, grad), i| %>
+          <article class="reveal group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1.5 hover:border-indigo-200 hover:shadow-xl hover:shadow-indigo-900/5" style="transition-delay:<%= (i % 3) * 80 %>ms">
+            <div class="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-gradient-to-br <%= grad %> opacity-0 blur-2xl transition duration-500 group-hover:opacity-20"></div>
+            <div class="relative mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br <%= grad %> text-white shadow-lg transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110">
+              <% case icon
+                 when "box" %><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+              <% when "truck" %><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8h4l3 3v5a1 1 0 01-1 1h-1"/></svg>
+              <% when "archive" %><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+              <% when "shield" %><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              <% when "heart" %><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+              <% else %><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+              <% end %>
+            </div>
+            <h3 class="relative mb-2 text-lg font-bold tracking-tight text-slate-900"><%= title %></h3>
+            <p class="relative text-pretty text-sm text-slate-600"><%= desc %></p>
+            <span class="relative mt-4 inline-flex items-center gap-1 text-sm font-semibold text-indigo-600 opacity-0 transition-all duration-300 group-hover:translate-x-0.5 group-hover:opacity-100">
+              Learn more
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            </span>
+          </article>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section id="how-it-works" class="border-y border-slate-200/70 bg-gradient-to-b from-indigo-50/60 to-white py-16 sm:py-24">
+    <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+      <div class="reveal mx-auto mb-14 max-w-2xl text-center">
+        <span class="mb-3 inline-block rounded-full bg-gradient-to-br from-indigo-600 to-blue-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-lg shadow-indigo-600/30">The process</span>
+        <h2 class="text-balance text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Four steps to a stress-free move</h2>
+      </div>
+
+      <ol class="relative grid gap-8 md:grid-cols-4">
+        <div class="absolute left-0 right-0 top-7 hidden h-0.5 bg-gradient-to-r from-indigo-200 via-blue-200 to-sky-200 md:block" aria-hidden="true"></div>
+        <% [
+          ["01", "Get a quote", "Share postcodes and move size for a tailored estimate in seconds."],
+          ["02", "Plan together", "Lock services, insurance and dates with your dedicated coordinator."],
+          ["03", "We move you", "Packing, transport and live updates on the big day."],
+          ["04", "Settle in", "Local orientation and ongoing support once you arrive."]
+        ].each_with_index do |(num, title, desc), i| %>
+          <li class="reveal group relative text-center" style="transition-delay:<%= i * 90 %>ms">
+            <span class="relative mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-indigo-100 bg-white font-mono text-lg font-bold text-indigo-600 shadow-md shadow-indigo-900/5 transition duration-300 group-hover:-translate-y-1 group-hover:border-indigo-300 group-hover:bg-gradient-to-br group-hover:from-indigo-600 group-hover:to-blue-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-indigo-600/30"><%= num %></span>
+            <h3 class="mb-2 text-lg font-bold text-slate-900"><%= title %></h3>
+            <p class="mx-auto max-w-xs text-pretty text-sm text-slate-600"><%= desc %></p>
+          </li>
+        <% end %>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Why us / split feature -->
+  <section id="why-us" class="py-16 sm:py-24">
+    <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+      <div class="grid items-center gap-12 lg:grid-cols-2">
+        <div class="reveal">
+          <p class="mb-2 text-sm font-semibold uppercase tracking-wide text-indigo-600">Why Removlo</p>
+          <h2 class="mb-4 text-balance text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Engineered for peace of mind</h2>
+          <p class="mb-8 text-pretty text-lg text-slate-600">We pair premium logistics with intelligent coordination — so nothing slips through the cracks on the most stressful day.</p>
+          <ul class="space-y-3">
+            <% [
+              ["Dedicated coordinator", "A single specialist owns your timeline from quote to keys."],
+              ["Transparent pricing", "Clear quotes with zero surprise fees on moving day."],
+              ["Real-time tracking", "Follow your belongings with live GPS updates en route."],
+              ["Flexible scheduling", "Evening and weekend slots available where you need them."]
+            ].each do |title, desc| %>
+              <li class="group flex gap-4 rounded-xl p-2 transition duration-200 hover:bg-white hover:shadow-sm">
+                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 transition duration-300 group-hover:bg-gradient-to-br group-hover:from-indigo-600 group-hover:to-blue-600 group-hover:text-white">
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                </span>
+                <div>
+                  <p class="font-semibold text-slate-900"><%= title %></p>
+                  <p class="text-pretty text-sm text-slate-600"><%= desc %></p>
+                </div>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+
+        <div class="reveal relative" style="transition-delay:120ms">
+          <div class="absolute -inset-2 rounded-3xl bg-gradient-to-br from-indigo-500/15 to-sky-400/15 blur-2xl"></div>
+          <div class="relative grid grid-cols-2 gap-4">
+            <div class="space-y-4">
+              <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-900/5">
+                <p class="text-3xl font-extrabold text-slate-900">98%</p>
+                <p class="mt-1 text-sm text-slate-500">On-time arrivals</p>
+              </div>
+              <div class="rounded-2xl bg-gradient-to-br from-indigo-600 to-blue-600 p-6 text-white shadow-lg shadow-indigo-600/30 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-600/40">
+                <svg class="mb-3 h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <p class="text-sm font-medium text-indigo-50">Average coordinator reply time</p>
+                <p class="mt-1 text-2xl font-bold">Under 2 hrs</p>
+              </div>
+            </div>
+            <div class="space-y-4 pt-8">
+              <div class="rounded-2xl bg-gradient-to-br from-sky-500 to-cyan-500 p-6 text-white shadow-lg shadow-sky-500/30 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-sky-500/40">
+                <svg class="mb-3 h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <p class="text-sm font-medium text-sky-50">Crews in</p>
+                <p class="mt-1 text-2xl font-bold">50+ UK cities</p>
+              </div>
+              <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-900/5">
+                <p class="text-3xl font-extrabold text-slate-900">£0</p>
+                <p class="mt-1 text-sm text-slate-500">Hidden fees, ever</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews -->
+  <section id="reviews" class="border-y border-slate-200/70 bg-slate-50 py-16 sm:py-24">
+    <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+      <div class="reveal mx-auto mb-14 max-w-2xl text-center">
+        <p class="mb-2 text-sm font-semibold uppercase tracking-wide text-indigo-600">Reviews</p>
+        <h2 class="text-balance text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Loved by movers like you</h2>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-3">
+        <% [
+          ["Removlo made our London to Manchester move effortless. Punctual, careful, and crystal-clear communication throughout.", "Sarah Mitchell", "London → Manchester", "SM"],
+          ["The quote matched the final invoice to the penny. My coordinator replied within hours every single time.", "James Thompson", "Manchester → Bristol", "JT"],
+          ["They anticipated details we'd have completely missed. Genuinely next-level, thoughtful service.", "Emma Wilson", "Edinburgh → London", "EW"]
+        ].each_with_index do |(quote, name, route, initials), i| %>
+          <figure class="reveal group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-indigo-900/5" style="transition-delay:<%= i * 90 %>ms">
+            <span class="pointer-events-none absolute -right-2 -top-4 font-serif text-8xl leading-none text-indigo-100 transition-colors duration-300 group-hover:text-indigo-200" aria-hidden="true">&rdquo;</span>
+            <div class="relative mb-4 flex gap-0.5 text-amber-400" aria-label="5 out of 5 stars">
+              <% 5.times do %><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg><% end %>
+            </div>
+            <blockquote class="relative mb-6 flex-1 text-pretty text-slate-700">“<%= quote %>”</blockquote>
+            <figcaption class="relative flex items-center gap-3 border-t border-slate-100 pt-4">
+              <span class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-blue-600 text-sm font-bold text-white"><%= initials %></span>
+              <div>
+                <p class="font-semibold text-slate-900"><%= name %></p>
+                <p class="text-xs text-indigo-600"><%= route %></p>
+              </div>
+            </figcaption>
+          </figure>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="py-16 sm:py-24">
+    <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+      <div class="reveal mb-12 text-center">
+        <p class="mb-2 text-sm font-semibold uppercase tracking-wide text-indigo-600">FAQ</p>
+        <h2 class="text-balance text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Questions, answered</h2>
+      </div>
+
+      <div id="accordion-faq" data-accordion="collapse" class="reveal space-y-3">
+        <% [
+          ["How accurate is the online estimate?", "Estimates use your move size and distance. A coordinator confirms everything via a quick phone or video survey before issuing your final fixed quote."],
+          ["Are my belongings insured?", "Yes — we offer tiered coverage options with limits clearly explained before you book, so there are no surprises."],
+          ["Do you handle international moves?", "Our core focus is UK domestic moves. For cross-border relocations we can refer you to trusted partners — just get in touch."],
+          ["How far in advance should I book?", "We recommend 4–6 weeks in peak season and 2–3 weeks off-peak. Need to move sooner? Ask us about last-minute slots."]
+        ].each_with_index do |(question, answer), i| %>
+          <div class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm transition duration-200 hover:border-indigo-200 hover:shadow-md">
+            <h2 id="accordion-faq-heading-<%= i %>">
+              <button
+                type="button"
+                class="flex w-full items-center justify-between gap-3 p-5 text-left font-semibold text-slate-900 transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-indigo-100"
+                data-accordion-target="#accordion-faq-body-<%= i %>"
+                aria-expanded="<%= i.zero? ? 'true' : 'false' %>"
+                aria-controls="accordion-faq-body-<%= i %>"
+              >
+                <span><%= question %></span>
+                <svg data-accordion-icon class="h-3 w-3 shrink-0 text-indigo-500 <%= i.zero? ? 'rotate-180' : '' %>" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1l4 4 4-4"/>
+                </svg>
+              </button>
+            </h2>
+            <div id="accordion-faq-body-<%= i %>" class="<%= i.zero? ? '' : 'hidden' %>" aria-labelledby="accordion-faq-heading-<%= i %>">
+              <div class="border-t border-slate-100 p-5">
+                <p class="text-sm text-slate-600"><%= answer %></p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="contact" class="px-4 pb-20 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-screen-xl">
+      <div class="reveal relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-700 via-blue-700 to-indigo-800 px-6 py-14 text-center shadow-2xl shadow-indigo-900/30 sm:px-12 sm:py-16">
+        <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#ffffff14_1px,transparent_1px),linear-gradient(to_bottom,#ffffff14_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]"></div>
+        <div class="pointer-events-none absolute -left-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
+        <div class="pointer-events-none absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-sky-400/20 blur-3xl"></div>
+        <div class="relative mx-auto max-w-2xl">
+          <p class="mb-2 text-sm font-semibold uppercase tracking-wide text-indigo-200">Ready to move?</p>
+          <h2 class="mb-4 text-balance text-3xl font-extrabold tracking-tight text-white sm:text-4xl">Start your move the smart way</h2>
+          <p class="mb-8 text-pretty text-lg text-indigo-100">Speak with a relocation specialist or create an account to track your quote end to end.</p>
+          <div class="flex flex-wrap justify-center gap-4">
+            <% if user_signed_in? %>
+              <%= link_to "Open dashboard", dashboard_path, class: "inline-flex items-center rounded-xl bg-white px-7 py-3.5 text-sm font-semibold text-indigo-700 shadow-lg transition duration-200 hover:-translate-y-0.5 hover:bg-indigo-50 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-white/30 active:translate-y-0" %>
+            <% else %>
+              <%= link_to "Get a free quote", new_user_registration_path, class: "inline-flex items-center rounded-xl bg-white px-7 py-3.5 text-sm font-semibold text-indigo-700 shadow-lg transition duration-200 hover:-translate-y-0.5 hover:bg-indigo-50 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-white/30 active:translate-y-0" %>
+              <%= link_to "Sign in", new_user_session_path, class: "inline-flex items-center rounded-xl border border-white/40 px-7 py-3.5 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-white/10 focus:outline-none focus:ring-4 focus:ring-white/20 active:translate-y-0" %>
+            <% end %>
+          </div>
+          <p class="mt-6 text-sm text-indigo-200">
+            Or email us at <a href="mailto:hello@removlo.co.uk" class="font-semibold text-white underline-offset-4 hover:underline">hello@removlo.co.uk</a>
+          </p>
         </div>
       </div>
     </div>
   </section>
 </main>
+
+<footer class="border-t border-slate-200/70 bg-white">
+  <div class="mx-auto w-full max-w-screen-xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+    <div class="md:flex md:justify-between">
+      <div class="mb-8 md:mb-0 md:me-6 lg:me-12">
+        <div class="mb-4 flex items-center gap-2.5">
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-600/30">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8h4l3 3v5a1 1 0 01-1 1h-1m-4 0a1 1 0 001 1h1"/></svg>
+          </span>
+          <span class="text-xl font-extrabold tracking-tight text-slate-900">Removlo</span>
+        </div>
+        <p class="max-w-sm text-sm text-slate-600">The smart way to move in the UK — transparent pricing, fully insured moves, and a dedicated coordinator for every journey.</p>
+      </div>
+      <div class="grid grid-cols-2 gap-8 sm:grid-cols-3 sm:gap-12">
+        <div>
+          <h2 class="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-900">Company</h2>
+          <ul class="space-y-3 text-sm text-slate-600">
+            <li><%= link_to "Home", root_path, class: "transition hover:text-indigo-700" %></li>
+            <li><%= link_to "Services", "#services", class: "transition hover:text-indigo-700" %></li>
+            <li><%= link_to "How it works", "#how-it-works", class: "transition hover:text-indigo-700" %></li>
+            <li><%= link_to "Reviews", "#reviews", class: "transition hover:text-indigo-700" %></li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-900">Support</h2>
+          <ul class="space-y-3 text-sm text-slate-600">
+            <li><%= link_to "FAQ", "#faq", class: "transition hover:text-indigo-700" %></li>
+            <li><%= link_to "Contact", "#contact", class: "transition hover:text-indigo-700" %></li>
+            <li><a href="#" class="transition hover:text-indigo-700">Help centre</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-900">Legal</h2>
+          <ul class="space-y-3 text-sm text-slate-600">
+            <li><a href="#" class="transition hover:text-indigo-700">Privacy</a></li>
+            <li><a href="#" class="transition hover:text-indigo-700">Terms</a></li>
+            <li><a href="mailto:hello@removlo.co.uk" class="transition hover:text-indigo-700">hello@removlo.co.uk</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <hr class="my-8 border-slate-200">
+    <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
+      <span class="text-sm text-slate-500">© <%= Time.current.year %> <a href="<%= root_path %>" class="font-medium hover:text-indigo-700">Removlo</a>. All rights reserved.</span>
+      <div class="flex flex-wrap gap-3 text-xs">
+        <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-slate-600">
+          <span class="h-2 w-2 rounded-full bg-emerald-400"></span> Fully insured
+        </span>
+        <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-slate-600">
+          <span class="h-2 w-2 rounded-full bg-indigo-400"></span> UK-wide network
+        </span>
+      </div>
+    </div>
+  </div>
+</footer>

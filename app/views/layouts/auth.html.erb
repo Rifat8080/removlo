@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <title><%= content_for(:title) || "Removlo — Account" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <style>body{font-family:'Inter',ui-sans-serif,system-ui,sans-serif}</style>
+  </head>
+
+  <body class="min-h-screen bg-slate-50 text-slate-700 antialiased">
+    <div class="grid min-h-screen lg:grid-cols-2">
+      <!-- Brand panel -->
+      <div class="relative hidden overflow-hidden bg-gradient-to-br from-indigo-700 via-blue-700 to-indigo-800 lg:flex lg:flex-col lg:justify-between lg:p-12">
+        <div class="pointer-events-none absolute -left-24 -top-24 h-80 w-80 rounded-full bg-white/10 blur-3xl"></div>
+        <div class="pointer-events-none absolute -bottom-28 -right-20 h-96 w-96 rounded-full bg-sky-400/20 blur-3xl"></div>
+        <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#ffffff14_1px,transparent_1px),linear-gradient(to_bottom,#ffffff14_1px,transparent_1px)] bg-[size:3rem_3rem]"></div>
+
+        <%= link_to root_path, class: "relative flex items-center gap-2.5" do %>
+          <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 text-white backdrop-blur">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8h4l3 3v5a1 1 0 01-1 1h-1m-4 0a1 1 0 001 1h1"/></svg>
+          </span>
+          <span class="text-xl font-extrabold tracking-tight text-white">Removlo</span>
+        <% end %>
+
+        <div class="relative max-w-md">
+          <h2 class="text-3xl font-extrabold leading-tight text-white">The smart way to move in the UK.</h2>
+          <p class="mt-4 text-lg text-indigo-100">Intelligent logistics, transparent pricing, and a dedicated coordinator from your first quote to settling in.</p>
+          <ul class="mt-8 space-y-4">
+            <% ["Fully insured, end-to-end moves", "One coordinator for your whole journey", "Live tracking and zero hidden fees"].each do |item| %>
+              <li class="flex items-center gap-3 text-indigo-50">
+                <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/15">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                </span>
+                <span class="text-sm font-medium"><%= item %></span>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+
+        <div class="relative flex items-center gap-3">
+          <div class="flex -space-x-2">
+            <% %w[from-indigo-400 from-sky-400 from-violet-400].each do |c| %>
+              <span class="h-8 w-8 rounded-full border-2 border-indigo-700 bg-gradient-to-br <%= c %> to-white/40"></span>
+            <% end %>
+          </div>
+          <p class="text-sm text-indigo-100"><span class="font-bold text-white">15,000+</span> happy movers · rated 4.9/5</p>
+        </div>
+      </div>
+
+      <!-- Form panel -->
+      <div class="flex flex-col">
+        <header class="flex items-center justify-between p-6 lg:hidden">
+          <%= link_to root_path, class: "flex items-center gap-2.5" do %>
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-600/30">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8h4l3 3v5a1 1 0 01-1 1h-1m-4 0a1 1 0 001 1h1"/></svg>
+            </span>
+            <span class="text-xl font-extrabold tracking-tight text-slate-900">Removlo</span>
+          <% end %>
+          <%= link_to "Back to site", root_path, class: "text-sm font-medium text-slate-500 transition hover:text-indigo-700" %>
+        </header>
+
+        <div class="flex flex-1 items-center justify-center px-6 py-10 sm:px-12">
+          <div class="w-full max-w-md">
+            <% if notice.present? %>
+              <div class="mb-6 flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-medium text-emerald-800" role="alert">
+                <svg class="h-5 w-5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                <%= notice %>
+              </div>
+            <% end %>
+            <% if alert.present? %>
+              <div class="mb-6 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-800" role="alert">
+                <svg class="h-5 w-5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                <%= alert %>
+              </div>
+            <% end %>
+
+            <%= yield %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/vendor/flowbite/flowbite.min.js"></script>
+  </body>
+</html>
