@@ -11,6 +11,67 @@ body {
 
 html {
   scroll-padding-top: 5rem;
+  --cursor-x: 50vw;
+  --cursor-y: 30vh;
+}
+
+.cursor-glow {
+  background:
+    radial-gradient(560px circle at var(--cursor-x) var(--cursor-y), rgba(99, 102, 241, 0.13), transparent 45%),
+    radial-gradient(420px circle at calc(var(--cursor-x) + 12rem) calc(var(--cursor-y) + 8rem), rgba(14, 165, 233, 0.1), transparent 45%);
+  transition: opacity 0.25s ease;
+}
+
+.soft-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.soft-shine::after {
+  content: "";
+  position: absolute;
+  inset: -40% -70%;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, 0.55), transparent 58%);
+  transform: translateX(-55%) rotate(8deg);
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.soft-shine:hover::after {
+  transform: translateX(55%) rotate(8deg);
+}
+
+.route-marquee {
+  animation: route-marquee 22s linear infinite;
+}
+
+.float-slow {
+  animation: float-slow 7s ease-in-out infinite;
+}
+
+.float-slower {
+  animation: float-slow 9s ease-in-out infinite reverse;
+}
+
+@keyframes route-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 /* Scroll-reveal (enabled only when JS adds .js to <html>) */
@@ -35,7 +96,10 @@ html {
   }
 
   .animate-pulse,
-  .animate-ping {
+  .animate-ping,
+  .route-marquee,
+  .float-slow,
+  .float-slower {
     animation: none !important;
   }
 
