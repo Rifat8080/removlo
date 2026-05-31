@@ -1,0 +1,101 @@
+<% content_for :title, "#{@quotation.reference} — Removlo" %>
+
+<div class="mx-auto max-w-7xl">
+  <div class="rounded-3xl bg-gradient-to-br from-slate-950 via-indigo-950 to-blue-900 p-6 text-white shadow-2xl shadow-indigo-950/20 min-[1025px]:p-8">
+    <div class="flex flex-col gap-6 min-[1025px]:flex-row min-[1025px]:items-start min-[1025px]:justify-between">
+      <div>
+        <div class="flex flex-wrap items-center gap-2">
+          <%= quotation_status_badge(@quotation.status) %>
+          <%= quotation_payment_badge(@quotation.payment_status) %>
+        </div>
+        <h1 class="mt-4 text-3xl font-black tracking-tight min-[1025px]:text-5xl"><%= @quotation.reference %></h1>
+        <p class="mt-3 text-sm text-slate-300"><%= @quotation.pickup_postcode.presence || "Pickup" %> to <%= @quotation.delivery_postcode.presence || "Delivery" %></p>
+      </div>
+      <%= link_to "Back to my quotations", quotations_path, class: "inline-flex items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-bold text-indigo-700 transition hover:bg-indigo-50" %>
+    </div>
+
+    <div class="mt-8 grid gap-3 sm:grid-cols-2 min-[1025px]:grid-cols-4">
+      <div class="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur">
+        <p class="text-xs font-semibold uppercase tracking-wide text-indigo-200">Quote price</p>
+        <p class="mt-2 text-2xl font-black"><%= @quotation.quoted_price_cents.positive? ? money_from_cents(@quotation.quoted_price_cents) : "Pending" %></p>
+      </div>
+      <div class="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur">
+        <p class="text-xs font-semibold uppercase tracking-wide text-indigo-200">Deposit</p>
+        <p class="mt-2 text-2xl font-black"><%= @quotation.deposit_cents.positive? ? money_from_cents(@quotation.deposit_cents) : "Pending" %></p>
+      </div>
+      <div class="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur">
+        <p class="text-xs font-semibold uppercase tracking-wide text-indigo-200">Move date</p>
+        <p class="mt-2 text-lg font-black"><%= @quotation.preferred_move_date&.to_fs(:long) || "Not set" %></p>
+      </div>
+      <div class="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur">
+        <p class="text-xs font-semibold uppercase tracking-wide text-indigo-200">Service</p>
+        <p class="mt-2 text-lg font-black"><%= @quotation.service_level.humanize %></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-6 grid gap-6 min-[1025px]:grid-cols-[1.2fr_0.8fr]">
+    <div class="space-y-6">
+      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 class="text-lg font-black text-slate-900">Quote decision</h2>
+        <p class="mt-1 text-sm text-slate-500">Once the team sends a price, you can accept, reject, or negotiate changes.</p>
+
+        <div class="mt-5 grid gap-3 sm:grid-cols-3">
+          <%= button_to "Accept quote", accept_quotation_path(@quotation), method: :patch, disabled: !@quotation.quoted_price_cents.positive?, class: "inline-flex w-full items-center justify-center rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300" %>
+          <%= button_to "Reject quote", reject_quotation_path(@quotation), method: :patch, disabled: !@quotation.quoted_price_cents.positive?, class: "inline-flex w-full items-center justify-center rounded-xl bg-rose-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:bg-slate-300" %>
+          <a href="#negotiate" class="inline-flex w-full items-center justify-center rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-bold text-indigo-700 transition hover:bg-indigo-100">Negotiate</a>
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 class="text-lg font-black text-slate-900">Move details</h2>
+        <div class="mt-5 grid gap-4 min-[1025px]:grid-cols-2">
+          <div class="rounded-2xl bg-slate-50 p-4">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Pickup</p>
+            <p class="mt-2 whitespace-pre-line text-sm font-semibold text-slate-900"><%= @quotation.pickup_address %></p>
+          </div>
+          <div class="rounded-2xl bg-slate-50 p-4">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Delivery</p>
+            <p class="mt-2 whitespace-pre-line text-sm font-semibold text-slate-900"><%= @quotation.delivery_address %></p>
+          </div>
+        </div>
+        <div class="mt-4 grid gap-4 min-[1025px]:grid-cols-2">
+          <div>
+            <p class="text-sm font-bold text-slate-900">Access notes</p>
+            <p class="mt-1 whitespace-pre-line text-sm text-slate-600"><%= @quotation.access_notes.presence || "No access notes recorded." %></p>
+          </div>
+          <div>
+            <p class="text-sm font-bold text-slate-900">Inventory and requirements</p>
+            <p class="mt-1 whitespace-pre-line text-sm text-slate-600"><%= @quotation.customer_notes.presence || "No requirements recorded." %></p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="space-y-6">
+      <section id="negotiate" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 class="text-lg font-black text-slate-900">Negotiation</h2>
+        <p class="mt-1 text-sm text-slate-500">Ask a question or request a change. The quotation will move into negotiation.</p>
+        <%= form_with(url: request_changes_quotation_path(@quotation), method: :patch, scope: :quotation_note, class: "mt-4 space-y-3") do |form| %>
+          <%= form.text_area :content, rows: 4, class: "block w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Can we adjust the price, date, service, or inventory?" %>
+          <%= form.submit "Send negotiation request", class: "inline-flex w-full items-center justify-center rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-indigo-700" %>
+        <% end %>
+      </section>
+
+      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 class="text-lg font-black text-slate-900">Messages</h2>
+        <div class="mt-5 space-y-3">
+          <% @quotation.quotation_notes.where(internal: false).order(created_at: :desc).each do |note| %>
+            <div class="rounded-2xl bg-slate-50 p-4">
+              <p class="whitespace-pre-line text-sm text-slate-700"><%= note.content %></p>
+              <p class="mt-3 text-xs text-slate-500"><%= note.user&.email || "Removlo team" %> · <%= note.created_at.to_fs(:long) %></p>
+            </div>
+          <% end %>
+          <% if @quotation.quotation_notes.where(internal: false).none? %>
+            <p class="rounded-2xl bg-slate-50 p-4 text-sm text-slate-500">No negotiation messages yet.</p>
+          <% end %>
+        </div>
+      </section>
+    </aside>
+  </div>
+</div>

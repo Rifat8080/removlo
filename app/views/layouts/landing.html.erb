@@ -41,7 +41,7 @@
             <%= button_to "Sign out", destroy_user_session_path, method: :delete, form: { class: "hidden sm:inline" }, class: "rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" %>
           <% else %>
             <%= link_to "Sign in", new_user_session_path, class: "hidden rounded-lg px-4 py-2 text-sm font-semibold text-slate-700 transition hover:text-indigo-700 sm:inline-flex" %>
-            <%= link_to "Get a quote", new_user_registration_path, class: "inline-flex items-center gap-2 rounded-lg bg-gradient-to-br from-indigo-600 to-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 transition hover:shadow-xl hover:shadow-indigo-600/40 focus:outline-none focus:ring-4 focus:ring-indigo-300" %>
+            <%= link_to "Get a quote", "#quote", class: "inline-flex items-center gap-2 rounded-lg bg-gradient-to-br from-indigo-600 to-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 transition hover:shadow-xl hover:shadow-indigo-600/40 focus:outline-none focus:ring-4 focus:ring-indigo-300" %>
           <% end %>
 
           <button data-collapse-toggle="landing-navbar" type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-lg p-2 text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-200 min-[1025px]:hidden" aria-controls="landing-navbar" aria-expanded="false">

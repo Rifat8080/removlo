@@ -1,0 +1,80 @@
+<%= form_with(model: quotation, class: "space-y-6") do |form| %>
+  <% if quotation.errors.any? %>
+    <div class="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+      <p class="font-semibold"><%= pluralize(quotation.errors.count, "error") %> stopped this request from being sent:</p>
+      <ul class="mt-2 list-inside list-disc">
+        <% quotation.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="grid gap-6 min-[1025px]:grid-cols-[1.3fr_0.8fr]">
+    <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <h2 class="text-lg font-black text-slate-900">Tell us about your move</h2>
+      <p class="mt-1 text-sm text-slate-500">Share enough detail for the team to prepare an accurate quote.</p>
+
+      <div class="mt-6 grid gap-4 sm:grid-cols-2">
+        <div>
+          <%= form.label :move_size, class: "mb-2 block text-sm font-semibold text-slate-700" %>
+          <%= form.select :move_size, Quotation::MOVE_SIZES.map { |size| [size.humanize, size] }, {}, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <%= form.label :service_level, class: "mb-2 block text-sm font-semibold text-slate-700" %>
+          <%= form.select :service_level, Quotation::SERVICE_LEVELS.map { |level| [level.humanize, level] }, {}, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <%= form.label :preferred_move_date, class: "mb-2 block text-sm font-semibold text-slate-700" %>
+          <%= form.date_field :preferred_move_date, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <%= form.label :pickup_postcode, class: "mb-2 block text-sm font-semibold text-slate-700" %>
+          <%= form.text_field :pickup_postcode, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500", placeholder: "SW1A 1AA" %>
+        </div>
+        <div>
+          <%= form.label :delivery_postcode, class: "mb-2 block text-sm font-semibold text-slate-700" %>
+          <%= form.text_field :delivery_postcode, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500", placeholder: "M1 1AE" %>
+        </div>
+      </div>
+
+      <div class="mt-4 grid gap-4 min-[1025px]:grid-cols-2">
+        <div>
+          <%= form.label :pickup_address, class: "mb-2 block text-sm font-semibold text-slate-700" %>
+          <%= form.text_area :pickup_address, rows: 4, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Full pickup address" %>
+        </div>
+        <div>
+          <%= form.label :delivery_address, class: "mb-2 block text-sm font-semibold text-slate-700" %>
+          <%= form.text_area :delivery_address, rows: 4, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Full delivery address" %>
+        </div>
+      </div>
+
+      <div class="mt-4 grid gap-4 min-[1025px]:grid-cols-2">
+        <div>
+          <%= form.label :access_notes, class: "mb-2 block text-sm font-semibold text-slate-700" %>
+          <%= form.text_area :access_notes, rows: 4, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Parking, stairs, lift access, timing limits" %>
+        </div>
+        <div>
+          <%= form.label :customer_notes, "Inventory and special requirements", class: "mb-2 block text-sm font-semibold text-slate-700" %>
+          <%= form.text_area :customer_notes, rows: 4, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Large items, fragile items, packing needs, storage needs" %>
+        </div>
+      </div>
+    </div>
+
+    <aside class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <h2 class="text-lg font-black text-slate-900">What happens next?</h2>
+      <div class="mt-5 space-y-4">
+        <% [["1", "Request received", "Your request is sent to our operations team."], ["2", "Quote prepared", "Staff review the move details and send a price."], ["3", "Negotiate if needed", "You can ask questions or request changes before accepting."], ["4", "Move confirmed", "Once accepted, we schedule and complete your move."]].each do |step, title, copy| %>
+          <div class="flex gap-3">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-sm font-black text-indigo-700"><%= step %></span>
+            <div>
+              <p class="text-sm font-bold text-slate-900"><%= title %></p>
+              <p class="mt-1 text-sm text-slate-500"><%= copy %></p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <%= form.submit "Request quotation", class: "mt-6 inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-600/25 transition hover:shadow-xl" %>
+    </aside>
+  </div>
+<% end %>

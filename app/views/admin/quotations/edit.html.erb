@@ -1,0 +1,14 @@
+<% content_for :title, "Edit #{@quotation.reference} — Removlo" %>
+
+<div class="mx-auto max-w-7xl">
+  <div class="mb-6 flex flex-col gap-3 min-[1025px]:flex-row min-[1025px]:items-end min-[1025px]:justify-between">
+    <div>
+      <p class="text-sm font-semibold uppercase tracking-[0.25em] text-indigo-600">Edit quotation</p>
+      <h1 class="mt-2 text-3xl font-black tracking-tight text-slate-900"><%= @quotation.reference %></h1>
+      <p class="mt-2 text-sm text-slate-500">Update customer, route, schedule, and pricing details.</p>
+    </div>
+    <%= link_to "Back to quotation", admin_quotation_path(@quotation), class: "inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50" %>
+  </div>
+
+  <%= render "form", quotation: @quotation %>
+</div>

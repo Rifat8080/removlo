@@ -1,10 +1,7 @@
 module Admin
-  class UsersController < ApplicationController
-    before_action :authenticate_user!
+  class UsersController < BaseController
     before_action :require_admin!
     before_action :set_user, only: %i[show edit update destroy]
-
-    layout "dashboard"
 
     def index
       @users = User.order(created_at: :desc)
@@ -25,6 +22,7 @@ module Admin
       @user = User.new(create_user_params)
 
       if @user.save
+        notify_user(@user, "Account created", "Your Removlo account was created by #{current_user.email}.")
         redirect_to admin_user_path(@user), notice: "User was created successfully."
       else
         render :new, status: :unprocessable_entity
@@ -37,6 +35,7 @@ module Admin
       attrs.delete(:password_confirmation) if attrs[:password_confirmation].blank?
 
       if @user.update(attrs)
+        notify_user(@user, "Account updated", "Your Removlo account details were updated.")
         redirect_to admin_user_path(@user), notice: "User was updated successfully."
       else
         render :edit, status: :unprocessable_entity
@@ -49,8 +48,11 @@ module Admin
         return
       end
 
-      @user.destroy
-      redirect_to admin_users_path, notice: "User was deleted successfully."
+      if @user.destroy
+        redirect_to admin_users_path, notice: "User was deleted successfully."
+      else
+        redirect_to admin_user_path(@user), alert: @user.errors.full_messages.to_sentence
+      end
     end
 
     private
@@ -71,6 +73,18 @@ module Admin
       return if current_user&.admin?
 
       redirect_to dashboard_path, alert: "You are not authorized to manage users."
+    end
+
+    def notify_user(user, title, body)
+      ::ActivityNotifier.call(
+        recipients: user,
+        event_type: "user.account",
+        title: title,
+        body: body,
+        url: dashboard_path,
+        actor: current_user,
+        notifiable: user
+      )
     end
   end
 end
