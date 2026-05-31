@@ -21,12 +21,20 @@ class User < ApplicationRecord
   has_many :quotation_status_events, dependent: :nullify
   has_many :notifications, dependent: :destroy
   has_many :web_push_subscriptions, dependent: :destroy
+  has_many :blog_posts, foreign_key: :author_id, dependent: :restrict_with_error
+  has_many :accounting_transactions, dependent: :nullify
+  has_many :customer_invoices, foreign_key: :customer_id, dependent: :restrict_with_error
+  has_many :payslips, foreign_key: :employee_id, dependent: :restrict_with_error
+  has_many :created_payroll_runs, class_name: "PayrollRun", foreign_key: :created_by_id, dependent: :nullify
+  has_many :carts, dependent: :destroy
+  has_many :material_orders, foreign_key: :customer_id, dependent: :nullify
 
   before_validation :set_default_role, on: :create
 
   scope :customers, -> { where(role: "customer").order(:email) }
   scope :operators, -> { where(role: %w[admin staff]).order(:email) }
   scope :drivers, -> { where(role: "driver").order(:email) }
+  scope :payroll_eligible, -> { where(role: %w[admin staff driver]).order(:email) }
 
   def operator?
     admin? || staff?

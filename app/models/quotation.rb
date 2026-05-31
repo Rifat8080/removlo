@@ -32,6 +32,8 @@ class Quotation < ApplicationRecord
   has_many :quotation_payments, dependent: :destroy
   has_many :quotation_documents, dependent: :destroy
   has_many :quotation_status_events, dependent: :destroy
+  has_many :accounting_transactions, dependent: :nullify
+  has_many :customer_invoices, dependent: :nullify
 
   enum :status, STATUSES, default: :draft, validate: true
   enum :payment_status, PAYMENT_STATUSES, default: :unpaid, validate: true

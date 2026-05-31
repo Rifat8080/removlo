@@ -1,0 +1,86 @@
+<% content_for(:title, "Reports — Accounting") %>
+
+<div class="mb-6">
+  <%= link_to "← Accounting", admin_accounting_root_path, class: "text-sm font-semibold text-indigo-600" %>
+  <h1 class="mt-2 text-2xl font-extrabold text-slate-900">Profit & loss reports</h1>
+</div>
+
+<div class="mb-6 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+  <%= form_with url: admin_accounting_reports_path, method: :get, local: true, class: "grid gap-4 min-[1025px]:grid-cols-3" do %>
+    <div>
+      <label class="mb-1 block text-xs font-semibold uppercase text-slate-500">Start date</label>
+      <%= date_field_tag :start_date, @start_date, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-sm" %>
+    </div>
+    <div>
+      <label class="mb-1 block text-xs font-semibold uppercase text-slate-500">End date</label>
+      <%= date_field_tag :end_date, @end_date, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-sm" %>
+    </div>
+    <div>
+      <label class="mb-1 block text-xs font-semibold uppercase text-slate-500">Type</label>
+      <%= select_tag :type, options_for_select([["All", ""]] + AccountingTransaction.transaction_types.keys.map { |k| [k.humanize, k] }, params[:type]), class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-sm" %>
+    </div>
+    <div>
+      <label class="mb-1 block text-xs font-semibold uppercase text-slate-500">Category</label>
+      <%= select_tag :category_id, options_from_collection_for_select(@categories, :id, :name, params[:category_id]), include_blank: "All", class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-sm" %>
+    </div>
+    <div>
+      <label class="mb-1 block text-xs font-semibold uppercase text-slate-500">User</label>
+      <%= select_tag :user_id, options_from_collection_for_select(@users, :id, :email, params[:user_id]), include_blank: "All", class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-sm" %>
+    </div>
+    <div class="flex items-end">
+      <%= submit_tag "Generate report", class: "rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white" %>
+    </div>
+  <% end %>
+</div>
+
+<div class="mb-6 grid gap-4 sm:grid-cols-2 min-[1025px]:grid-cols-5">
+  <% [
+    ["Revenue", @summary[:income_cents], "text-emerald-700"],
+    ["Expenses", @summary[:expense_cents], "text-rose-700"],
+    ["Payroll", @summary[:payroll_cents], "text-indigo-700"],
+    ["Refunds", @summary[:refund_cents], "text-amber-700"],
+    ["Net profit / loss", @summary[:net_profit_cents], @summary[:net_profit_cents].to_i >= 0 ? "text-emerald-700" : "text-rose-700"]
+  ].each do |label, cents, color| %>
+    <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
+      <p class="text-sm text-slate-500"><%= label %></p>
+      <p class="mt-1 text-xl font-extrabold <%= color %>"><%= money_from_cents(cents) %></p>
+    </div>
+  <% end %>
+</div>
+
+<% if @monthly.any? %>
+  <div class="mb-6 overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+    <div class="border-b border-slate-100 px-5 py-4"><h2 class="text-lg font-bold text-slate-900">Monthly summary</h2></div>
+    <div class="divide-y divide-slate-100">
+      <% @monthly.each do |month, data| %>
+        <div class="grid gap-3 px-5 py-4 min-[1025px]:grid-cols-[120px_1fr_1fr_1fr] min-[1025px]:items-center">
+          <p class="font-semibold text-slate-900"><%= Date.strptime(month, "%Y-%m").strftime("%b %Y") %></p>
+          <p class="text-sm text-emerald-700">Revenue: <%= money_from_cents(data[:income]) %></p>
+          <p class="text-sm text-rose-700">Expenses: <%= money_from_cents(data[:expenses]) %></p>
+          <p class="text-sm font-semibold <%= data[:net].to_i >= 0 ? 'text-emerald-700' : 'text-rose-700' %>">Net: <%= money_from_cents(data[:net]) %></p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<div class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+  <div class="border-b border-slate-100 px-5 py-4"><h2 class="text-lg font-bold text-slate-900">Filtered transactions</h2></div>
+  <div class="divide-y divide-slate-100">
+    <% @transactions.each do |transaction| %>
+      <div class="flex items-center justify-between gap-4 px-5 py-4">
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <%= accounting_transaction_badge(transaction.transaction_type) %>
+            <p class="font-semibold text-slate-900"><%= transaction.description.presence || "Transaction" %></p>
+          </div>
+          <p class="mt-1 text-xs text-slate-400"><%= transaction.transaction_date.strftime("%d %b %Y") %></p>
+        </div>
+        <%= accounting_amount(transaction.amount_cents, transaction.transaction_type) %>
+      </div>
+    <% end %>
+    <% if @transactions.empty? %>
+      <div class="px-5 py-12 text-center text-sm text-slate-500">No transactions in this period.</div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,7 @@
+<%= form_with model: [:admin, :shop, @category], url: @category.persisted? ? admin_shop_product_category_path(@category) : admin_shop_product_categories_path, class: "space-y-4 rounded-2xl border bg-white p-6" do |f| %>
+  <%= f.text_field :name, class: "block w-full rounded-xl border p-3 text-sm" %>
+  <%= f.text_field :slug, class: "block w-full rounded-xl border p-3 text-sm" %>
+  <%= f.number_field :position, class: "block w-full rounded-xl border p-3 text-sm" %>
+  <%= f.text_area :description, rows: 2, class: "block w-full rounded-xl border p-3 text-sm" %>
+  <%= f.submit class: "rounded-xl bg-indigo-600 px-5 py-2 text-sm font-semibold text-white" %>
+<% end %>

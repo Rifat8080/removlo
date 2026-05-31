@@ -1,0 +1,34 @@
+<% content_for(:title, "Invoices — Accounting") %>
+
+<div class="mb-6 flex flex-col gap-4 min-[1025px]:flex-row min-[1025px]:items-center min-[1025px]:justify-between">
+  <div>
+    <%= link_to "← Accounting", admin_accounting_root_path, class: "text-sm font-semibold text-indigo-600" %>
+    <h1 class="mt-2 text-2xl font-extrabold text-slate-900">Customer invoices</h1>
+  </div>
+  <%= link_to "New invoice", new_admin_accounting_customer_invoice_path, class: "inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30" %>
+</div>
+
+<div class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+  <div class="divide-y divide-slate-100">
+    <% @invoices.each do |invoice| %>
+      <div class="grid gap-3 px-5 py-4 min-[1025px]:grid-cols-[1fr_auto_auto] min-[1025px]:items-center">
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <p class="font-semibold text-slate-900"><%= invoice.invoice_number %></p>
+            <%= invoice_status_badge(invoice.status) %>
+            <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600"><%= invoice.invoice_type.humanize %></span>
+          </div>
+          <p class="mt-1 text-xs text-slate-400"><%= invoice.customer.email %> · <%= invoice.issued_on.strftime("%d %b %Y") %></p>
+        </div>
+        <span class="font-semibold text-slate-900"><%= money_from_cents(invoice.amount_cents) %></span>
+        <div class="flex flex-wrap gap-2">
+          <%= link_to "PDF", pdf_admin_accounting_customer_invoice_path(invoice), class: "rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800" %>
+          <%= link_to "View", admin_accounting_customer_invoice_path(invoice), class: "rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50" %>
+        </div>
+      </div>
+    <% end %>
+    <% if @invoices.empty? %>
+      <div class="px-5 py-12 text-center text-sm text-slate-500">No invoices yet.</div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<% content_for(:title, "Payroll — Accounting") %>
+
+<div class="mb-6 flex flex-col gap-4 min-[1025px]:flex-row min-[1025px]:items-center min-[1025px]:justify-between">
+  <div>
+    <%= link_to "← Accounting", admin_accounting_root_path, class: "text-sm font-semibold text-indigo-600" %>
+    <h1 class="mt-2 text-2xl font-extrabold text-slate-900">Payroll runs</h1>
+  </div>
+  <%= link_to "New payroll run", new_admin_accounting_payroll_run_path, class: "inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30" %>
+</div>
+
+<div class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+  <div class="divide-y divide-slate-100">
+    <% @payroll_runs.each do |run| %>
+      <div class="grid gap-3 px-5 py-4 min-[1025px]:grid-cols-[1fr_auto_auto] min-[1025px]:items-center">
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <p class="font-semibold text-slate-900"><%= run.period_label %></p>
+            <%= payroll_status_badge(run.status) %>
+          </div>
+          <p class="mt-1 text-xs text-slate-400"><%= run.payslips.size %> payslips · <%= money_from_cents(run.total_net_pay_cents) %> net</p>
+        </div>
+        <%= link_to "View", admin_accounting_payroll_run_path(run), class: "rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50" %>
+      </div>
+    <% end %>
+    <% if @payroll_runs.empty? %>
+      <div class="px-5 py-12 text-center text-sm text-slate-500">No payroll runs yet.</div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,22 @@
+<% content_for(:title, "#{@invoice.invoice_number} — Removlo") %>
+
+<div class="mb-6 flex flex-col gap-4 min-[1025px]:flex-row min-[1025px]:items-center min-[1025px]:justify-between">
+  <div>
+    <%= link_to "← My invoices", customer_invoices_path, class: "text-sm font-semibold text-indigo-600" %>
+    <h1 class="mt-2 text-2xl font-extrabold text-slate-900"><%= @invoice.invoice_number %></h1>
+    <div class="mt-2 flex flex-wrap gap-2"><%= invoice_status_badge(@invoice.status) %><span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600"><%= @invoice.invoice_type.humanize %></span></div>
+  </div>
+  <%= link_to "Export PDF", pdf_customer_invoice_path(@invoice), class: "inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800" %>
+</div>
+
+<div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
+  <dl class="grid gap-4 min-[1025px]:grid-cols-2 text-sm">
+    <div><dt class="text-slate-500">Amount</dt><dd class="mt-1 text-2xl font-extrabold text-slate-900"><%= money_from_cents(@invoice.amount_cents) %></dd></div>
+    <div><dt class="text-slate-500">Issued</dt><dd class="mt-1 font-semibold text-slate-900"><%= @invoice.issued_on.strftime("%d %b %Y") %></dd></div>
+    <div><dt class="text-slate-500">Settled</dt><dd class="mt-1 font-semibold text-slate-900"><%= @invoice.settled_on&.strftime("%d %b %Y") || "—" %></dd></div>
+    <% if @invoice.quotation.present? %>
+      <div><dt class="text-slate-500">Quotation</dt><dd class="mt-1"><%= link_to @invoice.quotation.reference, quotation_path(@invoice.quotation), class: "font-semibold text-indigo-600" %></dd></div>
+    <% end %>
+    <div class="min-[1025px]:col-span-2"><dt class="text-slate-500">Notes</dt><dd class="mt-1 text-slate-700"><%= @invoice.notes.presence || "—" %></dd></div>
+  </dl>
+</div>

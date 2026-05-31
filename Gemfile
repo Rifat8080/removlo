@@ -66,3 +66,11 @@ group :test do
 end
 
 gem "webpush", "~> 1.1"
+
+gem "prawn", "~> 2.4"
+
+gem "prawn-table", "~> 0.2.2"
+
+gem "stripe", "~> 19.2"
+
+gem "dotenv-rails", "~> 3.2", groups: [:development, :test]

@@ -62,14 +62,24 @@
                 <li><%= link_to "Notifications", notifications_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
                 <% if current_user.customer? %>
                   <li><%= link_to "My quotations", quotations_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
+                  <li><%= link_to "My invoices", customer_invoices_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
+                  <li><%= link_to "Material orders", material_orders_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
+                  <li><%= link_to "Shop materials", shop_products_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
                 <% end %>
                 <% if current_user.driver? %>
                   <li><%= link_to "My jobs", driver_jobs_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
+                <% end %>
+                <% if current_user.admin? || current_user.staff? || current_user.driver? %>
+                  <li><%= link_to "My payslips", payslips_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
                 <% end %>
                 <% if current_user.operator? %>
                   <li><%= link_to "Quotations", admin_quotations_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
                 <% end %>
                 <% if current_user.admin? %>
+                  <li><%= link_to "Accounting", admin_accounting_root_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
+                  <li><%= link_to "Shop products", admin_shop_products_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
+                  <li><%= link_to "Shop orders", admin_shop_material_orders_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
+                  <li><%= link_to "Blog posts", admin_blog_posts_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
                   <li><%= link_to "Users", admin_users_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
                 <% end %>
                 <li><%= link_to "Account settings", edit_user_registration_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
@@ -86,50 +96,64 @@
     <!-- Sidebar -->
     <aside id="dashboard-sidebar" class="fixed left-0 top-0 z-40 h-screen w-64 -translate-x-full border-r border-slate-200 bg-white pt-16 transition-transform min-[1025px]:translate-x-0" aria-label="Sidebar">
       <div class="flex h-full flex-col overflow-y-auto px-3 py-5">
-        <ul class="space-y-1">
-          <% nav = [
+        <% nav_groups = [
+          ["Main", [
             ["Overview", dashboard_path, "grid", current_page?(dashboard_path)],
-            ["My moves", "#", "truck", false],
-            ["Documents", "#", "folder", false],
-            ["Messages", "#", "chat", false],
             ["Notifications", notifications_path, "bell", controller_path == "notifications"]
-          ] %>
-          <% nav << ["My quotations", quotations_path, "doc", controller_path == "quotations"] if current_user.customer? %>
-          <% nav << ["My jobs", driver_jobs_path, "truck", controller_path.start_with?("driver/")] if current_user.driver? %>
-          <% nav << ["Quotations", admin_quotations_path, "doc", controller_path.start_with?("admin/quotation")] if current_user.operator? %>
-          <% nav << ["Users", admin_users_path, "users", controller_path == "admin/users"] if current_user.admin? %>
-          <% nav.each do |label, href, icon, active| %>
-            <li>
-              <%= link_to href, class: "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition #{active ? 'bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-600/30' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'}" do %>
-                <span class="<%= active ? 'text-white' : 'text-slate-400 group-hover:text-indigo-600' %>">
-                  <% case icon
-                     when "grid" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                  <% when "truck" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8h4l3 3v5a1 1 0 01-1 1h-1"/></svg>
-                  <% when "doc" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                  <% when "folder" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
-                  <% when "users" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1m0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                  <% when "bell" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0a3 3 0 11-6 0h6z"/></svg>
-                  <% else %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                  <% end %>
-                </span>
-                <%= label %>
-              <% end %>
-            </li>
+          ]]
+        ] %>
+        <% work_links = [] %>
+        <% work_links << ["My quotations", quotations_path, "doc", controller_path == "quotations"] if current_user.customer? %>
+        <% work_links << ["My invoices", customer_invoices_path, "invoice", controller_path == "customer_invoices"] if current_user.customer? %>
+        <% work_links << ["Material orders", material_orders_path, "shop", controller_path == "material_orders"] if current_user.customer? %>
+        <% work_links << ["Shop", shop_products_path, "shop", controller_path.start_with?("shop/")] if current_user.customer? %>
+        <% work_links << ["My jobs", driver_jobs_path, "truck", controller_path.start_with?("driver/")] if current_user.driver? %>
+        <% work_links << ["My payslips", payslips_path, "invoice", controller_path == "payslips"] if current_user.admin? || current_user.staff? || current_user.driver? %>
+        <% work_links << ["Quotations", admin_quotations_path, "doc", controller_path.start_with?("admin/quotation")] if current_user.operator? %>
+        <% work_links << ["Accounting", admin_accounting_root_path, "chart", controller_path.start_with?("admin/accounting")] if current_user.admin? %>
+        <% nav_groups << ["Work", work_links] if work_links.any? %>
+        <% admin_links = [] %>
+        <% admin_links << ["Users", admin_users_path, "users", controller_path == "admin/users"] if current_user.admin? %>
+        <% admin_links << ["Shop products", admin_shop_products_path, "shop", controller_path == "admin/shop/products"] if current_user.admin? %>
+        <% admin_links << ["Shop orders", admin_shop_material_orders_path, "shop", controller_path == "admin/shop/material_orders"] if current_user.admin? %>
+        <% admin_links << ["Blog posts", admin_blog_posts_path, "book", controller_path == "admin/blog_posts"] if current_user.admin? %>
+        <% nav_groups << ["Admin", admin_links] if admin_links.any? %>
+        <% nav_groups << ["Account", [["Settings", edit_user_registration_path, "cog", current_page?(edit_user_registration_path)]]] %>
+
+        <div class="space-y-5">
+          <% nav_groups.each do |group_label, links| %>
+            <div>
+              <p class="mb-2 px-3 text-[11px] font-black uppercase tracking-[0.18em] text-slate-400"><%= group_label %></p>
+              <ul class="space-y-1">
+                <% links.each do |label, href, icon, active| %>
+                  <li>
+                    <%= link_to href, class: "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition #{active ? 'bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-600/30' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'}" do %>
+                      <span class="<%= active ? 'text-white' : 'text-slate-400 group-hover:text-indigo-600' %>">
+                        <% case icon
+                           when "grid" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                        <% when "truck" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8h4l3 3v5a1 1 0 01-1 1h-1"/></svg>
+                        <% when "doc" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        <% when "invoice" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14h6m-6 4h6M7 4h10a2 2 0 012 2v14l-3-2-3 2-3-2-3 2V6a2 2 0 012-2z"/></svg>
+                        <% when "users" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1m0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                        <% when "bell" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0a3 3 0 11-6 0h6z"/></svg>
+                        <% when "chart" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3v18m4-14v14m4-10v10M7 13v8M3 17v4"/></svg>
+                        <% when "shop" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                        <% when "book" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18s-3.332.477-4.5 1.253"/></svg>
+                        <% when "cog" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <% else %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                        <% end %>
+                      </span>
+                      <span class="flex-1"><%= label %></span>
+                      <% if label == "Notifications" && current_user.unread_notifications_count.positive? %>
+                        <span class="<%= active ? 'bg-white/20 text-white' : 'bg-rose-100 text-rose-700' %> rounded-full px-2 py-0.5 text-[11px] font-black"><%= current_user.unread_notifications_count %></span>
+                      <% end %>
+                    <% end %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
           <% end %>
-        </ul>
-
-        <div class="my-4 border-t border-slate-100"></div>
-
-        <ul class="space-y-1">
-          <li>
-            <%= link_to edit_user_registration_path, class: "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition #{current_page?(edit_user_registration_path) ? 'bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-600/30' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'}" do %>
-              <span class="<%= current_page?(edit_user_registration_path) ? 'text-white' : 'text-slate-400 group-hover:text-indigo-600' %>">
-                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-              </span>
-              Settings
-            <% end %>
-          </li>
-        </ul>
+        </div>
 
         <div class="mt-auto rounded-2xl bg-gradient-to-br from-indigo-600 to-blue-600 p-4 text-white shadow-lg shadow-indigo-600/30">
           <p class="text-sm font-semibold">Need a hand?</p>

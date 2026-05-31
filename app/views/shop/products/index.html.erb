@@ -1,0 +1,79 @@
+<% content_for(:title, "Shop materials — Removlo") %>
+
+<section class="relative overflow-hidden bg-slate-50">
+  <div class="pointer-events-none absolute -left-24 top-20 h-72 w-72 rounded-full bg-indigo-200/40 blur-3xl"></div>
+  <div class="pointer-events-none absolute -right-24 top-48 h-72 w-72 rounded-full bg-blue-200/40 blur-3xl"></div>
+
+  <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 min-[1025px]:px-8 min-[1025px]:py-16">
+    <div class="mb-10 overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-950 via-indigo-950 to-blue-900 p-6 text-white shadow-2xl shadow-indigo-950/20 min-[1025px]:p-10">
+      <div class="grid gap-8 min-[1025px]:grid-cols-[1.2fr_0.8fr] min-[1025px]:items-center">
+        <div>
+          <p class="text-sm font-black uppercase tracking-[0.22em] text-indigo-200">Moving supplies</p>
+          <h1 class="mt-3 text-4xl font-black tracking-tight min-[1025px]:text-6xl">Pack smarter before moving day.</h1>
+          <p class="mt-4 max-w-2xl text-sm leading-6 text-slate-300 min-[1025px]:text-base">Boxes, tape, bubble wrap, protection covers, and ready-made moving kits delivered to your door or prepared for collection.</p>
+          <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+            <%= link_to cart_path, class: "inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-bold text-indigo-700 shadow-lg transition hover:-translate-y-0.5 hover:bg-indigo-50" do %>
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+              View cart (<%= current_cart.item_count %>)
+            <% end %>
+            <a href="#catalog" class="inline-flex items-center justify-center rounded-2xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-bold text-white backdrop-blur transition hover:bg-white/20">Browse catalog</a>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <% [["Free collection", "Pickup-ready orders"], ["Secure payment", "Stripe checkout"], ["Fast packing", "Move-ready kits"], ["Live stock", "Real quantities"]].each do |title, body| %>
+            <div class="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur">
+              <p class="text-sm font-bold text-white"><%= title %></p>
+              <p class="mt-1 text-xs text-indigo-100"><%= body %></p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <% if @featured.any? %>
+      <div class="mb-10">
+        <div class="mb-4 flex items-end justify-between gap-4">
+          <div>
+            <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">Popular picks</p>
+            <h2 class="mt-1 text-2xl font-black tracking-tight text-slate-900">Featured materials</h2>
+          </div>
+          <span class="hidden rounded-full bg-white px-4 py-2 text-xs font-bold text-slate-500 shadow-sm ring-1 ring-slate-200 sm:inline-flex">Delivery or collection</span>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2 min-[1025px]:grid-cols-4">
+          <% @featured.each do |product| %>
+            <%= render "shop/products/card", product: product %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <div id="catalog" class="mb-6 rounded-3xl border border-slate-200/80 bg-white/80 p-4 shadow-sm backdrop-blur">
+      <div class="flex flex-col gap-4 min-[1025px]:flex-row min-[1025px]:items-center min-[1025px]:justify-between">
+        <div>
+          <h2 class="text-xl font-black text-slate-900">Catalog</h2>
+          <p class="mt-1 text-sm text-slate-500"><%= pluralize(@products.size, "product") %> available for your next move.</p>
+        </div>
+        <div class="flex gap-2 overflow-x-auto pb-1">
+          <%= link_to "All", shop_products_path, class: "shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition #{params[:category].blank? ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/25' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}" %>
+          <% @categories.each do |category| %>
+            <%= link_to category.name, shop_products_path(category: category.id), class: "shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition #{params[:category].to_s == category.id.to_s ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/25' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid gap-5 sm:grid-cols-2 min-[1025px]:grid-cols-3">
+      <% @products.each do |product| %>
+        <%= render "shop/products/card", product: product %>
+      <% end %>
+    </div>
+
+    <% if @products.empty? %>
+      <div class="rounded-3xl border border-dashed border-slate-300 bg-white/70 p-10 text-center">
+        <p class="font-bold text-slate-900">No products found</p>
+        <p class="mt-1 text-sm text-slate-500">Try another category or check back soon.</p>
+      </div>
+    <% end %>
+  </div>
+</section>

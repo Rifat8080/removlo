@@ -1,0 +1,72 @@
+<%= form_with(model: [:admin, blog_post], class: "space-y-6") do |form| %>
+  <% if blog_post.errors.any? %>
+    <div class="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+      <p class="font-semibold"><%= pluralize(blog_post.errors.count, "error") %> stopped this post from being saved:</p>
+      <ul class="mt-2 list-inside list-disc">
+        <% blog_post.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="grid gap-6 min-[1025px]:grid-cols-[1.4fr_0.8fr]">
+    <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <h2 class="text-lg font-black text-slate-900">Post content</h2>
+      <p class="mt-1 text-sm text-slate-500">Write a clear, useful article for customers planning a move.</p>
+
+      <div class="mt-6 space-y-4">
+        <div>
+          <%= form.label :title, class: "mb-2 block text-sm font-semibold text-slate-700" %>
+          <%= form.text_field :title, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500", placeholder: "How to plan a stress-free house move" %>
+        </div>
+
+        <div>
+          <%= form.label :excerpt, class: "mb-2 block text-sm font-semibold text-slate-700" %>
+          <%= form.text_area :excerpt, rows: 3, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Short summary shown on the blog listing." %>
+        </div>
+
+        <div>
+          <%= form.label :body, class: "mb-2 block text-sm font-semibold text-slate-700" %>
+          <%= form.text_area :body, rows: 18, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm leading-6 text-slate-900 focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Write the full article here..." %>
+        </div>
+      </div>
+    </div>
+
+    <aside class="space-y-6">
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 class="text-lg font-black text-slate-900">Publishing</h2>
+        <div class="mt-5 space-y-4">
+          <div>
+            <%= form.label :slug, class: "mb-2 block text-sm font-semibold text-slate-700" %>
+            <%= form.text_field :slug, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Auto-generated from title" %>
+            <p class="mt-1.5 text-xs text-slate-400">Leave blank to generate automatically.</p>
+          </div>
+
+          <div>
+            <%= form.label :published_at, class: "mb-2 block text-sm font-semibold text-slate-700" %>
+            <%= form.datetime_local_field :published_at, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500" %>
+          </div>
+
+          <div>
+            <%= form.label :cover_image, "Cover photo", class: "mb-2 block text-sm font-semibold text-slate-700" %>
+            <% if blog_post.cover_image.attached? %>
+              <div class="mb-3 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
+                <%= image_tag blog_post.cover_image, alt: blog_post.title, class: "h-40 w-full object-cover" %>
+              </div>
+            <% end %>
+            <%= form.file_field :cover_image, accept: "image/png,image/jpeg,image/webp,image/gif", class: "block w-full cursor-pointer rounded-xl border border-slate-200 bg-white text-sm text-slate-700 file:mr-4 file:border-0 file:bg-indigo-50 file:px-4 file:py-3 file:text-sm file:font-bold file:text-indigo-700 hover:file:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+            <p class="mt-1.5 text-xs text-slate-400">Upload PNG, JPG, WEBP, or GIF. Max 5MB.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex flex-col gap-3">
+          <%= form.submit blog_post.persisted? ? "Save post" : "Publish post", class: "inline-flex w-full cursor-pointer items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-600/25 transition hover:shadow-xl" %>
+          <%= link_to "Cancel", blog_post.persisted? ? admin_blog_post_path(blog_post) : admin_blog_posts_path, class: "inline-flex w-full items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50" %>
+        </div>
+      </div>
+    </aside>
+  </div>
+<% end %>

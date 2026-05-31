@@ -1,0 +1,17 @@
+<% content_for(:title, "Shop orders — Admin") %>
+<h1 class="mb-6 text-2xl font-extrabold text-slate-900">Material orders</h1>
+<div class="divide-y rounded-2xl border border-slate-200 bg-white shadow-sm">
+  <% @orders.each do |order| %>
+    <div class="flex flex-wrap items-center justify-between gap-4 px-5 py-4">
+      <div>
+        <p class="font-semibold"><%= order.order_number %></p>
+        <p class="text-xs text-slate-400"><%= order.customer_email %> · <%= order.fulfillment_type %></p>
+        <div class="mt-1 flex gap-2"><%= material_order_status_badge(order.status) %><%= shop_payment_badge(order.payment_status) %></div>
+      </div>
+      <div class="flex gap-2">
+        <span class="font-semibold"><%= money_from_cents(order.total_cents) %></span>
+        <%= link_to "View", admin_shop_material_order_path(order), class: "text-sm font-semibold text-indigo-600" %>
+      </div>
+    </div>
+  <% end %>
+</div>

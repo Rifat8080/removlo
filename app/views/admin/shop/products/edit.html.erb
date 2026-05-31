@@ -1,0 +1,12 @@
+<% content_for(:title, "Edit #{@product.name} — Shop") %>
+
+<div class="mb-6 flex flex-col gap-4 min-[1025px]:flex-row min-[1025px]:items-center min-[1025px]:justify-between">
+  <div>
+    <%= link_to "← Products", admin_shop_products_path, class: "text-sm font-semibold text-indigo-600 hover:text-indigo-700" %>
+    <h1 class="mt-2 text-2xl font-extrabold tracking-tight text-slate-900">Edit product</h1>
+    <p class="mt-1 text-sm text-slate-500">Update <span class="font-semibold text-slate-700"><%= @product.name %></span> for the materials shop.</p>
+  </div>
+  <%= link_to "View in shop", shop_product_path(@product), class: "inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50" if @product.persisted? && @product.active? %>
+</div>
+
+<%= render "form" %>

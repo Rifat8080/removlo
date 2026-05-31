@@ -1,0 +1,34 @@
+<% content_for(:title, @order.order_number) %>
+<div class="mb-6 flex justify-between gap-4">
+  <div>
+    <%= link_to "← Orders", admin_shop_material_orders_path, class: "text-sm text-indigo-600 font-semibold" %>
+    <h1 class="mt-2 text-2xl font-extrabold"><%= @order.order_number %></h1>
+    <div class="mt-2 flex gap-2"><%= material_order_status_badge(@order.status) %><%= shop_payment_badge(@order.payment_status) %></div>
+  </div>
+  <%= link_to "Export PDF", pdf_admin_shop_material_order_path(@order), class: "rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white" %>
+</div>
+
+<div class="grid gap-6 min-[1025px]:grid-cols-2">
+  <div class="rounded-2xl border bg-white p-6 shadow-sm">
+    <p class="font-bold text-lg"><%= money_from_cents(@order.total_cents) %></p>
+    <p class="mt-2 text-sm text-slate-500"><%= @order.customer_email %></p>
+    <p class="text-sm capitalize"><%= @order.fulfillment_type %></p>
+    <% @order.material_order_items.each do |item| %>
+      <p class="mt-2 text-sm"><%= item.product_name %> × <%= item.quantity %> — <%= money_from_cents(item.line_total_cents) %></p>
+    <% end %>
+  </div>
+  <div class="space-y-4">
+    <div class="rounded-2xl border bg-white p-6 shadow-sm">
+      <h2 class="font-bold">Update status</h2>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <% %w[processing ready_for_collection dispatched delivered collected cancelled refunded].each do |status| %>
+          <%= button_to status.humanize, transition_admin_shop_material_order_path(@order, status: status), method: :patch, class: "rounded-lg border px-3 py-1.5 text-xs font-semibold" %>
+        <% end %>
+      </div>
+    </div>
+    <%= form_with model: [:admin, :shop, @order], url: admin_shop_material_order_path(@order), method: :patch, class: "rounded-2xl border bg-white p-6" do |f| %>
+      <%= f.text_area :admin_notes, rows: 3, class: "w-full rounded-xl border p-3 text-sm" %>
+      <%= f.submit "Save notes", class: "mt-3 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white" %>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+<% content_for(:title, "New product — Shop") %>
+
+<div class="mb-6 flex flex-col gap-4 min-[1025px]:flex-row min-[1025px]:items-center min-[1025px]:justify-between">
+  <div>
+    <%= link_to "← Products", admin_shop_products_path, class: "text-sm font-semibold text-indigo-600 hover:text-indigo-700" %>
+    <h1 class="mt-2 text-2xl font-extrabold tracking-tight text-slate-900">New product</h1>
+    <p class="mt-1 text-sm text-slate-500">Add a moving material item with pricing, stock, image, and visibility controls.</p>
+  </div>
+</div>
+
+<%= render "form" %>

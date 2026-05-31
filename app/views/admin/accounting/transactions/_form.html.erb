@@ -1,0 +1,53 @@
+<div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
+  <% form_url = @transaction.persisted? ? admin_accounting_transaction_path(@transaction) : admin_accounting_transactions_path %>
+  <%= form_with model: @transaction, url: form_url, class: "space-y-5" do |f| %>
+    <% if @transaction.errors.any? %>
+      <div class="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800"><%= @transaction.errors.full_messages.to_sentence %></div>
+    <% end %>
+
+    <div class="grid gap-5 min-[1025px]:grid-cols-2">
+      <div>
+        <%= f.label :transaction_type, class: "mb-2 block text-sm font-medium text-slate-900" %>
+        <%= f.select :transaction_type, AccountingTransaction.transaction_types.keys.map { |k| [k.humanize, k] }, {}, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
+      </div>
+      <div>
+        <%= f.label :amount, "Amount (£)", class: "mb-2 block text-sm font-medium text-slate-900" %>
+        <%= f.number_field :amount, step: 0.01, min: 0, value: (@transaction.amount if @transaction.persisted?), class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
+      </div>
+      <div>
+        <%= f.label :transaction_date, class: "mb-2 block text-sm font-medium text-slate-900" %>
+        <%= f.date_field :transaction_date, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
+      </div>
+      <div>
+        <%= f.label :accounting_category_id, "Category", class: "mb-2 block text-sm font-medium text-slate-900" %>
+        <%= f.collection_select :accounting_category_id, AccountingCategory.ordered, :id, :name, { include_blank: "Select category" }, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
+      </div>
+      <div>
+        <%= f.label :user_id, "Linked user", class: "mb-2 block text-sm font-medium text-slate-900" %>
+        <%= f.collection_select :user_id, User.order(:email), :id, :email, { include_blank: "Optional" }, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
+      </div>
+      <div>
+        <%= f.label :payment_method, class: "mb-2 block text-sm font-medium text-slate-900" %>
+        <%= f.text_field :payment_method, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :description, class: "mb-2 block text-sm font-medium text-slate-900" %>
+      <%= f.text_field :description, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
+    </div>
+
+    <div class="grid gap-5 min-[1025px]:grid-cols-2">
+      <div>
+        <%= f.label :vendor_payee, class: "mb-2 block text-sm font-medium text-slate-900" %>
+        <%= f.text_field :vendor_payee, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
+      </div>
+      <div>
+        <%= f.label :reference, class: "mb-2 block text-sm font-medium text-slate-900" %>
+        <%= f.text_field :reference, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
+      </div>
+    </div>
+
+    <%= f.submit class: "rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30" %>
+  <% end %>
+</div>

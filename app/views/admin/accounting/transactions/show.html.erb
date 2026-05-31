@@ -1,0 +1,31 @@
+<% content_for(:title, "#{@transaction.description || 'Transaction'} — Accounting") %>
+
+<div class="mb-6 flex flex-col gap-4 min-[1025px]:flex-row min-[1025px]:items-center min-[1025px]:justify-between">
+  <div>
+    <%= link_to "← Transactions", admin_accounting_transactions_path, class: "text-sm font-semibold text-indigo-600" %>
+    <h1 class="mt-2 text-2xl font-extrabold text-slate-900"><%= @transaction.description.presence || "Transaction" %></h1>
+    <div class="mt-2"><%= accounting_transaction_badge(@transaction.transaction_type) %></div>
+  </div>
+  <div class="flex gap-2">
+    <%= link_to "Edit", edit_admin_accounting_transaction_path(@transaction), class: "rounded-lg bg-indigo-50 px-3 py-2 text-sm font-semibold text-indigo-700" %>
+    <% unless @transaction.quotation_payment_id.present? %>
+      <%= button_to "Delete", admin_accounting_transaction_path(@transaction), method: :delete, form: { data: { turbo_confirm: "Delete this transaction?" } }, class: "rounded-lg border border-rose-200 px-3 py-2 text-sm font-semibold text-rose-700" %>
+    <% end %>
+  </div>
+</div>
+
+<div class="grid gap-4 min-[1025px]:grid-cols-2">
+  <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
+    <dl class="space-y-4 text-sm">
+      <div><dt class="text-slate-500">Amount</dt><dd class="mt-1 text-lg font-bold text-slate-900"><%= accounting_amount(@transaction.amount_cents, @transaction.transaction_type) %></dd></div>
+      <div><dt class="text-slate-500">Date</dt><dd class="mt-1 font-semibold text-slate-900"><%= @transaction.transaction_date.strftime("%d %b %Y") %></dd></div>
+      <div><dt class="text-slate-500">Category</dt><dd class="mt-1 font-semibold text-slate-900"><%= @transaction.accounting_category&.name || "—" %></dd></div>
+      <div><dt class="text-slate-500">Payment method</dt><dd class="mt-1 font-semibold text-slate-900"><%= @transaction.payment_method.presence || "—" %></dd></div>
+      <div><dt class="text-slate-500">Vendor / payee</dt><dd class="mt-1 font-semibold text-slate-900"><%= @transaction.vendor_payee.presence || "—" %></dd></div>
+      <div><dt class="text-slate-500">Reference</dt><dd class="mt-1 font-semibold text-slate-900"><%= @transaction.reference.presence || "—" %></dd></div>
+      <% if @transaction.quotation.present? %>
+        <div><dt class="text-slate-500">Quotation</dt><dd class="mt-1"><%= link_to @transaction.quotation.reference, admin_quotation_path(@transaction.quotation), class: "font-semibold text-indigo-600" %></dd></div>
+      <% end %>
+    </dl>
+  </div>
+</div>

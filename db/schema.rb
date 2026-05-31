@@ -10,10 +10,172 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_31_090000) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_31_160100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
+
+  create_table "accounting_categories", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.string "category_type", default: "expense", null: false
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_accounting_categories_on_slug", unique: true
+  end
+
+  create_table "accounting_transactions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "accounting_category_id"
+    t.uuid "user_id"
+    t.uuid "quotation_id"
+    t.uuid "quotation_payment_id"
+    t.string "transaction_type", null: false
+    t.integer "amount_cents", default: 0, null: false
+    t.date "transaction_date", null: false
+    t.string "description"
+    t.string "vendor_payee"
+    t.string "payment_method"
+    t.string "reference"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["accounting_category_id"], name: "index_accounting_transactions_on_accounting_category_id"
+    t.index ["quotation_id"], name: "index_accounting_transactions_on_quotation_id"
+    t.index ["quotation_payment_id"], name: "index_accounting_transactions_on_quotation_payment_id"
+    t.index ["quotation_payment_id"], name: "index_accounting_transactions_on_quotation_payment_unique", unique: true, where: "(quotation_payment_id IS NOT NULL)"
+    t.index ["transaction_type", "transaction_date"], name: "index_accounting_transactions_on_type_and_date"
+    t.index ["user_id"], name: "index_accounting_transactions_on_user_id"
+  end
+
+  create_table "active_storage_attachments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.uuid "record_id", null: false
+    t.uuid "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "blog_posts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "author_id", null: false
+    t.string "title", null: false
+    t.string "slug", null: false
+    t.text "excerpt"
+    t.text "body", null: false
+    t.datetime "published_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_id"], name: "index_blog_posts_on_author_id"
+    t.index ["published_at"], name: "index_blog_posts_on_published_at"
+    t.index ["slug"], name: "index_blog_posts_on_slug", unique: true
+  end
+
+  create_table "cart_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "cart_id", null: false
+    t.uuid "product_id", null: false
+    t.integer "quantity", default: 1, null: false
+    t.integer "unit_price_cents", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cart_id", "product_id"], name: "index_cart_items_on_cart_id_and_product_id", unique: true
+    t.index ["cart_id"], name: "index_cart_items_on_cart_id"
+    t.index ["product_id"], name: "index_cart_items_on_product_id"
+  end
+
+  create_table "carts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id"
+    t.string "session_token"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["session_token"], name: "index_carts_on_session_token", unique: true, where: "(session_token IS NOT NULL)"
+    t.index ["user_id"], name: "index_carts_on_user_id"
+  end
+
+  create_table "customer_invoices", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "invoice_number", null: false
+    t.string "invoice_type", default: "standard", null: false
+    t.uuid "customer_id", null: false
+    t.uuid "quotation_id"
+    t.uuid "quotation_payment_id"
+    t.integer "amount_cents", default: 0, null: false
+    t.string "status", default: "issued", null: false
+    t.date "issued_on", null: false
+    t.date "settled_on"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_customer_invoices_on_customer_id"
+    t.index ["invoice_number"], name: "index_customer_invoices_on_invoice_number", unique: true
+    t.index ["quotation_id"], name: "index_customer_invoices_on_quotation_id"
+    t.index ["quotation_payment_id"], name: "index_customer_invoices_on_quotation_payment_id"
+    t.index ["quotation_payment_id"], name: "index_customer_invoices_on_quotation_payment_unique", unique: true, where: "(quotation_payment_id IS NOT NULL)"
+  end
+
+  create_table "material_order_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "material_order_id", null: false
+    t.uuid "product_id"
+    t.string "product_name", null: false
+    t.string "product_sku", null: false
+    t.integer "quantity", default: 1, null: false
+    t.integer "unit_price_cents", default: 0, null: false
+    t.integer "line_total_cents", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["material_order_id"], name: "index_material_order_items_on_material_order_id"
+    t.index ["product_id"], name: "index_material_order_items_on_product_id"
+  end
+
+  create_table "material_orders", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "customer_id"
+    t.string "order_number", null: false
+    t.string "customer_email", null: false
+    t.string "fulfillment_type", default: "delivery", null: false
+    t.string "status", default: "pending", null: false
+    t.string "payment_status", default: "unpaid", null: false
+    t.integer "subtotal_cents", default: 0, null: false
+    t.integer "delivery_fee_cents", default: 0, null: false
+    t.integer "total_cents", default: 0, null: false
+    t.string "stripe_checkout_session_id"
+    t.string "stripe_payment_intent_id"
+    t.string "delivery_name"
+    t.string "delivery_phone"
+    t.text "delivery_address"
+    t.string "delivery_postcode"
+    t.date "preferred_date"
+    t.string "preferred_window"
+    t.text "collection_instructions"
+    t.text "customer_notes"
+    t.text "admin_notes"
+    t.datetime "paid_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "cart_id"
+    t.index ["cart_id"], name: "index_material_orders_on_cart_id"
+    t.index ["customer_id"], name: "index_material_orders_on_customer_id"
+    t.index ["order_number"], name: "index_material_orders_on_order_number", unique: true
+    t.index ["payment_status"], name: "index_material_orders_on_payment_status"
+    t.index ["status"], name: "index_material_orders_on_status"
+    t.index ["stripe_checkout_session_id"], name: "index_material_orders_on_stripe_checkout_session_id", unique: true, where: "(stripe_checkout_session_id IS NOT NULL)"
+  end
 
   create_table "notifications", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "user_id", null: false
@@ -33,6 +195,63 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_31_090000) do
     t.index ["user_id", "created_at"], name: "index_notifications_on_user_id_and_created_at"
     t.index ["user_id", "read_at"], name: "index_notifications_on_user_id_and_read_at"
     t.index ["user_id"], name: "index_notifications_on_user_id"
+  end
+
+  create_table "payroll_runs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.date "period_start", null: false
+    t.date "period_end", null: false
+    t.string "status", default: "draft", null: false
+    t.text "notes"
+    t.uuid "created_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_payroll_runs_on_created_by_id"
+  end
+
+  create_table "payslips", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "payroll_run_id", null: false
+    t.uuid "employee_id", null: false
+    t.string "employee_role", null: false
+    t.integer "base_salary_cents", default: 0, null: false
+    t.integer "bonus_cents", default: 0, null: false
+    t.integer "commission_cents", default: 0, null: false
+    t.integer "deductions_cents", default: 0, null: false
+    t.integer "net_pay_cents", default: 0, null: false
+    t.date "payment_date"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["employee_id"], name: "index_payslips_on_employee_id"
+    t.index ["payroll_run_id", "employee_id"], name: "index_payslips_on_payroll_run_id_and_employee_id", unique: true
+    t.index ["payroll_run_id"], name: "index_payslips_on_payroll_run_id"
+  end
+
+  create_table "product_categories", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.text "description"
+    t.integer "position", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_product_categories_on_slug", unique: true
+  end
+
+  create_table "products", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "product_category_id"
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.string "sku", null: false
+    t.text "description"
+    t.integer "price_cents", default: 0, null: false
+    t.integer "stock_quantity", default: 0, null: false
+    t.string "status", default: "active", null: false
+    t.boolean "featured", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_category_id"], name: "index_products_on_product_category_id"
+    t.index ["sku"], name: "index_products_on_sku", unique: true
+    t.index ["slug"], name: "index_products_on_slug", unique: true
+    t.index ["status"], name: "index_products_on_status"
   end
 
   create_table "quotation_documents", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -158,8 +377,29 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_31_090000) do
     t.index ["user_id"], name: "index_web_push_subscriptions_on_user_id"
   end
 
+  add_foreign_key "accounting_transactions", "accounting_categories"
+  add_foreign_key "accounting_transactions", "quotation_payments"
+  add_foreign_key "accounting_transactions", "quotations"
+  add_foreign_key "accounting_transactions", "users"
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "blog_posts", "users", column: "author_id"
+  add_foreign_key "cart_items", "carts"
+  add_foreign_key "cart_items", "products"
+  add_foreign_key "carts", "users"
+  add_foreign_key "customer_invoices", "quotation_payments"
+  add_foreign_key "customer_invoices", "quotations"
+  add_foreign_key "customer_invoices", "users", column: "customer_id"
+  add_foreign_key "material_order_items", "material_orders"
+  add_foreign_key "material_order_items", "products"
+  add_foreign_key "material_orders", "carts"
+  add_foreign_key "material_orders", "users", column: "customer_id"
   add_foreign_key "notifications", "users"
   add_foreign_key "notifications", "users", column: "actor_id"
+  add_foreign_key "payroll_runs", "users", column: "created_by_id"
+  add_foreign_key "payslips", "payroll_runs"
+  add_foreign_key "payslips", "users", column: "employee_id"
+  add_foreign_key "products", "product_categories"
   add_foreign_key "quotation_documents", "quotations"
   add_foreign_key "quotation_items", "quotations"
   add_foreign_key "quotation_notes", "quotations"

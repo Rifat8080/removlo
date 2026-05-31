@@ -83,6 +83,30 @@
       </section>
 
       <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex items-center justify-between gap-3">
+          <h2 class="text-lg font-black text-slate-900">Invoices</h2>
+          <%= link_to "All invoices", customer_invoices_path, class: "text-sm font-semibold text-indigo-600 hover:text-indigo-700" %>
+        </div>
+        <div class="mt-5 space-y-3">
+          <% @invoices.each do |invoice| %>
+            <div class="flex items-center justify-between gap-3 rounded-2xl bg-slate-50 p-4">
+              <div>
+                <p class="font-semibold text-slate-900"><%= invoice.invoice_number %></p>
+                <p class="text-xs text-slate-500"><%= invoice.invoice_type.humanize %> · <%= invoice.issued_on.strftime("%d %b %Y") %></p>
+              </div>
+              <div class="text-right">
+                <p class="font-semibold text-slate-900"><%= money_from_cents(invoice.amount_cents) %></p>
+                <%= link_to "View", customer_invoice_path(invoice), class: "text-xs font-semibold text-indigo-600" %>
+              </div>
+            </div>
+          <% end %>
+          <% if @invoices.empty? %>
+            <p class="rounded-2xl bg-slate-50 p-4 text-sm text-slate-500">Invoices will appear here when payments are recorded.</p>
+          <% end %>
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <h2 class="text-lg font-black text-slate-900">Messages</h2>
         <div class="mt-5 space-y-3">
           <% @quotation.quotation_notes.where(internal: false).order(created_at: :desc).each do |note| %>

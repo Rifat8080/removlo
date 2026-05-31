@@ -1,0 +1,125 @@
+<% form_url = @product.persisted? ? admin_shop_product_path(@product) : admin_shop_products_path %>
+
+<%= form_with model: @product, url: form_url, class: "space-y-6" do |f| %>
+  <% if @product.errors.any? %>
+    <div class="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
+      <p class="font-semibold">Please fix the following:</p>
+      <ul class="mt-2 list-inside list-disc space-y-1">
+        <% @product.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="grid gap-6 min-[1025px]:grid-cols-[1.3fr_0.7fr]">
+    <section class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
+      <div class="mb-6">
+        <h2 class="text-lg font-bold text-slate-900">Product details</h2>
+        <p class="mt-1 text-sm text-slate-500">Name, category, and description shown to customers in the shop.</p>
+      </div>
+
+      <div class="space-y-5">
+        <div>
+          <%= f.label :product_category_id, "Category", class: "mb-2 block text-sm font-semibold text-slate-900" %>
+          <%= f.collection_select :product_category_id, @categories, :id, :name, { include_blank: "Choose a category" }, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200" %>
+          <p class="mt-1 text-xs text-slate-400">Create categories from Admin → Shop categories.</p>
+        </div>
+
+        <div class="grid gap-5 min-[1025px]:grid-cols-2">
+          <div>
+            <%= f.label :name, "Product name", class: "mb-2 block text-sm font-semibold text-slate-900" %>
+            <%= f.text_field :name, placeholder: "Medium moving box", class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 placeholder-slate-400 transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200" %>
+          </div>
+
+          <div>
+            <%= f.label :sku, "SKU", class: "mb-2 block text-sm font-semibold text-slate-900" %>
+            <%= f.text_field :sku, placeholder: "BOX-MD", class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm uppercase text-slate-900 placeholder-slate-400 transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200" %>
+          </div>
+        </div>
+
+        <div>
+          <%= f.label :slug, "URL slug", class: "mb-2 block text-sm font-semibold text-slate-900" %>
+          <%= f.text_field :slug, placeholder: "medium-moving-box", class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 placeholder-slate-400 transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200" %>
+          <p class="mt-1 text-xs text-slate-400">Leave blank for new products and it will be generated from the product name.</p>
+        </div>
+
+        <div>
+          <%= f.label :description, class: "mb-2 block text-sm font-semibold text-slate-900" %>
+          <%= f.text_area :description, rows: 6, placeholder: "Describe size, best use, durability, and what is included.", class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 placeholder-slate-400 transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200" %>
+        </div>
+      </div>
+    </section>
+
+    <aside class="space-y-6">
+      <section class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
+        <div class="mb-6">
+          <h2 class="text-lg font-bold text-slate-900">Pricing & stock</h2>
+          <p class="mt-1 text-sm text-slate-500">Control sale price, stock, and product visibility.</p>
+        </div>
+
+        <div class="space-y-5">
+          <div>
+            <%= f.label :price, "Price (£)", class: "mb-2 block text-sm font-semibold text-slate-900" %>
+            <div class="relative">
+              <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-sm font-semibold text-slate-400">£</span>
+              <%= f.number_field :price, step: 0.01, min: 0, value: (@product.price if @product.persisted?), placeholder: "12.99", class: "block w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-8 pr-3 text-sm text-slate-900 placeholder-slate-400 transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200" %>
+            </div>
+          </div>
+
+          <div>
+            <%= f.label :stock_quantity, "Stock quantity", class: "mb-2 block text-sm font-semibold text-slate-900" %>
+            <%= f.number_field :stock_quantity, min: 0, placeholder: "100", class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 placeholder-slate-400 transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200" %>
+          </div>
+
+          <div>
+            <%= f.label :status, class: "mb-2 block text-sm font-semibold text-slate-900" %>
+            <%= f.select :status, Product.statuses.keys.map { |status| [status.humanize, status] }, {}, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200" %>
+            <p class="mt-1 text-xs text-slate-400">Inactive products are hidden from the public shop.</p>
+          </div>
+
+          <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 transition hover:bg-indigo-50/50">
+            <%= f.check_box :featured, class: "mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" %>
+            <span>
+              <span class="block text-sm font-semibold text-slate-900">Feature this product</span>
+              <span class="mt-1 block text-xs text-slate-500">Featured items appear near the top of the shop.</span>
+            </span>
+          </label>
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
+        <div class="mb-5">
+          <h2 class="text-lg font-bold text-slate-900">Product image</h2>
+          <p class="mt-1 text-sm text-slate-500">Use a clear square or landscape photo.</p>
+        </div>
+
+        <% if @product.image.attached? %>
+          <div class="mb-4 overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
+            <%= image_tag @product.image, class: "h-44 w-full object-cover" %>
+          </div>
+        <% else %>
+          <div class="mb-4 flex h-44 items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50 text-sm text-slate-400">
+            Image preview appears after upload
+          </div>
+        <% end %>
+
+        <%= f.file_field :image, accept: "image/png,image/jpeg,image/jpg,image/webp", class: "block w-full cursor-pointer rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-700 file:mr-4 file:border-0 file:bg-indigo-600 file:px-4 file:py-3 file:text-sm file:font-semibold file:text-white hover:file:bg-indigo-700" %>
+        <p class="mt-2 text-xs text-slate-400">Accepted formats: JPG, PNG, WebP.</p>
+      </section>
+    </aside>
+  </div>
+
+  <div class="sticky bottom-4 z-10 rounded-2xl border border-slate-200/80 bg-white/90 p-4 shadow-xl backdrop-blur">
+    <div class="flex flex-col gap-3 min-[1025px]:flex-row min-[1025px]:items-center min-[1025px]:justify-between">
+      <p class="text-sm text-slate-500">
+        <span class="font-semibold text-slate-900"><%= @product.persisted? ? "Update product" : "Create product" %></span>
+        and it will be available based on its status and stock.
+      </p>
+      <div class="flex flex-col gap-2 sm:flex-row">
+        <%= link_to "Cancel", admin_shop_products_path, class: "inline-flex items-center justify-center rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" %>
+        <%= f.submit class: "inline-flex cursor-pointer items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 transition hover:-translate-y-0.5 hover:shadow-xl" %>
+      </div>
+    </div>
+  </div>
+<% end %>

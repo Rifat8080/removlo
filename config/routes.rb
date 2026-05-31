@@ -8,6 +8,8 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   namespace :admin do
+    resources :blog_posts
+
     resources :quotations do
       patch :transition, on: :member
       resources :quotation_items, path: :items, only: %i[create update destroy]
@@ -17,6 +19,36 @@ Rails.application.routes.draw do
     end
 
     resources :users
+
+    namespace :accounting do
+      root to: "dashboard#index"
+      resources :categories, except: :show
+      resources :transactions
+      resources :customer_invoices, path: :invoices do
+        get :pdf, on: :member
+      end
+      resources :payroll_runs do
+        member do
+          patch :finalize
+          patch :mark_paid
+        end
+        resources :payslips, only: %i[new create edit update destroy] do
+          get :pdf, on: :member
+        end
+      end
+      get :reports, to: "reports#index"
+    end
+
+    namespace :shop do
+      resources :product_categories, except: :show
+      resources :products
+      resources :material_orders, only: %i[index show update] do
+        member do
+          patch :transition
+          get :pdf
+        end
+      end
+    end
   end
 
   namespace :driver do
@@ -29,12 +61,42 @@ Rails.application.routes.draw do
     patch :request_changes, on: :member
   end
 
+  resources :blog_posts, path: "blog", only: %i[index show]
+
   resources :notifications, only: :index do
     patch :read, on: :member
     patch :read_all, on: :collection
   end
   resource :web_push_subscription, only: %i[create destroy]
   get "web_push/config", to: "web_push_subscriptions#config", as: :web_push_config
+
+  resources :customer_invoices, path: "invoices", only: %i[index show] do
+    get :pdf, on: :member
+  end
+  resources :payslips, only: %i[index show] do
+    get :pdf, on: :member
+  end
+
+  scope module: :shop, path: "shop", as: :shop do
+    resources :products, only: %i[index show], param: :slug
+  end
+
+  resource :cart, only: :show do
+    post :add
+  end
+  patch "cart/items/:id", to: "carts#update", as: :cart_item
+  delete "cart/items/:id", to: "carts#remove", as: :remove_cart_item
+
+  get "checkout", to: "checkouts#show", as: :checkout
+  post "checkout", to: "checkouts#create"
+  get "checkout/success", to: "checkouts#success", as: :checkout_success
+  get "checkout/cancel", to: "checkouts#cancel", as: :checkout_cancel
+
+  resources :material_orders, only: %i[index show] do
+    get :pdf, on: :member
+  end
+
+  post "stripe/webhook", to: "stripe_webhooks#create"
 
   get "dashboard", to: "pages#dashboard", as: :dashboard
   root to: "pages#landing"

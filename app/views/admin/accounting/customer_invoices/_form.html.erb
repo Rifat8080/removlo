@@ -1,0 +1,46 @@
+<div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
+  <% form_url = @invoice.persisted? ? admin_accounting_customer_invoice_path(@invoice) : admin_accounting_customer_invoices_path %>
+  <%= form_with model: @invoice, url: form_url, class: "space-y-5" do |f| %>
+    <% if @invoice.errors.any? %>
+      <div class="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800"><%= @invoice.errors.full_messages.to_sentence %></div>
+    <% end %>
+
+    <div class="grid gap-5 min-[1025px]:grid-cols-2">
+      <div>
+        <%= f.label :invoice_type, class: "mb-2 block text-sm font-medium text-slate-900" %>
+        <%= f.select :invoice_type, CustomerInvoice.invoice_types.keys.map { |k| [k.humanize, k] }, {}, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
+      </div>
+      <div>
+        <%= f.label :status, class: "mb-2 block text-sm font-medium text-slate-900" %>
+        <%= f.select :status, CustomerInvoice.statuses.keys.map { |k| [k.humanize, k] }, {}, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
+      </div>
+      <div>
+        <%= f.label :customer_id, "Customer", class: "mb-2 block text-sm font-medium text-slate-900" %>
+        <%= f.collection_select :customer_id, User.customers, :id, :email, { prompt: "Select customer" }, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
+      </div>
+      <div>
+        <%= f.label :quotation_id, "Quotation", class: "mb-2 block text-sm font-medium text-slate-900" %>
+        <%= f.collection_select :quotation_id, Quotation.recent.limit(100), :id, :reference, { include_blank: "Optional" }, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
+      </div>
+      <div>
+        <%= f.label :amount, "Amount (£)", class: "mb-2 block text-sm font-medium text-slate-900" %>
+        <%= f.number_field :amount, step: 0.01, min: 0, value: (@invoice.amount if @invoice.persisted?), class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
+      </div>
+      <div>
+        <%= f.label :issued_on, class: "mb-2 block text-sm font-medium text-slate-900" %>
+        <%= f.date_field :issued_on, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
+      </div>
+      <div>
+        <%= f.label :settled_on, class: "mb-2 block text-sm font-medium text-slate-900" %>
+        <%= f.date_field :settled_on, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :notes, class: "mb-2 block text-sm font-medium text-slate-900" %>
+      <%= f.text_area :notes, rows: 3, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
+    </div>
+
+    <%= f.submit class: "rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30" %>
+  <% end %>
+</div>

@@ -1,39 +1,34 @@
 <% content_for(:title, "Dashboard — Removlo") %>
 
-<!-- Welcome header -->
-<div class="mb-6 flex flex-col gap-4 min-[1025px]:flex-row min-[1025px]:items-center min-[1025px]:justify-between">
-  <div>
-    <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Welcome back 👋</h1>
-    <p class="mt-1 text-sm text-slate-500">Here's what's happening with your move today.</p>
-  </div>
-  <div class="flex items-center gap-2">
-    <a href="<%= root_path %>#quote" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 transition hover:shadow-xl min-[1025px]:w-auto">
-      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-      Request a quote
-    </a>
+<div class="mb-6 overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-indigo-950 to-blue-900 p-6 text-white shadow-2xl shadow-indigo-950/20 min-[1025px]:p-8">
+  <div class="flex flex-col gap-5 min-[1025px]:flex-row min-[1025px]:items-center min-[1025px]:justify-between">
+    <div>
+      <p class="text-sm font-semibold uppercase tracking-[0.2em] text-indigo-200"><%= current_user.role.humanize %> dashboard</p>
+      <h1 class="mt-2 text-3xl font-black tracking-tight min-[1025px]:text-5xl"><%= @dashboard_title %></h1>
+      <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-300"><%= @dashboard_subtitle %></p>
+    </div>
+    <% if @primary_action.present? %>
+      <%= link_to @primary_action.first, @primary_action.last, class: "inline-flex items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-bold text-indigo-700 shadow-lg transition hover:-translate-y-0.5 hover:bg-indigo-50" %>
+    <% end %>
   </div>
 </div>
 
-<!-- Stat cards -->
-<div class="mb-6 grid grid-cols-1 gap-4 min-[1025px]:grid-cols-4">
-  <% [
-    ["Upcoming moves", "0", "truck", "from-indigo-500 to-blue-500", "Nothing booked yet"],
-    ["Active quotes", "0", "doc", "from-blue-500 to-sky-500", "Request one to start"],
-    ["Documents", "0", "folder", "from-sky-500 to-cyan-500", "Contracts & receipts"],
-    ["Messages", "0", "chat", "from-violet-500 to-indigo-500", "From your coordinator"]
-  ].each do |label, value, icon, grad, sub| %>
-    <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition hover:shadow-md">
-      <div class="flex items-start justify-between">
+<div class="mb-6 grid gap-4 sm:grid-cols-2 min-[1025px]:grid-cols-4">
+  <% @dashboard_stats.each do |label, value, sub, icon, grad| %>
+    <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+      <div class="flex items-start justify-between gap-4">
         <div>
           <p class="text-sm font-medium text-slate-500"><%= label %></p>
           <p class="mt-2 text-3xl font-extrabold text-slate-900"><%= value %></p>
         </div>
-        <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br <%= grad %> text-white shadow-lg">
+        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br <%= grad %> text-white shadow-lg">
           <% case icon
              when "truck" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8h4l3 3v5a1 1 0 01-1 1h-1"/></svg>
-          <% when "doc" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-          <% when "folder" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
-          <% else %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+          <% when "invoice" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14h6m-6 4h6M7 4h10a2 2 0 012 2v14l-3-2-3 2-3-2-3 2V6a2 2 0 012-2z"/></svg>
+          <% when "bell" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0a3 3 0 11-6 0h6z"/></svg>
+          <% when "check" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <% when "chat" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+          <% else %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
           <% end %>
         </span>
       </div>
@@ -42,99 +37,134 @@
   <% end %>
 </div>
 
-<div class="grid grid-cols-1 gap-6 min-[1025px]:grid-cols-3">
-  <!-- Move progress -->
-  <div class="min-[1025px]:col-span-2">
-    <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
-      <div class="mb-6 flex items-center justify-between">
-        <h2 class="text-lg font-bold text-slate-900">Your move journey</h2>
-        <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">Not started</span>
-      </div>
-
-      <ol class="relative ml-3 border-l border-slate-200">
-        <% [
-          ["Get a quote", "Tell us your postcodes and move size.", "active"],
-          ["Plan with your coordinator", "Confirm services, insurance and dates.", "pending"],
-          ["Moving day", "Packing, transport and live tracking.", "pending"],
-          ["Settle in", "Local orientation and ongoing support.", "pending"]
-        ].each do |title, desc, state| %>
-          <li class="mb-8 ml-6 last:mb-0">
-            <span class="absolute -left-3 flex h-6 w-6 items-center justify-center rounded-full ring-4 ring-white <%= state == 'active' ? 'bg-gradient-to-br from-indigo-600 to-blue-600' : 'bg-slate-200' %>">
-              <% if state == "active" %>
-                <span class="h-2 w-2 rounded-full bg-white"></span>
-              <% else %>
-                <span class="h-2 w-2 rounded-full bg-slate-400"></span>
-              <% end %>
-            </span>
-            <h3 class="font-semibold <%= state == 'active' ? 'text-slate-900' : 'text-slate-500' %>"><%= title %></h3>
-            <p class="text-sm text-slate-500"><%= desc %></p>
-            <% if state == "active" %>
-              <a href="<%= root_path %>#quote" class="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-indigo-600 hover:text-indigo-700">
-                Start now
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-              </a>
-            <% end %>
-          </li>
-        <% end %>
-      </ol>
+<% if current_user.admin? && @accounting_summary.present? %>
+  <div class="mb-6 grid gap-4 min-[1025px]:grid-cols-4">
+    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+      <p class="text-sm font-semibold text-emerald-700">Month revenue</p>
+      <p class="mt-2 text-2xl font-extrabold text-emerald-900"><%= money_from_cents(@accounting_summary[:income_cents]) %></p>
+    </div>
+    <div class="rounded-2xl border border-rose-200 bg-rose-50 p-5">
+      <p class="text-sm font-semibold text-rose-700">Month expenses</p>
+      <p class="mt-2 text-2xl font-extrabold text-rose-900"><%= money_from_cents(@accounting_summary[:expense_cents]) %></p>
+    </div>
+    <div class="rounded-2xl border border-indigo-200 bg-indigo-50 p-5">
+      <p class="text-sm font-semibold text-indigo-700">Net profit</p>
+      <p class="mt-2 text-2xl font-extrabold text-indigo-900"><%= money_from_cents(@accounting_summary[:net_profit_cents]) %></p>
+    </div>
+    <div class="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+      <p class="text-sm font-semibold text-amber-700">Open invoices</p>
+      <p class="mt-2 text-2xl font-extrabold text-amber-900"><%= @open_invoices_count %></p>
     </div>
   </div>
+<% end %>
 
-  <!-- Side column -->
+<div class="grid gap-6 min-[1025px]:grid-cols-[1.4fr_0.8fr]">
   <div class="space-y-6">
-    <!-- Coordinator card -->
-    <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
-      <h2 class="mb-4 text-lg font-bold text-slate-900">Your coordinator</h2>
-      <div class="flex items-center gap-3">
-        <span class="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-blue-600 text-sm font-bold text-white">RC</span>
+    <section class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+      <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4">
         <div>
-          <p class="font-semibold text-slate-900">Removlo Care</p>
-          <p class="text-xs text-slate-500">Assigned once you book</p>
+          <h2 class="text-lg font-bold text-slate-900"><%= current_user.driver? ? "Assigned jobs" : (current_user.customer? ? "Your quotations" : "Operational queue") %></h2>
+          <p class="mt-1 text-sm text-slate-500">The records most likely to need your attention.</p>
         </div>
       </div>
-      <a href="mailto:hello@removlo.co.uk" class="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-        Send a message
-      </a>
-    </div>
 
-    <!-- Quick actions -->
-    <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
-      <h2 class="mb-4 text-lg font-bold text-slate-900">Quick actions</h2>
-      <div class="space-y-2">
-        <% [
-          ["Request a new quote", "#{root_path}#quote", "plus"],
-          ["Account settings", edit_user_registration_path, "cog"],
-          ["Browse services", "#{root_path}#services", "grid"]
-        ].each do |label, href, icon| %>
-          <%= link_to href, class: "group flex items-center justify-between rounded-xl border border-slate-100 px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-indigo-200 hover:bg-indigo-50/50" do %>
-            <span class="flex items-center gap-3">
-              <span class="text-indigo-500">
-                <% case icon
-                   when "plus" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                <% when "cog" %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                <% else %><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+      <div class="divide-y divide-slate-100">
+        <% records = current_user.driver? ? @driver_jobs : (current_user.customer? ? @customer_quotations : @operations_quotations) %>
+        <% records.each do |quotation| %>
+          <% destination = current_user.customer? ? quotation_path(quotation) : (current_user.driver? ? driver_job_path(quotation) : admin_quotation_path(quotation)) %>
+          <%= link_to destination, class: "block px-5 py-4 transition hover:bg-slate-50" do %>
+            <div class="flex flex-col gap-3 min-[1025px]:flex-row min-[1025px]:items-center min-[1025px]:justify-between">
+              <div class="min-w-0">
+                <div class="flex flex-wrap items-center gap-2">
+                  <p class="font-semibold text-slate-900"><%= quotation.reference %></p>
+                  <%= quotation_status_badge(quotation.status) %>
+                  <%= quotation_payment_badge(quotation.payment_status) %>
+                </div>
+                <p class="mt-1 truncate text-sm text-slate-500">
+                  <%= quotation.pickup_postcode.presence || quotation.pickup_address %> to <%= quotation.delivery_postcode.presence || quotation.delivery_address %>
+                </p>
+              </div>
+              <div class="text-sm text-slate-500 min-[1025px]:text-right">
+                <p class="font-semibold text-slate-700"><%= quotation.preferred_move_date&.strftime("%d %b %Y") || "Date pending" %></p>
+                <% if current_user.operator? %>
+                  <p><%= quotation.customer.email %></p>
+                <% elsif current_user.driver? %>
+                  <p><%= quotation.customer.email %></p>
+                <% else %>
+                  <p><%= quotation.assigned_staff&.email || "Coordinator pending" %></p>
                 <% end %>
-              </span>
-              <%= label %>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+
+        <% if records.empty? %>
+          <div class="px-5 py-12 text-center">
+            <p class="font-semibold text-slate-900">Nothing needs attention right now</p>
+            <p class="mt-1 text-sm text-slate-500">New activity will appear here as soon as it is created.</p>
+          </div>
+        <% end %>
+      </div>
+    </section>
+
+    <% if current_user.admin? %>
+      <section class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+        <div class="flex flex-col gap-4 min-[1025px]:flex-row min-[1025px]:items-center min-[1025px]:justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">Team and finance shortcuts</h2>
+            <p class="mt-1 text-sm text-slate-500">Payroll-ready team members: <span class="font-semibold text-slate-900"><%= @team_count %></span></p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <%= link_to "Accounting", admin_accounting_root_path, class: "rounded-xl bg-indigo-50 px-4 py-2.5 text-sm font-semibold text-indigo-700 hover:bg-indigo-100" %>
+            <%= link_to "Users", admin_users_path, class: "rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50" %>
+          </div>
+        </div>
+      </section>
+    <% end %>
+  </div>
+
+  <aside class="space-y-6">
+    <section class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+      <h2 class="text-lg font-bold text-slate-900">Quick actions</h2>
+      <div class="mt-4 space-y-2">
+        <% @quick_actions.each do |label, href, description| %>
+          <%= link_to href, class: "group flex items-center justify-between gap-4 rounded-xl border border-slate-100 px-4 py-3 transition hover:border-indigo-200 hover:bg-indigo-50/60" do %>
+            <span>
+              <span class="block text-sm font-semibold text-slate-800"><%= label %></span>
+              <span class="mt-0.5 block text-xs text-slate-500"><%= description %></span>
             </span>
             <svg class="h-4 w-4 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
           <% end %>
         <% end %>
       </div>
-    </div>
-  </div>
-</div>
+    </section>
 
-<!-- Empty state / recent activity -->
-<div class="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white/60 p-6 text-center min-[1025px]:p-10">
-  <span class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
-    <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8h4l3 3v5a1 1 0 01-1 1h-1"/></svg>
-  </span>
-  <h3 class="text-lg font-bold text-slate-900">No moves yet</h3>
-  <p class="mx-auto mt-1 max-w-md text-sm text-slate-500">Once you request a quote and book your move, you'll be able to track everything right here.</p>
-  <a href="<%= root_path %>#quote" class="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 transition hover:shadow-xl min-[1025px]:w-auto">
-    Get your first quote
-    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-  </a>
+    <section class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+      <div class="flex items-center justify-between gap-3">
+        <h2 class="text-lg font-bold text-slate-900">Recent notifications</h2>
+        <%= link_to "View all", notifications_path, class: "text-sm font-semibold text-indigo-600 hover:text-indigo-700" %>
+      </div>
+      <div class="mt-4 space-y-3">
+        <% @recent_notifications.each do |notification| %>
+          <div class="rounded-xl border <%= notification.read? ? 'border-slate-100 bg-slate-50' : 'border-indigo-100 bg-indigo-50' %> p-3">
+            <p class="text-sm font-semibold text-slate-900"><%= notification.title %></p>
+            <% if notification.body.present? %>
+              <p class="mt-1 line-clamp-2 text-xs text-slate-500"><%= notification.body %></p>
+            <% end %>
+            <p class="mt-2 text-[11px] font-medium text-slate-400"><%= time_ago_in_words(notification.created_at) %> ago</p>
+          </div>
+        <% end %>
+
+        <% if @recent_notifications.empty? %>
+          <div class="rounded-xl bg-slate-50 p-4 text-center text-sm text-slate-500">No notifications yet.</div>
+        <% end %>
+      </div>
+    </section>
+
+    <section class="rounded-2xl bg-gradient-to-br from-indigo-600 to-blue-600 p-5 text-white shadow-lg shadow-indigo-600/30">
+      <p class="text-sm font-semibold">Need help?</p>
+      <p class="mt-1 text-xs text-indigo-100">Contact the Removlo team for quotes, jobs, payroll, or account questions.</p>
+      <a href="mailto:hello@removlo.co.uk" class="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-white/15 px-4 py-2.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/25">Contact support</a>
+    </section>
+  </aside>
 </div>

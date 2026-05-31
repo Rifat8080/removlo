@@ -52,7 +52,7 @@
 
         <div class="hidden w-full items-center justify-between min-[1025px]:order-1 min-[1025px]:flex min-[1025px]:w-auto" id="landing-navbar">
           <ul class="mt-4 flex flex-col gap-1 rounded-xl border border-slate-100 bg-white p-4 font-medium shadow-sm min-[1025px]:mt-0 min-[1025px]:flex-row min-[1025px]:gap-1 min-[1025px]:border-0 min-[1025px]:bg-transparent min-[1025px]:p-0 min-[1025px]:shadow-none">
-            <% [["Services", "#services"], ["How it works", "#how-it-works"], ["Reviews", "#reviews"], ["FAQ", "#faq"], ["Contact", "#contact"]].each do |label, href| %>
+            <% [["Services", "#{root_path}#services"], ["How it works", "#{root_path}#how-it-works"], ["Shop materials", shop_products_path], ["Blog", blog_posts_path], ["Reviews", "#{root_path}#reviews"], ["FAQ", "#{root_path}#faq"], ["Contact", "#{root_path}#contact"]].each do |label, href| %>
               <li>
                 <%= link_to label, href, class: "relative block rounded-lg px-3 py-2 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-indigo-700 min-[1025px]:hover:bg-transparent min-[1025px]:after:absolute min-[1025px]:after:bottom-1 min-[1025px]:after:left-3 min-[1025px]:after:h-0.5 min-[1025px]:after:w-0 min-[1025px]:after:rounded-full min-[1025px]:after:bg-indigo-600 min-[1025px]:after:transition-all min-[1025px]:after:duration-300 min-[1025px]:hover:after:w-[calc(100%-1.5rem)]" %>
               </li>

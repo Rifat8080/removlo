@@ -11,6 +11,7 @@ class QuotationsController < ApplicationController
 
   def show
     @negotiation_note = @quotation.quotation_notes.new(internal: false)
+    @invoices = @quotation.customer_invoices.recent
   end
 
   def new
