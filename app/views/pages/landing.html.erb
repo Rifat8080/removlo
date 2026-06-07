@@ -212,28 +212,28 @@
       </div>
 
       <div class="reveal mt-6 grid gap-4 lg:grid-cols-[0.74fr_1fr]">
-        <div class="rounded-[1.5rem] border border-white bg-white/90 p-5 shadow-xl shadow-blue-950/5 backdrop-blur">
-          <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Trusted by thousands across the UK</p>
-          <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="rounded-[1.5rem] border border-white bg-white/90 p-4 shadow-xl shadow-blue-950/5 backdrop-blur sm:p-5">
+          <p class="text-center text-[9px] font-black uppercase tracking-[0.18em] text-slate-400 sm:text-left sm:text-[10px]">Trusted by thousands across the UK</p>
+          <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-4">
             <% trust_logos.each do |name, rating, logo| %>
-              <div class="border-slate-100 lg:border-r lg:last:border-r-0">
-                <%= image_tag asset_image.call(logo), alt: "#{name} logo", class: "h-6 w-auto object-contain" %>
-                <div class="mt-1 flex text-amber-400" aria-hidden="true"><% 5.times do %><svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.05 2.93c.3-.92 1.6-.92 1.9 0l1.07 3.29a1 1 0 00.95.69h3.46c.97 0 1.37 1.24.59 1.81l-2.8 2.03a1 1 0 00-.36 1.12l1.07 3.29c.3.92-.76 1.69-1.54 1.12l-2.8-2.03a1 1 0 00-1.18 0l-2.8 2.03c-.78.57-1.84-.2-1.54-1.12l1.07-3.29a1 1 0 00-.36-1.12l-2.8-2.03c-.78-.57-.38-1.81.59-1.81h3.46a1 1 0 00.95-.69l1.07-3.29z"/></svg><% end %></div>
-                <p class="mt-1 text-[10px] font-bold uppercase tracking-wide text-slate-400"><%= rating %></p>
+              <div class="rounded-2xl bg-slate-50/70 p-3 text-center ring-1 ring-slate-100 transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md hover:shadow-blue-950/5 min-[1360px]:rounded-none min-[1360px]:bg-transparent min-[1360px]:p-0 min-[1360px]:text-left min-[1360px]:ring-0 min-[1360px]:border-r min-[1360px]:border-slate-100 min-[1360px]:last:border-r-0">
+                <%= image_tag asset_image.call(logo), alt: "#{name} logo", class: "mx-auto h-5 w-auto object-contain sm:h-6 lg:mx-0" %>
+                <div class="mt-1.5 flex justify-center text-amber-400 min-[1360px]:justify-start" aria-hidden="true"><% 5.times do %><svg class="h-3 w-3 sm:h-3.5 sm:w-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.05 2.93c.3-.92 1.6-.92 1.9 0l1.07 3.29a1 1 0 00.95.69h3.46c.97 0 1.37 1.24.59 1.81l-2.8 2.03a1 1 0 00-.36 1.12l1.07 3.29c.3.92-.76 1.69-1.54 1.12l-2.8-2.03a1 1 0 00-1.18 0l-2.8 2.03c-.78.57-1.84-.2-1.54-1.12l1.07-3.29a1 1 0 00-.36-1.12l-2.8-2.03c-.78-.57-.38-1.81.59-1.81h3.46a1 1 0 00.95-.69l1.07-3.29z"/></svg><% end %></div>
+                <p class="mt-1 text-[9px] font-bold uppercase tracking-wide text-slate-400 sm:text-[10px]"><%= rating %></p>
               </div>
             <% end %>
           </div>
         </div>
 
-        <div class="grid gap-3 rounded-[1.5rem] border border-white bg-white/90 p-4 shadow-xl shadow-blue-950/5 backdrop-blur sm:grid-cols-2 lg:grid-cols-4">
+        <div class="grid grid-cols-2 gap-3 rounded-[1.5rem] border border-white bg-white/90 p-4 shadow-xl shadow-blue-950/5 backdrop-blur sm:grid-cols-4 lg:grid-cols-4">
           <% [["15K+", "Moves completed", "users-customers.svg"], ["4.9/5", "Average rating", "rating-star.svg"], ["50+", "Trained movers", "shield-protection.svg"], ["20+", "UK locations", "location-contact.svg"]].each do |stat, label, icon| %>
-            <div class="flex items-center gap-3 border-slate-100 px-2 py-2 lg:border-r lg:last:border-r-0">
-              <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50">
-                <%= image_tag asset_image.call(icon), alt: "", class: "h-6 w-6", aria: { hidden: true } %>
+            <div class="flex flex-col items-center justify-center gap-2 rounded-2xl bg-slate-50/70 px-2 py-3 text-center ring-1 ring-slate-100 sm:bg-transparent sm:ring-0 min-[1360px]:flex-row min-[1360px]:justify-start min-[1360px]:gap-3 min-[1360px]:text-left min-[1360px]:border-r min-[1360px]:border-slate-100 min-[1360px]:last:border-r-0">
+              <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-blue-50 sm:h-10 sm:w-10">
+                <%= image_tag asset_image.call(icon), alt: "", class: "h-5 w-5 sm:h-6 sm:w-6", aria: { hidden: true } %>
               </span>
               <span>
-                <span class="block text-xl font-black tracking-tight text-slate-950"><%= stat %></span>
-                <span class="block text-[11px] font-bold text-slate-500"><%= label %></span>
+                <span class="block text-lg font-black tracking-tight text-slate-950 sm:text-xl"><%= stat %></span>
+                <span class="block text-[10px] font-bold text-slate-500 sm:text-[11px]"><%= label %></span>
               </span>
             </div>
           <% end %>
