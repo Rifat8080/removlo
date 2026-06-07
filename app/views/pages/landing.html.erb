@@ -29,6 +29,73 @@
   ["Are my items insured?", "We explain protection options before booking so you can choose the level that fits your move."]
 ] %>
 <% asset_image = ->(file) { "images/#{file}" } %>
+<% content_for :title, "Removlo — UK Home & Office Removals, Packing, Storage & Live Tracking" %>
+<% content_for :meta_description, "Move smarter with Removlo. Compare transparent UK removals quotes, book professional home or office movers, add packing and storage, and track your move with dedicated support." %>
+<% content_for :head do %>
+  <% structured_data = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "#{root_url}#organization",
+        "name": "Removlo",
+        "url": root_url,
+        "logo": image_url(asset_image.call("logo.png")),
+        "sameAs": []
+      },
+      {
+        "@type": "MovingCompany",
+        "@id": "#{root_url}#moving-company",
+        "name": "Removlo",
+        "url": root_url,
+        "image": image_url(asset_image.call("logo.png")),
+        "telephone": "+447950202441",
+        "email": "hello@removlo.com",
+        "areaServed": {
+          "@type": "Country",
+          "name": "United Kingdom"
+        },
+        "priceRange": "££",
+        "description": "UK removals company offering home removals, office removals, packing services, storage solutions, transparent quotes, and live move tracking.",
+        "makesOffer": service_cards.map do |title, description, _icon, _image|
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": title,
+              "description": description,
+              "areaServed": "United Kingdom"
+            }
+          }
+        end
+      },
+      {
+        "@type": "WebSite",
+        "@id": "#{root_url}#website",
+        "name": "Removlo",
+        "url": root_url,
+        "publisher": {
+          "@id": "#{root_url}#organization"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "#{root_url}#faq",
+        "mainEntity": faqs.map do |question, answer|
+          {
+            "@type": "Question",
+            "name": question,
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": answer
+            }
+          }
+        end
+      }
+    ]
+  } %>
+  <script type="application/ld+json"><%= JSON.generate(structured_data).html_safe %></script>
+<% end %>
 
 <main data-controller="cursor-glow reveal" class="relative flex-1 overflow-hidden bg-[#f7f9ff] text-slate-800">
   <div class="cursor-glow pointer-events-none fixed inset-0 z-0 opacity-40"></div>
