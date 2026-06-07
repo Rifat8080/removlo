@@ -1,424 +1,591 @@
-<main class="flex-1 pt-16">
-  <!-- Hero -->
-  <section class="relative overflow-hidden px-4 pb-16 pt-12 sm:px-6 min-[1025px]:px-8 min-[1025px]:pb-24 min-[1025px]:pt-20">
-    <div class="pointer-events-none absolute left-6 top-44 hidden rounded-2xl border border-white/70 bg-white/60 px-4 py-3 shadow-xl shadow-indigo-900/5 backdrop-blur-xl 2xl:block float-slow" aria-hidden="true">
-      <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Live route</p>
-      <p class="mt-1 text-sm font-bold text-slate-900">London → Leeds</p>
-    </div>
-    <div class="pointer-events-none absolute right-6 top-52 hidden rounded-2xl border border-white/70 bg-white/60 px-4 py-3 shadow-xl shadow-sky-900/5 backdrop-blur-xl 2xl:block float-slower" aria-hidden="true">
-      <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">ETA sync</p>
-      <p class="mt-1 text-sm font-bold text-slate-900">Crew arriving 09:30</p>
-    </div>
-    <div class="relative z-10 mx-auto max-w-screen-xl">
-      <div class="min-[1025px]:grid min-[1025px]:grid-cols-12 min-[1025px]:items-center min-[1025px]:gap-12">
-        <div class="reveal min-[1025px]:col-span-7">
-          <span class="mb-5 inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50/80 px-3.5 py-1.5 text-xs font-semibold text-indigo-700 shadow-sm shadow-indigo-900/5 backdrop-blur">
-            <span class="relative flex h-2 w-2">
-              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-indigo-500 opacity-75"></span>
-              <span class="relative inline-flex h-2 w-2 rounded-full bg-indigo-600"></span>
-            </span>
-            Rated 4.9/5 · 15,000+ moves delivered
-          </span>
+<% service_cards = [
+  ["Home Removals", "From flats to family homes, we move it all.", "home_removals_icon.svg", "home_removals_image.png"],
+  ["Office Removals", "Minimise downtime with our efficient service.", "office_removals_icon.svg", "office_removals_image.png"],
+  ["Packing Services", "Professional packing for a stress-free move.", "packing_services_icon.svg", "packing_services_image.png"],
+  ["Storage Solutions", "Secure short or long-term storage options.", "storage_solutions_icon.svg", "storage_solutions_image.png"]
+] %>
+<% trust_logos = [
+  ["Google", "Excellent 4.9"],
+  ["Trustpilot", "5-star service"],
+  ["feefo", "Verified reviews"],
+  ["Which?", "Trusted mover"]
+] %>
+<% benefits = [
+  ["Real-time tracking", "Know your route, ETA, and crew status.", "route-tracking.svg"],
+  ["Dedicated support", "One friendly coordinator from quote to keys.", "headset-support.svg"],
+  ["Care & protection", "Careful crews, insurance options, and item notes.", "shield-protection.svg"],
+  ["Transparent pricing", "No surprises, no pressure, no hidden extras.", "price-receipt.svg"]
+] %>
+<% reviews = [
+  ["Sarah T.", "London to Manchester", "Removlo made our move go from stressful to simple. The team was professional, careful, and friendly."],
+  ["James R.", "Office relocation", "Clear quote, punctual crew, and great communication. We were working again the next morning."],
+  ["Amina K.", "Packing and storage", "The packing team labelled everything beautifully and kept fragile items safe from start to finish."]
+] %>
+<% faqs = [
+  ["How much does a home move cost?", "The price depends on distance, property size, access, packing, and storage needs. The quote form gives us what we need to prepare a clear estimate."],
+  ["How far in advance should I book?", "Two to six weeks is ideal for most moves, but we can often help with shorter notice depending on crew availability."],
+  ["What is included in the quote?", "Your quote itemises crew time, loading, transport, unloading, and any selected extras such as packing or storage."],
+  ["Do you offer packing services?", "Yes. You can book full packing, fragile-only packing, materials, labelling, and inventory support."],
+  ["Are my items insured?", "We explain protection options before booking so you can choose the level that fits your move."]
+] %>
+<% asset_image = ->(file) { "images/#{file}" } %>
 
-          <h1 class="mb-5 text-balance text-4xl font-extrabold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl min-[1025px]:text-6xl">
-            Moving home,
-            <span class="relative whitespace-nowrap">
-              <span class="bg-gradient-to-r from-indigo-600 via-blue-600 to-sky-500 bg-clip-text text-transparent">made smart</span>
-              <svg class="absolute -bottom-2 left-0 w-full" height="12" viewBox="0 0 300 12" fill="none" preserveAspectRatio="none"><path d="M2 9C75 3 225 3 298 9" stroke="url(#g)" stroke-width="4" stroke-linecap="round"/><defs><linearGradient id="g" x1="0" x2="300" y1="0" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#6366f1"/><stop offset="1" stop-color="#0ea5e9"/></linearGradient></defs></svg>
-            </span>
-          </h1>
-          <p class="mb-8 max-w-xl text-pretty text-lg leading-relaxed text-slate-600">
-            Removlo blends intelligent logistics with real human support. One dedicated coordinator, transparent pricing, and full coverage from your first quote to settling into your new home.
-          </p>
+<main data-controller="cursor-glow reveal" class="relative flex-1 overflow-hidden bg-[#f7f9ff] text-slate-800">
+  <div class="cursor-glow pointer-events-none fixed inset-0 z-0 opacity-40"></div>
+  <div class="pointer-events-none absolute inset-x-0 top-0 z-0 h-[48rem] bg-[radial-gradient(circle_at_18%_20%,rgba(37,99,235,0.14),transparent_26%),radial-gradient(circle_at_80%_16%,rgba(124,58,237,0.13),transparent_28%),linear-gradient(180deg,#fbfdff_0%,#eef5ff_58%,#ffffff_100%)]"></div>
+  <div class="pointer-events-none absolute left-1/2 top-28 z-0 h-[38rem] w-[58rem] -translate-x-1/2 rounded-full bg-blue-200/25 blur-3xl"></div>
 
-          <div class="mb-8 flex flex-wrap gap-4">
-            <% if user_signed_in? %>
-              <%= link_to current_user.customer? ? new_quotation_path : dashboard_path, class: "group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 transition duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-indigo-600/40 focus:outline-none focus:ring-4 focus:ring-indigo-300 active:translate-y-0 active:scale-[.98] min-[1025px]:w-auto" do %>
-                <%= current_user.customer? ? "Request your quote" : "Open dashboard" %>
-                <svg class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-              <% end %>
-            <% else %>
-              <%= link_to "#quote", class: "group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 transition duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-indigo-600/40 focus:outline-none focus:ring-4 focus:ring-indigo-300 active:translate-y-0 active:scale-[.98] min-[1025px]:w-auto" do %>
-                Get your free quote
-                <svg class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-              <% end %>
-              <a href="#how-it-works" class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white/80 px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-sm backdrop-blur transition duration-200 hover:-translate-y-0.5 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 active:translate-y-0 min-[1025px]:w-auto">
-                See how it works
-              </a>
-            <% end %>
-          </div>
-
-          <div class="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-slate-500">
-            <% ["Fully insured", "No hidden fees", "UK-wide coverage"].each do |item| %>
-              <span class="inline-flex items-center gap-2">
-                <svg class="h-5 w-5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                <%= item %>
-              </span>
-            <% end %>
-          </div>
-
-          <div class="mt-8 w-full max-w-xl overflow-hidden rounded-2xl border border-slate-200/80 bg-white/65 p-2 shadow-sm backdrop-blur">
-            <div class="route-marquee flex w-max items-center gap-2">
-              <% (["London → Manchester", "Bristol → Bath", "Edinburgh → Glasgow", "Cardiff → Swansea"] * 2).each do |route| %>
-                <span class="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-600 shadow-sm ring-1 ring-slate-100">
-                  <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
-                  <%= route %>
-                </span>
-              <% end %>
-            </div>
-          </div>
+  <section class="relative isolate z-10 overflow-hidden px-3 pb-7 pt-24 min-[380px]:px-4 sm:px-6 sm:pt-24 lg:px-8">
+    <div class="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(37,99,235,0.055)_1px,transparent_1px),linear-gradient(to_bottom,rgba(37,99,235,0.055)_1px,transparent_1px)] bg-[size:3rem_3rem]"></div>
+    <div class="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_45%_24%,rgba(96,165,250,0.16),transparent_34%),radial-gradient(circle_at_78%_22%,rgba(124,58,237,0.10),transparent_34%),linear-gradient(180deg,rgba(255,255,255,0.30),rgba(239,246,255,0.25)_55%,rgba(255,255,255,0.65))]"></div>
+    <div class="mx-auto max-w-[1320px]">
+      <div class="reveal relative">
+        <div class="pointer-events-none absolute -inset-x-8 -inset-y-10 bg-[radial-gradient(circle_at_45%_24%,rgba(96,165,250,0.22),transparent_32%),radial-gradient(circle_at_78%_22%,rgba(124,58,237,0.12),transparent_32%),linear-gradient(180deg,rgba(255,255,255,0.45),rgba(239,246,255,0.35)_55%,rgba(255,255,255,0.35))]"></div>
+        <div class="pointer-events-none absolute -top-12 -bottom-12 left-[22%] right-[13%] hidden min-[1360px]:block">
+          <div class="absolute inset-0 bg-[radial-gradient(circle_at_52%_54%,rgba(96,165,250,0.16),transparent_48%)]"></div>
+          <%= image_tag asset_image.call("van.png"), alt: "", class: "absolute inset-0 h-full w-full object-cover object-center opacity-90 contrast-105 saturate-105 [mask-image:radial-gradient(ellipse_at_center,black_34%,rgba(0,0,0,0.72)_54%,transparent_76%)]", aria: { hidden: true } %>
         </div>
 
-        <!-- Quote card -->
-        <div class="reveal mt-12 min-[1025px]:col-span-5 min-[1025px]:mt-0" style="transition-delay:120ms" id="quote">
-          <div class="group/card relative">
-            <div class="absolute -inset-1 rounded-3xl bg-gradient-to-br from-indigo-500/25 via-blue-500/10 to-sky-400/25 blur-xl transition duration-500 group-hover/card:from-indigo-500/35 group-hover/card:to-sky-400/35"></div>
-            <span class="absolute right-3 top-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-indigo-700 shadow-lg shadow-indigo-900/10 ring-1 ring-indigo-100 sm:-right-3 sm:-top-3">
-              <svg class="h-3.5 w-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-              2-min form
-            </span>
-            <div class="soft-shine relative w-full rounded-2xl border border-slate-200/80 bg-white/90 p-6 shadow-2xl shadow-indigo-900/10 backdrop-blur sm:p-8">
-              <div class="mb-6 flex items-center gap-3 border-b border-slate-100 pb-5">
-                <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-600/30">
-                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                </span>
-                <div>
-                  <p class="text-xs font-semibold uppercase tracking-wide text-indigo-600">Instant estimate</p>
-                  <h2 class="text-lg font-bold text-slate-900">Get your quick quote</h2>
-                </div>
-              </div>
+        <div class="relative grid min-w-0 gap-6 sm:gap-7 min-[1360px]:min-h-[31rem] min-[1360px]:grid-cols-[minmax(21rem,0.95fr)_minmax(31rem,1.1fr)_minmax(22rem,0.92fr)] min-[1360px]:items-center">
+          <div class="relative isolate z-20 min-w-0 overflow-hidden pb-4 sm:pb-6 min-[1360px]:overflow-visible min-[1360px]:pb-0">
+            <%= image_tag asset_image.call("van.png"), alt: "", class: "pointer-events-none absolute -right-16 top-12 -z-10 h-52 w-[105%] object-contain object-right-bottom opacity-30 mix-blend-multiply contrast-105 saturate-105 [mask-image:linear-gradient(to_left,black_0%,rgba(0,0,0,0.72)_46%,transparent_100%)] min-[380px]:top-10 min-[380px]:h-60 sm:-right-24 sm:top-0 sm:h-[24rem] sm:w-[82%] sm:opacity-40 md:w-[72%] min-[1360px]:hidden", aria: { hidden: true } %>
+            <div class="inline-flex max-w-full items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/90 px-2.5 py-1.5 text-[8px] font-black uppercase tracking-[0.13em] text-slate-700 shadow-sm shadow-blue-950/5 backdrop-blur min-[380px]:gap-2 min-[380px]:px-3 min-[380px]:text-[10px]">
+              <%= image_tag asset_image.call("route-pin.svg"), alt: "", class: "h-3.5 w-3.5 shrink-0 min-[380px]:h-4 min-[380px]:w-4", aria: { hidden: true } %>
+              UK's smartest way to move
+            </div>
 
-              <%= form_with scope: :quotation, url: quotations_path, method: :post, local: true, class: "space-y-5" do |f| %>
-                <% unless user_signed_in? %>
-                  <div>
-                    <%= f.label :customer_email, "Email", class: "mb-2 block text-sm font-medium text-slate-900" %>
-                    <%= f.email_field :customer_email, required: true, autocomplete: "email", placeholder: "you@example.com", class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 placeholder-slate-400 transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200" %>
-                  </div>
+            <h1 class="mt-4 max-w-2xl text-[2.05rem] font-black leading-[0.98] tracking-[-0.055em] text-slate-950 min-[380px]:text-[2.35rem] min-[420px]:text-[2.6rem] sm:text-[3.2rem] xl:text-[3.95rem]">
+              <span class="sm:whitespace-nowrap">Moving home,</span> <span class="relative inline-block bg-gradient-to-r from-blue-700 via-indigo-600 to-violet-600 bg-clip-text pb-3 text-transparent">made smart<svg class="absolute -bottom-0.5 left-0 h-3 w-full text-blue-600" viewBox="0 0 280 18" fill="none" preserveAspectRatio="none" aria-hidden="true"><path d="M4 13C64 4 204 4 276 12" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></svg></span>
+            </h1>
+            <p class="mt-3 max-w-md text-[13px] font-medium leading-6 text-slate-600 sm:text-[0.95rem] sm:leading-7">
+              Removlo blends intelligent logistics with real human support. Get a transparent quote, track your move live, and relax knowing your move is in safe hands.
+            </p>
+
+            <div class="mt-4 flex flex-wrap gap-x-3 gap-y-2 sm:mt-5 sm:gap-x-5">
+              <% [["Fully insured", "shield-protection.svg"], ["No hidden fees", "price-receipt.svg"], ["UK-wide coverage", "route-pin.svg"]].each do |label, icon| %>
+                <div class="inline-flex items-center gap-1.5 text-[10px] font-bold text-slate-600 sm:gap-2 sm:text-xs">
+                  <span class="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-blue-600 sm:h-5 sm:w-5">
+                    <%= image_tag asset_image.call(icon), alt: "", class: "h-2.5 w-2.5 brightness-0 invert sm:h-3 sm:w-3", aria: { hidden: true } %>
+                  </span>
+                  <%= label %>
+                </div>
+              <% end %>
+            </div>
+
+            <div class="mt-5 flex flex-col gap-2.5 min-[380px]:gap-3 sm:flex-row sm:items-center">
+              <% if user_signed_in? %>
+                <%= link_to current_user.customer? ? new_quotation_path : dashboard_path, class: "soft-shine inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 px-4 py-3 text-[11px] font-black text-white shadow-xl shadow-blue-600/25 transition hover:-translate-y-0.5 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-blue-200 sm:px-5 sm:text-xs" do %>
+                  <%= current_user.customer? ? "Start your free quote" : "Open dashboard" %>
+                  <%= image_tag asset_image.call("arrow-right.svg"), alt: "", class: "h-4 w-4 brightness-0 invert", aria: { hidden: true } %>
                 <% end %>
-                <div class="grid grid-cols-1 gap-4 min-[1025px]:grid-cols-2">
-                  <div>
-                    <%= f.label :pickup_postcode, "From", class: "mb-2 block text-sm font-medium text-slate-900" %>
-                    <%= f.text_field :pickup_postcode, required: true, placeholder: "SW1A 1AA", class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 placeholder-slate-400 transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200" %>
-                  </div>
-                  <div>
-                    <%= f.label :delivery_postcode, "To", class: "mb-2 block text-sm font-medium text-slate-900" %>
-                    <%= f.text_field :delivery_postcode, required: true, placeholder: "M1 1AD", class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 placeholder-slate-400 transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200" %>
-                  </div>
-                </div>
-                <div>
-                  <%= f.label :move_size, "Move size", class: "mb-2 block text-sm font-medium text-slate-900" %>
-                  <%= f.select :move_size, [["Studio", "studio"], ["1 bedroom", "one_bed"], ["2 bedrooms", "two_bed"], ["3 bedrooms", "three_bed"], ["4+ bedrooms", "four_plus"], ["Office / commercial", "office"]], {}, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200" %>
-                </div>
-                <div>
-                  <%= f.label :preferred_move_date, "Preferred date", class: "mb-2 block text-sm font-medium text-slate-900" %>
-                  <%= f.date_field :preferred_move_date, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200" %>
-                </div>
-                <%= f.hidden_field :service_level, value: "standard" %>
-                <%= f.submit "Request my estimate", class: "w-full cursor-pointer rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 transition duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-indigo-600/40 focus:outline-none focus:ring-4 focus:ring-indigo-300 active:translate-y-0 active:scale-[.99]" %>
-                <p class="text-center text-xs text-slate-500">No obligation · Response within 24 hours</p>
+              <% else %>
+                <%= link_to "#quote", class: "soft-shine inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 px-4 py-3 text-[11px] font-black text-white shadow-xl shadow-blue-600/25 transition hover:-translate-y-0.5 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-blue-200 sm:px-5 sm:text-xs" do %>
+                  Get your free quote
+                  <%= image_tag asset_image.call("arrow-right.svg"), alt: "", class: "h-4 w-4 brightness-0 invert", aria: { hidden: true } %>
+                <% end %>
               <% end %>
+              <a href="#how-it-works" class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white/90 px-4 py-3 text-[11px] font-black text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:text-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100 sm:px-5 sm:text-xs">
+                See how it works
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 5v14l11-7z"/></svg>
+              </a>
+            </div>
+
+            <div class="relative mt-4 max-w-full overflow-hidden rounded-2xl border border-white/80 bg-white/75 p-1.5 shadow-lg shadow-blue-950/5 backdrop-blur-xl sm:max-w-md sm:p-2">
+              <div class="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-white to-transparent"></div>
+              <div class="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-white to-transparent"></div>
+              <div class="route-marquee flex w-max items-center gap-2">
+                <% (["London to Leeds", "Bristol to Bath", "Cardiff to Swansea", "Edinburgh to Glasgow"] * 2).each do |route| %>
+                  <span class="inline-flex items-center gap-2 rounded-xl bg-white px-2.5 py-2 text-[10px] font-black text-slate-600 shadow-sm ring-1 ring-slate-100 sm:px-3 sm:text-[11px]">
+                    <span class="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_0_4px_rgba(52,211,153,0.12)]"></span>
+                    <%= route %>
+                  </span>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="mt-5 flex flex-col gap-3 sm:mt-6 sm:flex-row sm:items-center sm:gap-4">
+              <div class="flex -space-x-3">
+                <% ["SM", "JR", "AK", "OP"].each_with_index do |initials, index| %>
+                  <span class="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br <%= index.even? ? 'from-blue-600 to-indigo-600' : 'from-violet-600 to-fuchsia-600' %> text-[9px] font-black text-white shadow-md sm:h-9 sm:w-9 sm:text-[10px]"><%= initials %></span>
+                <% end %>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-slate-500">Trusted by thousands across the UK</p>
+                <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <span class="text-sm font-black text-slate-950">4.9/5</span>
+                  <span class="flex text-amber-400" aria-label="Five star rating"><% 5.times do %><svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path d="M9.05 2.93c.3-.92 1.6-.92 1.9 0l1.07 3.29a1 1 0 00.95.69h3.46c.97 0 1.37 1.24.59 1.81l-2.8 2.03a1 1 0 00-.36 1.12l1.07 3.29c.3.92-.76 1.69-1.54 1.12l-2.8-2.03a1 1 0 00-1.18 0l-2.8 2.03c-.78.57-1.84-.2-1.54-1.12l1.07-3.29a1 1 0 00-.36-1.12l-2.8-2.03c-.78-.57-.38-1.81.59-1.81h3.46a1 1 0 00.95-.69l1.07-3.29z"/></svg><% end %></span>
+                  <span class="text-xs font-bold text-emerald-600">Trustpilot</span>
+                </div>
+              </div>
             </div>
           </div>
+
+          <div class="relative z-10 hidden min-h-[14rem] min-[380px]:min-h-[16rem] sm:min-h-[25rem] min-[1360px]:block min-[1360px]:min-h-[30rem]">
+            <div class="relative isolate h-full min-h-[14rem] min-[380px]:min-h-[16rem] sm:min-h-[25rem] min-[1360px]:min-h-[30rem]">
+
+              <div class="float-slower absolute left-1/2 top-8 hidden -translate-x-1/2 items-center gap-2 rounded-2xl border border-white/80 bg-white/92 px-3.5 py-2.5 shadow-xl shadow-blue-950/10 backdrop-blur-xl sm:flex">
+                <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-50">
+                  <%= image_tag asset_image.call("route-pin.svg"), alt: "", class: "h-5 w-5", aria: { hidden: true } %>
+                </span>
+                <span>
+                  <span class="block text-[9px] font-black uppercase tracking-wide text-slate-400">Live tracking</span>
+                  <span class="block text-xs font-black text-slate-950">London to Leeds <span class="ml-1 text-emerald-600">In progress</span></span>
+                </span>
+              </div>
+
+              <div class="float-slow absolute left-5 top-16 hidden rounded-2xl border border-white/80 bg-white/90 p-3 shadow-xl shadow-blue-950/10 backdrop-blur-xl sm:block">
+                <p class="text-[9px] font-black uppercase tracking-wide text-slate-400">Crew ETA</p>
+                <p class="mt-1 text-xs font-black text-slate-950">08:30 AM</p>
+                <p class="mt-0.5 text-[10px] font-bold text-emerald-600">Today</p>
+              </div>
+              <div class="absolute bottom-10 left-8 hidden items-center gap-2 rounded-2xl border border-white/80 bg-white/90 px-3 py-2 shadow-xl shadow-blue-950/10 backdrop-blur-xl min-[1360px]:flex">
+                <span class="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-50">
+                  <%= image_tag asset_image.call("shield-protection.svg"), alt: "", class: "h-4 w-4", aria: { hidden: true } %>
+                </span>
+                <span>
+                  <span class="block text-[9px] font-black uppercase tracking-wide text-slate-400">Protected move</span>
+                  <span class="block text-[10px] font-bold text-slate-700">Fully insured</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <aside id="quote" class="relative z-20 rounded-[1.25rem] border border-white/85 bg-white/95 p-4 shadow-[0_24px_70px_rgba(30,64,175,0.16)] ring-1 ring-blue-100/80 backdrop-blur-2xl sm:rounded-[1.5rem] sm:p-6">
+            <div class="flex items-start justify-between gap-3 sm:gap-4">
+              <div class="min-w-0">
+                <span class="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.16em] text-blue-700">
+                  <%= image_tag asset_image.call("quote-document.svg"), alt: "", class: "h-4 w-4", aria: { hidden: true } %>
+                  2-min instant quote
+                </span>
+                <h2 class="mt-4 text-xl font-black tracking-[-0.03em] text-slate-950 sm:text-2xl">Get your quick quote</h2>
+                <p class="mt-1 text-xs font-semibold text-slate-500">Tell us the basics and we will shape the plan.</p>
+              </div>
+              <div class="shrink-0 rounded-2xl bg-gradient-to-br from-blue-600 to-violet-600 p-2.5 shadow-lg shadow-blue-600/25 sm:p-3">
+                <%= image_tag asset_image.call("price-receipt.svg"), alt: "", class: "h-5 w-5 brightness-0 invert sm:h-6 sm:w-6", aria: { hidden: true } %>
+              </div>
+            </div>
+
+            <%= form_with scope: :quotation, url: quotations_path, method: :post, local: true, class: "mt-5 space-y-4" do |f| %>
+              <% field_class = "block w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm font-semibold text-slate-900 placeholder-slate-400 shadow-sm transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 sm:px-4" %>
+              <% label_class = "mb-1.5 block text-[10px] font-black uppercase tracking-wide text-slate-500" %>
+
+              <% unless user_signed_in? %>
+                <div>
+                  <%= f.label :customer_email, "Email address", class: label_class %>
+                  <%= f.email_field :customer_email, required: true, autocomplete: "email", placeholder: "you@example.com", class: field_class %>
+                </div>
+              <% end %>
+
+              <div class="grid gap-3 sm:grid-cols-2 min-[1360px]:grid-cols-1 2xl:grid-cols-2">
+                <div>
+                  <%= f.label :pickup_postcode, "From", class: label_class %>
+                  <%= f.text_field :pickup_postcode, required: true, placeholder: "SW1A 1AA", class: field_class %>
+                </div>
+                <div>
+                  <%= f.label :delivery_postcode, "To", class: label_class %>
+                  <%= f.text_field :delivery_postcode, required: true, placeholder: "M1 1AD", class: field_class %>
+                </div>
+              </div>
+
+              <div class="grid gap-3 sm:grid-cols-2 min-[1360px]:grid-cols-1 2xl:grid-cols-2">
+                <div>
+                  <%= f.label :move_size, "Move size", class: label_class %>
+                  <%= f.select :move_size, [["Select size", ""], ["Studio", "studio"], ["1 bedroom", "one_bed"], ["2 bedrooms", "two_bed"], ["3 bedrooms", "three_bed"], ["4+ bedrooms", "four_plus"], ["Office / commercial", "office"]], {}, class: field_class %>
+                </div>
+                <div>
+                  <%= f.label :preferred_move_date, "Move date", class: label_class %>
+                  <%= f.date_field :preferred_move_date, class: field_class %>
+                </div>
+              </div>
+
+              <div>
+                <%= f.label :customer_notes, "Additional services", class: label_class %>
+                <%= f.text_field :customer_notes, placeholder: "Packing, storage, fragile items...", class: field_class %>
+              </div>
+
+              <%= f.hidden_field :service_level, value: "standard" %>
+              <%= f.submit "Get my instant quote", class: "w-full cursor-pointer rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 px-4 py-3.5 text-sm font-black text-white shadow-xl shadow-blue-600/25 transition hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-blue-600/30 focus:outline-none focus:ring-4 focus:ring-blue-200 sm:px-6" %>
+              <p class="text-center text-[11px] font-semibold text-slate-500">No obligation. Response within 24 hours.</p>
+            <% end %>
+          </aside>
+        </div>
+      </div>
+
+      <div class="reveal mt-6 grid gap-4 min-[1360px]:grid-cols-[0.74fr_1fr]">
+        <div class="rounded-[1.5rem] border border-white bg-white/90 p-5 shadow-xl shadow-blue-950/5 backdrop-blur">
+          <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Trusted by thousands across the UK</p>
+          <div class="mt-4 grid gap-4 sm:grid-cols-2 min-[1360px]:grid-cols-4">
+            <% trust_logos.each do |name, rating| %>
+              <div class="border-slate-100 min-[1360px]:border-r min-[1360px]:last:border-r-0">
+                <p class="text-base font-black tracking-tight text-slate-900"><%= name %></p>
+                <div class="mt-1 flex text-amber-400" aria-hidden="true"><% 5.times do %><svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.05 2.93c.3-.92 1.6-.92 1.9 0l1.07 3.29a1 1 0 00.95.69h3.46c.97 0 1.37 1.24.59 1.81l-2.8 2.03a1 1 0 00-.36 1.12l1.07 3.29c.3.92-.76 1.69-1.54 1.12l-2.8-2.03a1 1 0 00-1.18 0l-2.8 2.03c-.78.57-1.84-.2-1.54-1.12l1.07-3.29a1 1 0 00-.36-1.12l-2.8-2.03c-.78-.57-.38-1.81.59-1.81h3.46a1 1 0 00.95-.69l1.07-3.29z"/></svg><% end %></div>
+                <p class="mt-1 text-[10px] font-bold uppercase tracking-wide text-slate-400"><%= rating %></p>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="grid gap-3 rounded-[1.5rem] border border-white bg-white/90 p-4 shadow-xl shadow-blue-950/5 backdrop-blur sm:grid-cols-2 min-[1360px]:grid-cols-4">
+          <% [["15K+", "Moves completed", "users-customers.svg"], ["4.9/5", "Average rating", "rating-star.svg"], ["50+", "Trained movers", "shield-protection.svg"], ["20+", "UK locations", "location-contact.svg"]].each do |stat, label, icon| %>
+            <div class="flex items-center gap-3 border-slate-100 px-2 py-2 min-[1360px]:border-r min-[1360px]:last:border-r-0">
+              <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50">
+                <%= image_tag asset_image.call(icon), alt: "", class: "h-6 w-6", aria: { hidden: true } %>
+              </span>
+              <span>
+                <span class="block text-xl font-black tracking-tight text-slate-950"><%= stat %></span>
+                <span class="block text-[11px] font-bold text-slate-500"><%= label %></span>
+              </span>
+            </div>
+          <% end %>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Trust bar -->
-  <section class="border-y border-slate-200/70 bg-white/60 py-8 backdrop-blur">
-    <div class="mx-auto max-w-screen-xl px-4 sm:px-6 min-[1025px]:px-8">
-      <p class="reveal mb-6 text-center text-xs font-semibold uppercase tracking-widest text-slate-400">Trusted by movers across the UK</p>
-      <div class="grid grid-cols-2 gap-8 min-[1025px]:grid-cols-4">
-        <% [["15K+", "Homes moved"], ["4.9/5", "Average rating"], ["50+", "Cities covered"], ["20+", "Years experience"]].each_with_index do |(stat, label), i| %>
-          <div class="reveal group text-center" style="transition-delay:<%= i * 70 %>ms">
-            <p class="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-3xl font-extrabold text-transparent transition-transform duration-300 group-hover:scale-110 sm:text-4xl"><%= stat %></p>
-            <p class="mt-1 text-xs font-semibold uppercase tracking-wider text-slate-500"><%= label %></p>
+  <section id="services" class="relative z-10 px-4 py-7 sm:px-6 sm:py-9 lg:px-8">
+    <div class="mx-auto max-w-[1320px]">
+      <div class="reveal rounded-[2rem] border border-white/90 bg-white/80 p-4 shadow-[0_24px_80px_rgba(30,64,175,0.10)] ring-1 ring-blue-100/70 backdrop-blur-xl sm:p-6 lg:p-7">
+        <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <h2 class="text-2xl font-black tracking-[-0.04em] text-slate-950 sm:text-3xl">Our services</h2>
           </div>
-        <% end %>
+          <a href="#quote" class="inline-flex items-center gap-2 text-xs font-black text-blue-700 sm:text-sm">
+            View all services
+            <%= image_tag asset_image.call("arrow-right.svg"), alt: "", class: "h-4 w-4", aria: { hidden: true } %>
+          </a>
+        </div>
+
+        <div class="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <% service_cards.each do |title, desc, icon, image| %>
+            <article class="group relative min-h-[18rem] overflow-hidden rounded-[1.45rem] border border-blue-100/80 bg-white shadow-[0_14px_45px_rgba(30,64,175,0.07)] transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-950/10 sm:min-h-[18.5rem] xl:min-h-[15.5rem]">
+              <div class="relative z-10 flex items-start gap-4 px-5 pt-5 sm:px-6 sm:pt-6 xl:gap-3 xl:px-4 xl:pt-4">
+                <span class="flex h-12 w-12 shrink-0 items-center justify-center text-blue-700 xl:h-11 xl:w-11">
+                  <%= image_tag asset_image.call(icon), alt: "", class: "h-10 w-10 xl:h-9 xl:w-9", aria: { hidden: true } %>
+                </span>
+                <div class="min-w-0 pt-1">
+                  <h3 class="text-base font-black tracking-tight text-slate-950 xl:text-sm"><%= title %></h3>
+                  <p class="mt-2 max-w-[12rem] text-sm font-semibold leading-6 text-slate-500 xl:max-w-[9.5rem] xl:text-[11px] xl:leading-5"><%= desc %></p>
+                </div>
+              </div>
+              <div class="absolute inset-x-0 bottom-0 h-[58%] overflow-hidden bg-slate-100">
+                <%= image_tag asset_image.call(image), alt: "#{title} service", class: "h-full w-full object-cover object-bottom transition duration-700 group-hover:scale-105" %>
+              </div>
+              <a href="#quote" class="absolute bottom-5 right-5 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white text-blue-700 shadow-lg shadow-blue-950/15 ring-1 ring-slate-200 transition group-hover:-translate-y-0.5 group-hover:bg-blue-600 group-hover:text-white xl:bottom-4 xl:right-4 xl:h-10 xl:w-10" aria-label="Get quote for <%= title %>">
+                <%= image_tag asset_image.call("arrow-right.svg"), alt: "", class: "h-4 w-4 transition group-hover:brightness-0 group-hover:invert", aria: { hidden: true } %>
+              </a>
+            </article>
+          <% end %>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Services -->
-  <section id="services" class="py-16 sm:py-24">
-    <div class="mx-auto max-w-screen-xl px-4 sm:px-6 min-[1025px]:px-8">
-      <div class="reveal mx-auto mb-14 max-w-2xl text-center">
-        <p class="mb-2 text-sm font-semibold uppercase tracking-wide text-indigo-600">Services</p>
-        <h2 class="mb-4 text-balance text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Everything your move needs</h2>
-        <p class="text-pretty text-lg text-slate-600">Mix and match, or hand us the whole relocation. We scale to your move.</p>
-      </div>
+  <section id="how-it-works" class="relative z-10 px-4 py-7 sm:px-6 sm:py-9 lg:px-8">
+    <div class="reveal mx-auto max-w-[1320px] rounded-[2rem] border border-white/90 bg-white/85 p-5 shadow-[0_24px_80px_rgba(30,64,175,0.09)] ring-1 ring-blue-100/70 backdrop-blur-xl sm:p-7">
+      <div class="grid gap-8 min-[1360px]:grid-cols-[1fr_18rem] min-[1360px]:items-center">
+        <div>
+          <div>
+            <h2 class="text-2xl font-black tracking-[-0.04em] text-slate-950 sm:text-3xl">How it works</h2>
+            <p class="mt-1 text-sm font-bold text-slate-500">3 simple steps to a stress-free move</p>
+          </div>
 
-      <div class="grid gap-6 min-[1025px]:grid-cols-3">
-        <% [
-          ["box", "Packing", "Premium materials, trained packers, and careful fragile-item protocols.", "from-indigo-500 to-blue-500"],
-          ["truck", "Transport", "GPS-tracked fleet, careful loading, and reliable UK-wide routes.", "from-blue-500 to-sky-500"],
-          ["archive", "Storage", "Secure, climate-aware units for short or long-term storage.", "from-sky-500 to-cyan-500"],
-          ["shield", "Insurance", "Coverage matched to your inventory and explained upfront.", "from-violet-500 to-indigo-500"],
-          ["heart", "Pet moving", "Compliant, low-stress relocation for your animals.", "from-fuchsia-500 to-violet-500"],
-          ["home", "Settling-in", "Schools, utilities, and local orientation once you arrive.", "from-emerald-500 to-teal-500"]
-        ].each_with_index do |(icon, title, desc, grad), i| %>
-          <article class="soft-shine reveal group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1.5 hover:border-indigo-200 hover:shadow-xl hover:shadow-indigo-900/5" style="transition-delay:<%= (i % 3) * 80 %>ms">
-            <div class="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-gradient-to-br <%= grad %> opacity-0 blur-2xl transition duration-500 group-hover:opacity-20"></div>
-            <div class="relative mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br <%= grad %> text-white shadow-lg transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110">
-              <% case icon
-                 when "box" %><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-              <% when "truck" %><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8h4l3 3v5a1 1 0 01-1 1h-1"/></svg>
-              <% when "archive" %><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
-              <% when "shield" %><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-              <% when "heart" %><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-              <% else %><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-              <% end %>
-            </div>
-            <h3 class="relative mb-2 text-lg font-bold tracking-tight text-slate-900"><%= title %></h3>
-            <p class="relative text-pretty text-sm text-slate-600"><%= desc %></p>
-            <span class="relative mt-4 inline-flex items-center gap-1 text-sm font-semibold text-indigo-600 opacity-0 transition-all duration-300 group-hover:translate-x-0.5 group-hover:opacity-100">
-              Learn more
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-            </span>
-          </article>
-        <% end %>
-      </div>
-    </div>
-  </section>
+          <div class="mt-8 grid gap-8 md:grid-cols-3 md:gap-5">
+            <% [["Set your quote", "Tell us the basics and get an instant price.", "quote-document.svg"], ["Book your move", "Pick a date that suits you. We'll handle the rest.", "calendar-check.svg"], ["We move you", "Sit back while our team moves you smoothly.", "moving-truck.svg"]].each_with_index do |(title, copy, icon), index| %>
+              <div class="group relative flex gap-4 rounded-2xl p-2 transition duration-300 hover:-translate-y-1 hover:bg-white/70 hover:shadow-xl hover:shadow-blue-950/5 md:block md:text-center">
+                <% unless index == 2 %>
+                  <div class="absolute left-9 top-9 hidden h-px w-[calc(100%+1.25rem)] border-t border-dashed border-blue-200 md:block"></div>
+                <% end %>
+                <div class="relative z-10 mx-0 flex h-[4.5rem] w-[4.5rem] shrink-0 items-center justify-center rounded-full bg-blue-100/80 shadow-[0_12px_30px_rgba(37,99,235,0.16)] ring-4 ring-blue-50 transition duration-300 group-hover:bg-blue-100 group-hover:shadow-[0_18px_40px_rgba(37,99,235,0.24)] md:mx-auto">
+                  <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-violet-600 shadow-lg shadow-blue-700/25 transition duration-300 group-hover:scale-105 group-hover:from-violet-600 group-hover:to-blue-600">
+                    <%= image_tag asset_image.call(icon), alt: "", class: "h-7 w-7 brightness-0 invert transition duration-300 group-hover:scale-110", aria: { hidden: true } %>
+                  </div>
+                </div>
+                <div class="min-w-0">
+                  <span class="mt-3 inline-flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[10px] font-black text-white transition duration-300 group-hover:bg-violet-600 md:mx-auto"><%= index + 1 %></span>
+                  <h3 class="mt-3 text-sm font-black text-slate-950 transition duration-300 group-hover:text-blue-700"><%= title %></h3>
+                  <p class="mt-2 max-w-[12rem] text-xs font-semibold leading-5 text-slate-500 transition duration-300 group-hover:text-slate-600 md:mx-auto"><%= copy %></p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
 
-  <!-- How it works -->
-  <section id="how-it-works" class="border-y border-slate-200/70 bg-gradient-to-b from-indigo-50/60 to-white py-16 sm:py-24">
-    <div class="mx-auto max-w-screen-xl px-4 sm:px-6 min-[1025px]:px-8">
-      <div class="reveal mx-auto mb-14 max-w-2xl text-center">
-        <span class="mb-3 inline-block rounded-full bg-gradient-to-br from-indigo-600 to-blue-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-lg shadow-indigo-600/30">The process</span>
-        <h2 class="text-balance text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Four steps to a stress-free move</h2>
-      </div>
-
-      <ol class="relative grid gap-8 min-[1025px]:grid-cols-4">
-        <div class="absolute left-0 right-0 top-7 hidden h-0.5 bg-gradient-to-r from-indigo-200 via-blue-200 to-sky-200 min-[1025px]:block" aria-hidden="true"></div>
-        <% [
-          ["01", "Get a quote", "Share postcodes and move size for a tailored estimate in seconds."],
-          ["02", "Plan together", "Lock services, insurance and dates with your dedicated coordinator."],
-          ["03", "We move you", "Packing, transport and live updates on the big day."],
-          ["04", "Settle in", "Local orientation and ongoing support once you arrive."]
-        ].each_with_index do |(num, title, desc), i| %>
-          <li class="reveal group relative text-center" style="transition-delay:<%= i * 90 %>ms">
-            <span class="relative mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-indigo-100 bg-white font-mono text-lg font-bold text-indigo-600 shadow-md shadow-indigo-900/5 transition duration-300 group-hover:-translate-y-1 group-hover:border-indigo-300 group-hover:bg-gradient-to-br group-hover:from-indigo-600 group-hover:to-blue-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-indigo-600/30"><%= num %></span>
-            <h3 class="mb-2 text-lg font-bold text-slate-900"><%= title %></h3>
-            <p class="mx-auto max-w-xs text-pretty text-sm text-slate-600"><%= desc %></p>
-          </li>
-        <% end %>
-      </ol>
-    </div>
-  </section>
-
-  <!-- Why us / split feature -->
-  <section id="why-us" class="py-16 sm:py-24">
-    <div class="mx-auto max-w-screen-xl px-4 sm:px-6 min-[1025px]:px-8">
-      <div class="grid items-center gap-12 min-[1025px]:grid-cols-2">
-        <div class="reveal">
-          <p class="mb-2 text-sm font-semibold uppercase tracking-wide text-indigo-600">Why Removlo</p>
-          <h2 class="mb-4 text-balance text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Engineered for peace of mind</h2>
-          <p class="mb-8 text-pretty text-lg text-slate-600">We pair premium logistics with intelligent coordination — so nothing slips through the cracks on the most stressful day.</p>
-          <ul class="space-y-3">
-            <% [
-              ["Dedicated coordinator", "A single specialist owns your timeline from quote to keys."],
-              ["Transparent pricing", "Clear quotes with zero surprise fees on moving day."],
-              ["Real-time tracking", "Follow your belongings with live GPS updates en route."],
-              ["Flexible scheduling", "Evening and weekend slots available where you need them."]
-            ].each do |title, desc| %>
-              <li class="group flex gap-4 rounded-xl p-2 transition duration-200 hover:bg-white hover:shadow-sm">
-                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 transition duration-300 group-hover:bg-gradient-to-br group-hover:from-indigo-600 group-hover:to-blue-600 group-hover:text-white">
-                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <div class="rounded-[1.5rem] border border-slate-200/80 bg-white p-5 shadow-sm shadow-blue-950/5">
+          <div class="grid gap-4">
+            <% benefits.each do |title, copy, icon| %>
+              <div class="group flex gap-3 rounded-2xl p-2 transition duration-300 hover:-translate-y-0.5 hover:bg-blue-50/70">
+                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 transition duration-300 group-hover:bg-white group-hover:shadow-md group-hover:shadow-blue-950/10">
+                  <%= image_tag asset_image.call(icon), alt: "", class: "h-6 w-6 transition duration-300 group-hover:scale-110", aria: { hidden: true } %>
                 </span>
                 <div>
-                  <p class="font-semibold text-slate-900"><%= title %></p>
-                  <p class="text-pretty text-sm text-slate-600"><%= desc %></p>
+                  <h3 class="text-sm font-black text-slate-950 transition duration-300 group-hover:text-blue-700"><%= title %></h3>
+                  <p class="mt-1 text-xs font-semibold leading-5 text-slate-500 transition duration-300 group-hover:text-slate-600"><%= copy %></p>
                 </div>
-              </li>
+              </div>
             <% end %>
-          </ul>
-        </div>
-
-        <div class="reveal relative" style="transition-delay:120ms">
-          <div class="absolute -inset-2 rounded-3xl bg-gradient-to-br from-indigo-500/15 to-sky-400/15 blur-2xl"></div>
-          <div class="relative grid grid-cols-2 gap-4">
-            <div class="space-y-4">
-              <div class="soft-shine rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-900/5">
-                <p class="text-3xl font-extrabold text-slate-900">98%</p>
-                <p class="mt-1 text-sm text-slate-500">On-time arrivals</p>
-              </div>
-              <div class="soft-shine rounded-2xl bg-gradient-to-br from-indigo-600 to-blue-600 p-6 text-white shadow-lg shadow-indigo-600/30 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-600/40">
-                <svg class="mb-3 h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                <p class="text-sm font-medium text-indigo-50">Average coordinator reply time</p>
-                <p class="mt-1 text-2xl font-bold">Under 2 hrs</p>
-              </div>
-            </div>
-            <div class="space-y-4 pt-8">
-              <div class="soft-shine rounded-2xl bg-gradient-to-br from-sky-500 to-cyan-500 p-6 text-white shadow-lg shadow-sky-500/30 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-sky-500/40">
-                <svg class="mb-3 h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                <p class="text-sm font-medium text-sky-50">Crews in</p>
-                <p class="mt-1 text-2xl font-bold">50+ UK cities</p>
-              </div>
-              <div class="soft-shine rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-900/5">
-                <p class="text-3xl font-extrabold text-slate-900">£0</p>
-                <p class="mt-1 text-sm text-slate-500">Hidden fees, ever</p>
-              </div>
-            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Reviews -->
-  <section id="reviews" class="border-y border-slate-200/70 bg-slate-50 py-16 sm:py-24">
-    <div class="mx-auto max-w-screen-xl px-4 sm:px-6 min-[1025px]:px-8">
-      <div class="reveal mx-auto mb-14 max-w-2xl text-center">
-        <p class="mb-2 text-sm font-semibold uppercase tracking-wide text-indigo-600">Reviews</p>
-        <h2 class="text-balance text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Loved by movers like you</h2>
-      </div>
+  <section id="reviews" class="relative z-10 px-4 py-7 sm:px-6 sm:py-9 lg:px-8">
+    <div class="mx-auto max-w-[1320px]">
+      <div class="reveal rounded-[2rem] border border-white/90 bg-white/80 p-4 shadow-[0_24px_80px_rgba(30,64,175,0.10)] ring-1 ring-blue-100/70 backdrop-blur-xl sm:p-6 lg:p-7">
+        <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <h2 class="text-2xl font-black tracking-[-0.04em] text-slate-950 sm:text-3xl">What our customers say</h2>
+          </div>
+          <a href="#quote" class="inline-flex items-center gap-2 text-xs font-black text-blue-700 sm:text-sm">
+            View all reviews
+            <%= image_tag asset_image.call("arrow-right.svg"), alt: "", class: "h-4 w-4", aria: { hidden: true } %>
+          </a>
+        </div>
 
-      <div class="grid gap-6 min-[1025px]:grid-cols-3">
-        <% [
-          ["Removlo made our London to Manchester move effortless. Punctual, careful, and crystal-clear communication throughout.", "Sarah Mitchell", "London → Manchester", "SM"],
-          ["The quote matched the final invoice to the penny. My coordinator replied within hours every single time.", "James Thompson", "Manchester → Bristol", "JT"],
-          ["They anticipated details we'd have completely missed. Genuinely next-level, thoughtful service.", "Emma Wilson", "Edinburgh → London", "EW"]
-        ].each_with_index do |(quote, name, route, initials), i| %>
-          <figure class="soft-shine reveal group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-indigo-900/5" style="transition-delay:<%= i * 90 %>ms">
-            <span class="pointer-events-none absolute -right-2 -top-4 font-serif text-8xl leading-none text-indigo-100 transition-colors duration-300 group-hover:text-indigo-200" aria-hidden="true">&rdquo;</span>
-            <div class="relative mb-4 flex gap-0.5 text-amber-400" aria-label="5 out of 5 stars">
-              <% 5.times do %><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg><% end %>
+        <div class="mt-5 grid gap-5 min-[1360px]:grid-cols-[1fr_1.1fr]">
+        <article class="rounded-[1.5rem] border border-slate-200/80 bg-white p-5 shadow-sm shadow-blue-950/5 sm:p-6">
+          <div id="reviews-carousel" class="relative" data-carousel="static">
+            <div class="relative h-56 overflow-hidden sm:h-44">
+              <% reviews.each_with_index do |(name, route, quote), index| %>
+                <% initials = name.split.map { |part| part.first }.join.first(2).upcase %>
+                <div class="<%= index.zero? ? '' : 'hidden' %> duration-500 ease-in-out" data-carousel-item="<%= index.zero? ? 'active' : '' %>">
+                  <div class="absolute inset-0 flex flex-col justify-between">
+                    <div>
+                      <div class="flex text-amber-400" aria-label="Five star review">
+                        <% 5.times do %>
+                          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path d="M9.05 2.93c.3-.92 1.6-.92 1.9 0l1.07 3.29a1 1 0 00.95.69h3.46c.97 0 1.37 1.24.59 1.81l-2.8 2.03a1 1 0 00-.36 1.12l1.07 3.29c.3.92-.76 1.69-1.54 1.12l-2.8-2.03a1 1 0 00-1.18 0l-2.8 2.03c-.78.57-1.84-.2-1.54-1.12l1.07-3.29a1 1 0 00-.36-1.12l-2.8-2.03c-.78-.57-.38-1.81.59-1.81h3.46a1 1 0 00.95-.69l1.07-3.29z"/></svg>
+                        <% end %>
+                      </div>
+                      <blockquote class="mt-3 max-w-xl text-sm font-bold leading-6 text-slate-800">
+                        <%= quote %>
+                      </blockquote>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                      <span class="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-blue-100 to-violet-100 ring-2 ring-white">
+                        <span class="text-xs font-black text-blue-700"><%= initials %></span>
+                      </span>
+                      <div>
+                        <p class="text-sm font-black text-slate-950"><%= name %></p>
+                        <p class="text-xs font-semibold text-slate-500"><%= route.gsub(" to ", " → ") %></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
             </div>
-            <blockquote class="relative mb-6 flex-1 text-pretty text-slate-700">“<%= quote %>”</blockquote>
-            <figcaption class="relative flex items-center gap-3 border-t border-slate-100 pt-4">
-              <span class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-blue-600 text-sm font-bold text-white"><%= initials %></span>
-              <div>
-                <p class="font-semibold text-slate-900"><%= name %></p>
-                <p class="text-xs text-indigo-600"><%= route %></p>
-              </div>
-            </figcaption>
-          </figure>
-        <% end %>
-      </div>
-    </div>
-  </section>
 
-  <!-- FAQ -->
-  <section id="faq" class="py-16 sm:py-24">
-    <div class="mx-auto max-w-3xl px-4 sm:px-6 min-[1025px]:px-8">
-      <div class="reveal mb-12 text-center">
-        <p class="mb-2 text-sm font-semibold uppercase tracking-wide text-indigo-600">FAQ</p>
-        <h2 class="text-balance text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Questions, answered</h2>
-      </div>
-
-      <div id="accordion-faq" data-accordion="collapse" class="reveal space-y-3">
-        <% [
-          ["How accurate is the online estimate?", "Estimates use your move size and distance. A coordinator confirms everything via a quick phone or video survey before issuing your final fixed quote."],
-          ["Are my belongings insured?", "Yes — we offer tiered coverage options with limits clearly explained before you book, so there are no surprises."],
-          ["Do you handle international moves?", "Our core focus is UK domestic moves. For cross-border relocations we can refer you to trusted partners — just get in touch."],
-          ["How far in advance should I book?", "We recommend 4–6 weeks in peak season and 2–3 weeks off-peak. Need to move sooner? Ask us about last-minute slots."]
-        ].each_with_index do |(question, answer), i| %>
-          <div class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm transition duration-200 hover:border-indigo-200 hover:shadow-md">
-            <h2 id="accordion-faq-heading-<%= i %>">
-              <button
-                type="button"
-                class="flex w-full items-center justify-between gap-3 p-5 text-left font-semibold text-slate-900 transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-indigo-100"
-                data-accordion-target="#accordion-faq-body-<%= i %>"
-                aria-expanded="<%= i.zero? ? 'true' : 'false' %>"
-                aria-controls="accordion-faq-body-<%= i %>"
-              >
-                <span><%= question %></span>
-                <svg data-accordion-icon class="h-3 w-3 shrink-0 text-indigo-500 <%= i.zero? ? 'rotate-180' : '' %>" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1l4 4 4-4"/>
-                </svg>
+            <div class="mt-4 flex items-center justify-between gap-5 sm:absolute sm:bottom-0 sm:right-0 sm:mt-0">
+              <button type="button" class="flex h-9 w-9 items-center justify-center rounded-full text-slate-300 transition hover:bg-blue-50 hover:text-blue-700" data-carousel-prev aria-label="Previous review">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 19l-7-7 7-7"/></svg>
               </button>
-            </h2>
-            <div id="accordion-faq-body-<%= i %>" class="<%= i.zero? ? '' : 'hidden' %>" aria-labelledby="accordion-faq-heading-<%= i %>">
-              <div class="border-t border-slate-100 p-5">
-                <p class="text-sm text-slate-600"><%= answer %></p>
+              <div class="flex items-center gap-2" aria-label="Review slide indicators">
+                <% reviews.each_with_index do |_, index| %>
+                  <button type="button" class="h-2 w-2 rounded-full <%= index.zero? ? 'bg-blue-600' : 'bg-slate-300' %>" aria-label="Show review <%= index + 1 %>" data-carousel-slide-to="<%= index %>"></button>
+                <% end %>
               </div>
+              <button type="button" class="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 transition hover:bg-blue-50 hover:text-blue-700" data-carousel-next aria-label="Next review">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7"/></svg>
+              </button>
             </div>
           </div>
-        <% end %>
+        </article>
+
+        <div class="rounded-[1.5rem] border border-slate-200/80 bg-white p-5 shadow-sm shadow-blue-950/5 sm:p-6">
+          <div class="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+            <% [["Fully insured", "Your move is protected.", "shield-protection.svg"], ["Careful & experienced", "Trained, vetted movers.", "careful-experienced.svg"], ["On-time guarantee", "We stick to the plan.", "clock-check.svg"], ["Eco-friendly", "We care for the planet.", "eco-friendly.svg"]].each do |title, copy, icon| %>
+              <div class="group flex gap-4 rounded-2xl p-2 transition hover:bg-blue-50/60">
+                <span class="flex h-12 w-12 shrink-0 items-center justify-center text-blue-700 transition group-hover:scale-110">
+                  <%= image_tag asset_image.call(icon), alt: "", class: "h-9 w-9", aria: { hidden: true } %>
+                </span>
+                <div>
+                  <h3 class="text-sm font-black text-slate-950 transition group-hover:text-blue-700"><%= title %></h3>
+                  <p class="mt-1 text-xs font-semibold leading-5 text-slate-500"><%= copy %></p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- CTA -->
-  <section id="contact" class="px-4 pb-20 sm:px-6 min-[1025px]:px-8">
-    <div class="mx-auto max-w-screen-xl">
-      <div class="soft-shine reveal relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-700 via-blue-700 to-indigo-800 px-6 py-14 text-center shadow-2xl shadow-indigo-900/30 sm:px-12 sm:py-16">
-        <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#ffffff14_1px,transparent_1px),linear-gradient(to_bottom,#ffffff14_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]"></div>
-        <div class="pointer-events-none absolute -left-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
-        <div class="pointer-events-none absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-sky-400/20 blur-3xl"></div>
-        <div class="relative mx-auto max-w-2xl">
-          <p class="mb-2 text-sm font-semibold uppercase tracking-wide text-indigo-200">Ready to move?</p>
-          <h2 class="mb-4 text-balance text-3xl font-extrabold tracking-tight text-white sm:text-4xl">Start your move the smart way</h2>
-          <p class="mb-8 text-pretty text-lg text-indigo-100">Speak with a relocation specialist or create an account to track your quote end to end.</p>
-          <div class="flex flex-wrap justify-center gap-4">
-            <% if user_signed_in? %>
-              <%= link_to current_user.customer? ? "Request a quote" : "Open dashboard", current_user.customer? ? new_quotation_path : dashboard_path, class: "inline-flex items-center rounded-xl bg-white px-7 py-3.5 text-sm font-semibold text-indigo-700 shadow-lg transition duration-200 hover:-translate-y-0.5 hover:bg-indigo-50 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-white/30 active:translate-y-0" %>
-            <% else %>
-              <%= link_to "Get a free quote", "#quote", class: "inline-flex items-center rounded-xl bg-white px-7 py-3.5 text-sm font-semibold text-indigo-700 shadow-lg transition duration-200 hover:-translate-y-0.5 hover:bg-indigo-50 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-white/30 active:translate-y-0" %>
-              <%= link_to "Sign in", new_user_session_path, class: "inline-flex items-center rounded-xl border border-white/40 px-7 py-3.5 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-white/10 focus:outline-none focus:ring-4 focus:ring-white/20 active:translate-y-0" %>
+  <section class="relative z-10 px-4 py-7 sm:px-6 sm:py-9 lg:px-8">
+    <div class="mx-auto grid max-w-[1320px] gap-5 min-[1360px]:grid-cols-[1.52fr_1fr] min-[1360px]:items-stretch">
+      <div class="reveal overflow-hidden rounded-[2rem] border border-white/90 bg-white/85 p-5 shadow-[0_24px_80px_rgba(30,64,175,0.09)] ring-1 ring-blue-100/70 backdrop-blur-xl sm:p-7">
+        <div class="grid gap-7 md:grid-cols-[0.82fr_0.72fr_1fr] md:items-center">
+          <div>
+            <h2 class="text-2xl font-black tracking-[-0.04em] text-slate-950 sm:text-3xl">Take Removlo with you</h2>
+            <p class="mt-3 max-w-sm text-sm font-semibold leading-6 text-slate-600">Get updates, manage your move and chat with our team on the go.</p>
+
+            <div class="mt-6 flex flex-wrap gap-3">
+              <a href="#" class="inline-flex items-center gap-2 rounded-lg bg-slate-950 px-3.5 py-2 text-xs font-black text-white transition hover:-translate-y-0.5">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 1.51c0 1.06-.43 2.08-1.12 2.85-.72.82-1.9 1.45-2.95 1.36-.13-1.02.38-2.11 1.04-2.86.73-.84 2.02-1.45 3.03-1.35zM20.56 17.2c-.55 1.26-.82 1.82-1.53 2.94-.99 1.51-2.38 3.4-4.1 3.42-1.53.02-1.93-.99-4.01-.98-2.08.01-2.51 1.01-4.04.99-1.72-.02-3.03-1.72-4.02-3.23-2.77-4.23-3.06-9.2-1.35-11.84 1.21-1.87 3.12-2.97 4.92-2.97 1.83 0 2.98 1 4.49 1 1.47 0 2.36-1 4.48-1 1.6 0 3.3.87 4.5 2.37-3.95 2.17-3.31 7.81.66 9.3z"/></svg>
+                App Store
+              </a>
+              <a href="#" class="inline-flex items-center gap-2 rounded-lg bg-slate-950 px-3.5 py-2 text-xs font-black text-white transition hover:-translate-y-0.5">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.6 2.38c-.37.2-.6.6-.6 1.12v17c0 .52.23.92.6 1.12l9.94-9.62L3.6 2.38zm11.08 10.72l2.33 2.25-10.8 6.16 8.47-8.41zm3.7-1.1l-2.6-1.48-2.35 2.31 2.35 2.31 2.6-1.48c1.3-.74 1.3-1.92 0-2.66zM6.2 2.49l10.8 6.16-2.33 2.25L6.2 2.49z"/></svg>
+                Google Play
+              </a>
+            </div>
+
+            <div class="mt-5 flex items-center gap-4">
+              <div class="grid h-20 w-20 grid-cols-5 gap-0.5 rounded-xl border border-slate-200 bg-white p-2 shadow-sm" aria-label="QR code placeholder">
+                <% 25.times do |index| %>
+                  <span class="rounded-[2px] <%= [0, 1, 3, 4, 5, 9, 11, 13, 15, 19, 20, 21, 23, 24].include?(index) ? 'bg-slate-950' : 'bg-slate-200' %>"></span>
+                <% end %>
+              </div>
+              <p class="text-xs font-semibold text-slate-500">Scan to download</p>
+            </div>
+          </div>
+
+          <div class="relative mx-auto hidden h-72 w-44 overflow-hidden rounded-t-[2.5rem] border-[9px] border-slate-950 bg-gradient-to-b from-blue-50 to-white shadow-2xl shadow-slate-950/20 md:block">
+            <div class="absolute left-1/2 top-0 h-5 w-20 -translate-x-1/2 rounded-b-2xl bg-slate-950"></div>
+            <div class="p-5 pt-9">
+              <p class="text-center text-sm font-black text-blue-700">REMOVLO</p>
+              <div class="mt-7 rounded-2xl bg-white p-3 shadow-lg shadow-blue-950/10">
+                <p class="text-[10px] font-black uppercase text-slate-400">Your move</p>
+                <p class="mt-2 text-xs font-black">London → Leeds</p>
+                <p class="mt-3 inline-flex rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-black text-emerald-600">In progress</p>
+              </div>
+              <div class="mt-4 rounded-2xl bg-blue-50 p-3">
+                <p class="text-[10px] font-black text-slate-500">Today, 09:30</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid gap-5">
+            <% [["Live move tracking", "See exactly where we are.", "route-tracking.svg"], ["In-app chat", "Message your moving team.", "chat-message.svg"], ["Manage bookings", "Change details with ease.", "calendar-check.svg"]].each do |title, copy, icon| %>
+              <div class="flex items-center gap-4">
+                <span class="flex h-[3.25rem] w-[3.25rem] shrink-0 items-center justify-center rounded-full bg-white shadow-lg shadow-blue-950/10 ring-1 ring-blue-100">
+                  <%= image_tag asset_image.call(icon), alt: "", class: "h-7 w-7", aria: { hidden: true } %>
+                </span>
+                <div>
+                  <h3 class="text-sm font-black text-slate-950"><%= title %></h3>
+                  <p class="mt-1 text-xs font-semibold text-slate-500"><%= copy %></p>
+                </div>
+              </div>
             <% end %>
           </div>
-          <p class="mt-6 text-sm text-indigo-200">
-            Or email us at <a href="mailto:hello@removlo.co.uk" class="font-semibold text-white underline-offset-4 hover:underline">hello@removlo.co.uk</a>
-          </p>
+        </div>
+      </div>
+
+      <div id="faq" class="reveal rounded-[2rem] border border-white/90 bg-white/85 p-5 shadow-[0_24px_80px_rgba(30,64,175,0.09)] ring-1 ring-blue-100/70 backdrop-blur-xl sm:p-7">
+        <div class="mb-4 flex items-center justify-between gap-4">
+          <h2 class="text-xl font-black tracking-[-0.03em] text-slate-950 sm:text-2xl">Frequently asked questions</h2>
+          <a href="#contact" class="hidden items-center gap-2 text-xs font-black text-blue-700 sm:inline-flex">
+            View all FAQs
+            <%= image_tag asset_image.call("arrow-right.svg"), alt: "", class: "h-4 w-4", aria: { hidden: true } %>
+          </a>
+        </div>
+        <div id="landing-faq" data-accordion="collapse" class="space-y-3">
+          <% faqs.each_with_index do |(question, answer), index| %>
+            <div class="rounded-xl border border-slate-200/80 bg-white">
+              <h3 id="landing-faq-heading-<%= index %>">
+                <button type="button" class="flex w-full items-center justify-between gap-4 px-4 py-3 text-left text-xs font-black text-slate-950 transition hover:text-blue-700 sm:text-sm" data-accordion-target="#landing-faq-body-<%= index %>" aria-expanded="<%= index.zero? ? 'true' : 'false' %>" aria-controls="landing-faq-body-<%= index %>">
+                  <span><%= question %></span>
+                  <span class="text-lg leading-none text-blue-700">+</span>
+                </button>
+              </h3>
+              <div id="landing-faq-body-<%= index %>" class="<%= index.zero? ? '' : 'hidden' %>" aria-labelledby="landing-faq-heading-<%= index %>">
+                <p class="px-4 pb-4 text-sm font-medium leading-6 text-slate-600"><%= answer %></p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="relative z-10 px-4 pb-9 pt-3 sm:px-6 sm:pb-12 lg:px-8">
+    <div class="reveal mx-auto max-w-[1320px] overflow-hidden rounded-[1.5rem] bg-gradient-to-r from-blue-700 via-indigo-700 to-violet-700 p-5 text-white shadow-2xl shadow-blue-950/20 sm:p-6 lg:p-7">
+      <div class="grid gap-6 min-[1360px]:grid-cols-[1fr_auto] min-[1360px]:items-center">
+        <div class="flex gap-4">
+          <span class="hidden h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/15 ring-1 ring-white/20 sm:flex">
+            <%= image_tag asset_image.call("home-removals.svg"), alt: "", class: "h-8 w-8 brightness-0 invert", aria: { hidden: true } %>
+          </span>
+          <div>
+            <h2 class="text-2xl font-black tracking-[-0.04em] sm:text-3xl">Ready to move smarter?</h2>
+            <p class="mt-2 max-w-2xl text-sm font-semibold leading-6 text-blue-100">Get your free instant quote now and let us take care of the rest.</p>
+          </div>
+        </div>
+        <div>
+          <%= link_to "#quote", class: "inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-black text-slate-950 shadow-xl shadow-blue-950/20 transition hover:-translate-y-0.5 hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-white/25 sm:w-auto" do %>
+            Get your free quote
+            <%= image_tag asset_image.call("arrow-right.svg"), alt: "", class: "h-4 w-4", aria: { hidden: true } %>
+          <% end %>
+          <p class="mt-2 text-center text-[10px] font-bold text-blue-100">No obligation. Response within 24 hours.</p>
         </div>
       </div>
     </div>
   </section>
 </main>
 
-<footer class="border-t border-slate-200/70 bg-white">
-  <div class="mx-auto w-full max-w-screen-xl px-4 py-12 sm:px-6 min-[1025px]:px-8 min-[1025px]:py-16">
-    <div class="min-[1025px]:flex min-[1025px]:justify-between">
-      <div class="mb-8 min-[1025px]:mb-0 min-[1025px]:me-12">
-        <div class="mb-4 flex items-center gap-2.5">
-          <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-600/30">
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8h4l3 3v5a1 1 0 01-1 1h-1m-4 0a1 1 0 001 1h1"/></svg>
-          </span>
-          <span class="text-xl font-extrabold tracking-tight text-slate-900">Removlo</span>
-        </div>
-        <p class="max-w-sm text-sm text-slate-600">The smart way to move in the UK — transparent pricing, fully insured moves, and a dedicated coordinator for every journey.</p>
+<footer class="relative z-10 overflow-hidden bg-[#eef4ff]">
+  <div class="pointer-events-none absolute inset-x-0 top-0 h-48 bg-[radial-gradient(circle_at_18%_20%,rgba(37,99,235,0.14),transparent_30%),radial-gradient(circle_at_82%_18%,rgba(124,58,237,0.12),transparent_32%)]"></div>
+  <div class="relative mx-auto w-full max-w-[1600px] px-4 py-8 sm:px-6 lg:px-10 lg:py-10 2xl:px-14">
+    <div class="rounded-[2rem] border border-white/90 bg-white/72 p-5 shadow-[0_24px_80px_rgba(30,64,175,0.10)] ring-1 ring-blue-100/70 backdrop-blur-xl sm:p-7 lg:p-8">
+    <div class="grid gap-10 lg:grid-cols-[1.2fr_2.8fr] lg:items-start xl:grid-cols-[1.05fr_3fr]">
+      <div class="max-w-md">
+        <%= link_to root_path, class: "group flex items-center" do %>
+          <%= image_tag asset_image.call("logo.png"), alt: "Removlo - Moving Made Simple", class: "h-auto w-44 transition duration-300 group-hover:-translate-y-0.5 sm:w-56" %>
+        <% end %>
+        <p class="mt-4 max-w-sm text-sm font-semibold leading-6 text-slate-500">
+          Intelligent logistics, careful movers, live updates, and human support from quote to doorstep.
+        </p>
+        <a href="#quote" class="mt-5 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 px-4 py-2.5 text-xs font-black text-white shadow-lg shadow-blue-600/25 transition hover:-translate-y-0.5 hover:shadow-xl">
+          Get a quote
+          <%= image_tag asset_image.call("arrow-right.svg"), alt: "", class: "h-4 w-4 brightness-0 invert", aria: { hidden: true } %>
+        </a>
       </div>
-      <div class="grid grid-cols-2 gap-8 min-[1025px]:grid-cols-3 min-[1025px]:gap-12">
-        <div>
-          <h2 class="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-900">Company</h2>
-          <ul class="space-y-3 text-sm text-slate-600">
-            <li><%= link_to "Home", root_path, class: "transition hover:text-indigo-700" %></li>
-            <li><%= link_to "Services", "#services", class: "transition hover:text-indigo-700" %></li>
-            <li><%= link_to "How it works", "#how-it-works", class: "transition hover:text-indigo-700" %></li>
-            <li><%= link_to "Reviews", "#reviews", class: "transition hover:text-indigo-700" %></li>
-          </ul>
-        </div>
-        <div>
-          <h2 class="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-900">Support</h2>
-          <ul class="space-y-3 text-sm text-slate-600">
-            <li><%= link_to "FAQ", "#faq", class: "transition hover:text-indigo-700" %></li>
-            <li><%= link_to "Contact", "#contact", class: "transition hover:text-indigo-700" %></li>
-            <li><a href="#" class="transition hover:text-indigo-700">Help centre</a></li>
-          </ul>
-        </div>
-        <div>
-          <h2 class="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-900">Legal</h2>
-          <ul class="space-y-3 text-sm text-slate-600">
-            <li><a href="#" class="transition hover:text-indigo-700">Privacy</a></li>
-            <li><a href="#" class="transition hover:text-indigo-700">Terms</a></li>
-            <li><a href="mailto:hello@removlo.co.uk" class="transition hover:text-indigo-700">hello@removlo.co.uk</a></li>
-          </ul>
-        </div>
+
+      <div class="grid grid-cols-2 gap-x-8 gap-y-9 sm:grid-cols-3 lg:grid-cols-5 xl:gap-x-12">
+        <% [["Services", ["Home Removals", "Office Removals", "Packing Services", "Storage Solutions"]], ["Company", ["About us", "Why Removlo?", "Our team", "Careers"]], ["Support", ["Contact us", "Help centre", "FAQs", "Moving guides"]], ["Resources", ["Moving checklist", "Packing tips", "Storage guide", "Blog"]], ["Contact", ["020 7946 0958", "hello@removlo.com", "UK-wide coverage", "Mon-Fri, 8am-8pm"]]].each do |heading, links| %>
+          <div>
+            <h2 class="mb-5 text-xs font-black uppercase tracking-[0.18em] text-slate-950"><%= heading %></h2>
+            <ul class="font-semibold text-slate-500">
+              <% links.each do |label| %>
+                <li class="mb-4 last:mb-0">
+                  <a href="#" class="transition hover:text-blue-700 hover:underline"><%= label %></a>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
       </div>
     </div>
-    <hr class="my-8 border-slate-200">
-    <div class="flex flex-col items-center justify-between gap-4 min-[1025px]:flex-row">
-      <span class="text-sm text-slate-500">© <%= Time.current.year %> <a href="<%= root_path %>" class="font-medium hover:text-indigo-700">Removlo</a>. All rights reserved.</span>
-      <div class="flex flex-wrap gap-3 text-xs">
-        <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-slate-600">
-          <span class="h-2 w-2 rounded-full bg-emerald-400"></span> Fully insured
-        </span>
-        <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-slate-600">
-          <span class="h-2 w-2 rounded-full bg-indigo-400"></span> UK-wide network
-        </span>
+
+    <hr class="my-6 border-blue-100 sm:mx-auto lg:my-8" />
+
+    <div class="sm:flex sm:items-center sm:justify-between">
+      <span class="text-sm font-semibold text-slate-500 sm:text-center">
+        © <%= Time.current.year %> <%= link_to "Removlo Ltd", root_path, class: "hover:text-blue-700 hover:underline" %>. All Rights Reserved.
+      </span>
+
+      <div class="mt-4 flex sm:mt-0 sm:justify-center">
+        <a href="#" class="text-slate-500 transition hover:-translate-y-0.5 hover:text-blue-700">
+          <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M13.135 6H15V3h-1.865a4.147 4.147 0 0 0-4.142 4.142V9H7v3h2v9.938h3V12h2.021l.592-3H12V6.591A.6.6 0 0 1 12.592 6h.543Z" clip-rule="evenodd"/></svg>
+          <span class="sr-only">Facebook page</span>
+        </a>
+        <a href="#" class="ms-5 text-slate-500 transition hover:-translate-y-0.5 hover:text-blue-700">
+          <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M18.942 5.556a16.3 16.3 0 0 0-4.126-1.3 12.04 12.04 0 0 0-.529 1.1 15.175 15.175 0 0 0-4.573 0 11.586 11.586 0 0 0-.535-1.1 16.274 16.274 0 0 0-4.129 1.3 17.392 17.392 0 0 0-2.868 11.662 15.785 15.785 0 0 0 4.963 2.521c.41-.564.773-1.16 1.084-1.785a10.638 10.638 0 0 1-1.706-.83c.143-.106.283-.217.418-.331a11.664 11.664 0 0 0 10.118 0c.137.114.277.225.418.331-.544.328-1.116.606-1.71.832a12.58 12.58 0 0 0 1.084 1.785 16.46 16.46 0 0 0 5.064-2.595 17.286 17.286 0 0 0-2.973-11.59ZM8.678 14.813a1.94 1.94 0 0 1-1.8-2.045 1.93 1.93 0 0 1 1.8-2.047 1.918 1.918 0 0 1 1.8 2.047 1.929 1.929 0 0 1-1.8 2.045Zm6.644 0a1.94 1.94 0 0 1-1.8-2.045 1.93 1.93 0 0 1 1.8-2.047 1.919 1.919 0 0 1 1.8 2.047 1.93 1.93 0 0 1-1.8 2.045Z"/></svg>
+          <span class="sr-only">Discord community</span>
+        </a>
+        <a href="#" class="ms-5 text-slate-500 transition hover:-translate-y-0.5 hover:text-blue-700">
+          <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M13.795 10.533 20.68 2h-3.073l-5.255 6.517L7.69 2H1l7.806 10.91L1.47 22h3.074l5.705-7.07L15.31 22H22l-8.205-11.467Zm-2.38 2.95L9.97 11.464 4.36 3.627h2.31l4.528 6.317 1.443 2.02 6.018 8.409h-2.31l-4.934-6.89Z"/></svg>
+          <span class="sr-only">Twitter page</span>
+        </a>
+        <a href="#" class="ms-5 text-slate-500 transition hover:-translate-y-0.5 hover:text-blue-700">
+          <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12.006 2a9.847 9.847 0 0 0-6.484 2.44 10.32 10.32 0 0 0-3.393 6.17 10.48 10.48 0 0 0 1.317 6.955 10.045 10.045 0 0 0 5.4 4.418c.504.095.683-.223.683-.494 0-.245-.01-1.052-.014-1.908-2.78.62-3.366-1.21-3.366-1.21a2.711 2.711 0 0 0-1.11-1.5c-.907-.637.07-.621.07-.621.317.044.62.163.885.346.266.183.487.426.647.71.135.253.318.476.538.655a2.079 2.079 0 0 0 2.37.196c.045-.52.27-1.006.635-1.37-2.219-.259-4.554-1.138-4.554-5.07a4.022 4.022 0 0 1 1.031-2.75 3.77 3.77 0 0 1 .096-2.713s.839-.275 2.749 1.05a9.26 9.26 0 0 1 5.004 0c1.906-1.325 2.74-1.05 2.74-1.05.37.858.406 1.828.101 2.713a4.017 4.017 0 0 1 1.029 2.75c0 3.939-2.339 4.805-4.564 5.058a2.471 2.471 0 0 1 .679 1.897c0 1.372-.012 2.477-.012 2.814 0 .272.18.592.687.492a10.05 10.05 0 0 0 5.388-4.421 10.473 10.473 0 0 0 1.313-6.948 10.32 10.32 0 0 0-3.39-6.165A9.847 9.847 0 0 0 12.007 2Z" clip-rule="evenodd"/></svg>
+          <span class="sr-only">GitHub account</span>
+        </a>
+        <a href="#" class="ms-5 text-slate-500 transition hover:-translate-y-0.5 hover:text-blue-700">
+          <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2a10 10 0 1 0 10 10A10.009 10.009 0 0 0 12 2Zm6.613 4.614a8.523 8.523 0 0 1 1.93 5.32 20.093 20.093 0 0 0-5.949-.274c-.059-.149-.122-.292-.184-.441a23.879 23.879 0 0 0-.566-1.239 11.41 11.41 0 0 0 4.769-3.366ZM10 3.707a8.82 8.82 0 0 1 2-.238 8.5 8.5 0 0 1 5.664 2.152 9.608 9.608 0 0 1-4.476 3.087A45.755 45.755 0 0 0 10 3.707Zm-6.358 6.555a8.57 8.57 0 0 1 4.73-5.981 53.99 53.99 0 0 1 3.168 4.941 32.078 32.078 0 0 1-7.9 1.04h.002Zm2.01 7.46a8.51 8.51 0 0 1-2.2-5.707v-.262a31.641 31.641 0 0 0 8.777-1.219c.243.477.477.964.692 1.449-.114.032-.227.067-.336.1a13.569 13.569 0 0 0-6.942 5.636l.009.003ZM12 20.556a8.508 8.508 0 0 1-5.243-1.8 11.717 11.717 0 0 1 6.7-5.332.509.509 0 0 1 .055-.02 35.65 35.65 0 0 1 1.819 6.476 8.476 8.476 0 0 1-3.331.676Zm4.772-1.462A37.232 37.232 0 0 0 15.113 13a12.513 12.513 0 0 1 5.321.364 8.56 8.56 0 0 1-3.66 5.73h-.002Z" clip-rule="evenodd"/></svg>
+          <span class="sr-only">Dribbble account</span>
+        </a>
       </div>
+    </div>
     </div>
   </div>
 </footer>

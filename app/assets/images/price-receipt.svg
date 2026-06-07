@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="Price receipt">
+<defs>
+<linearGradient id="g" x1="16" y1="16" x2="240" y2="240" gradientUnits="userSpaceOnUse">
+<stop offset="0%" stop-color="#005BFF"/>
+<stop offset="52%" stop-color="#2563FF"/>
+<stop offset="100%" stop-color="#7C3AED"/>
+</linearGradient>
+<filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+<feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#2563FF" flood-opacity="0.18"/>
+</filter>
+</defs>
+<g filter="url(#softShadow)" stroke="url(#g)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none">
+<path d="M65 38 H191 V218 L166 202 L143 218 L128 202 L104 218 L83 202 L65 218 Z"/><path d="M128 76 V135"/><path d="M110 94 C111 80 121 74 132 76 C143 78 150 85 150 96 C150 108 141 113 128 117 C116 121 108 128 108 139 C108 153 121 160 135 157 C147 154 153 147 154 137"/><path d="M98 171 H158"/>
+</g>
+</svg>
