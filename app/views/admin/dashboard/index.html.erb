@@ -1,0 +1,75 @@
+<% content_for :title, "Admin Control Panel — Removlo" %>
+
+<div class="mx-auto max-w-7xl">
+  <div class="rounded-3xl bg-gradient-to-br from-slate-950 via-indigo-950 to-blue-900 p-6 text-white shadow-2xl min-[1025px]:p-8">
+    <h1 class="text-3xl font-black tracking-tight min-[1025px]:text-5xl">Admin Control Panel</h1>
+    <p class="mt-3 text-sm text-slate-300">Lead queue, driver marketplace, payouts, and performance at a glance.</p>
+  </div>
+
+  <div class="mt-6 grid gap-4 sm:grid-cols-2 min-[1025px]:grid-cols-5">
+    <% [["New Leads", @lead_counts[:new_leads], "requested"], ["Pending Quotes", @lead_counts[:pending_quotes], "quoted"], ["Awaiting Driver", @lead_counts[:awaiting_driver], "awaiting"], ["Booked Jobs", @lead_counts[:booked_jobs], "booked"], ["Completed", @lead_counts[:completed], "completed"]].each do |label, count, key| %>
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p class="text-xs font-semibold uppercase tracking-wide text-slate-400"><%= label %></p>
+        <p class="mt-2 text-3xl font-black text-slate-900"><%= count %></p>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-6 grid gap-6 min-[1025px]:grid-cols-[1.2fr_0.8fr]">
+    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="flex items-center justify-between gap-3">
+        <h2 class="text-lg font-black text-slate-900">Lead Queue</h2>
+        <%= link_to "All quotations", admin_quotations_path, class: "text-sm font-semibold text-indigo-600" %>
+      </div>
+      <div class="mt-5 divide-y divide-slate-100">
+        <% @recent_quotations.each do |quotation| %>
+          <div class="flex items-center justify-between gap-3 py-3">
+            <div>
+              <p class="font-bold text-slate-900"><%= quotation.reference %></p>
+              <p class="text-sm text-slate-500"><%= quotation.customer.email %> · <%= quotation.pickup_postcode %> → <%= quotation.delivery_postcode %></p>
+            </div>
+            <div class="text-right">
+              <%= quotation_status_badge(quotation.status) %>
+              <%= link_to "Open", admin_quotation_path(quotation), class: "mt-2 block text-sm font-semibold text-indigo-600" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </section>
+
+    <div class="space-y-6">
+      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 class="text-lg font-black text-slate-900">Driver Performance</h2>
+        <div class="mt-4 space-y-3">
+          <% @driver_performance.each do |summary| %>
+            <div class="rounded-2xl bg-slate-50 p-4">
+              <p class="font-bold text-slate-900"><%= summary.driver.email %></p>
+              <p class="mt-1 text-sm text-slate-500">Jobs: <%= summary.jobs_count %> · Revenue: <%= money_from_cents(summary.revenue_cents) %></p>
+              <p class="text-xs text-slate-500">Cancellation: <%= summary.cancellation_rate %>% · Late arrivals: <%= summary.late_arrivals %></p>
+            </div>
+          <% end %>
+        </div>
+        <%= link_to "View all drivers", admin_driver_performances_path, class: "mt-4 inline-flex text-sm font-semibold text-indigo-600" %>
+      </section>
+
+      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 class="text-lg font-black text-slate-900">Pending Payouts</h2>
+        <div class="mt-4 space-y-3">
+          <% @pending_payouts.each do |entry| %>
+            <div class="flex items-center justify-between rounded-2xl bg-slate-50 p-4">
+              <div>
+                <p class="font-bold text-slate-900"><%= entry.driver.email %></p>
+                <p class="text-sm text-slate-500"><%= entry.reference || entry.quotation&.reference %></p>
+              </div>
+              <p class="font-bold text-emerald-700"><%= money_from_cents(entry.amount_cents) %></p>
+            </div>
+          <% end %>
+          <% if @pending_payouts.empty? %>
+            <p class="text-sm text-slate-500">No pending payouts.</p>
+          <% end %>
+        </div>
+        <%= link_to "Manage payouts", admin_wallet_payouts_path, class: "mt-4 inline-flex text-sm font-semibold text-indigo-600" %>
+      </section>
+    </div>
+  </div>
+</div>

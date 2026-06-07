@@ -1,0 +1,53 @@
+marketplace_job:
+  reference: Q-TEST-001
+  customer: customer
+  status: quoted
+  move_size: three_bed
+  service_level: standard
+  pickup_postcode: M1
+  delivery_postcode: B1
+  pickup_address: 10 Pickup Street, Manchester
+  delivery_address: 20 Delivery Road, Birmingham
+  quoted_price_cents: 65000
+  deposit_cents: 10000
+  driver_cost_cents: 50000
+  markup_percentage: 30
+  admin_margin_cents: 15000
+  vehicle_required: luton_van
+  expected_duration_hours: 8
+  property_type: house
+  awaiting_driver_offers: true
+  payment_status: unpaid
+
+accepted_job:
+  reference: Q-TEST-002
+  customer: customer
+  status: accepted
+  move_size: two_bed
+  service_level: standard
+  pickup_postcode: M2
+  delivery_postcode: B2
+  pickup_address: Hidden pickup
+  delivery_address: Hidden delivery
+  quoted_price_cents: 50000
+  deposit_cents: 10000
+  driver_cost_cents: 40000
+  markup_percentage: 25
+  admin_margin_cents: 10000
+  payment_status: unpaid
+
+booked_job:
+  reference: Q-TEST-003
+  customer: customer
+  assigned_driver: driver_a
+  status: scheduled
+  move_size: three_bed
+  service_level: standard
+  pickup_postcode: M3
+  delivery_postcode: B3
+  pickup_address: 1 Customer Street
+  delivery_address: 2 Delivery Lane
+  quoted_price_cents: 60000
+  deposit_cents: 10000
+  driver_cost_cents: 45000
+  payment_status: deposit_paid

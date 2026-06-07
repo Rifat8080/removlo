@@ -94,6 +94,30 @@
           <%= form.number_field :deposit, value: quotation.deposit, min: 0, step: "0.01", class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500" %>
         </div>
         <div>
+          <%= form.label :driver_cost, "Driver cost (£)", class: "mb-2 block text-sm font-semibold text-slate-700" %>
+          <%= form.number_field :driver_cost, value: quotation.driver_cost_cents.to_i / 100.0, min: 0, step: "0.01", class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <%= form.label :markup_percentage, "Markup %", class: "mb-2 block text-sm font-semibold text-slate-700" %>
+          <%= form.number_field :markup_percentage, min: 0, step: "0.1", class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <%= form.label :vehicle_required, class: "mb-2 block text-sm font-semibold text-slate-700" %>
+          <%= form.select :vehicle_required, DriverProfile::VEHICLE_TYPES.map { |v| [v.humanize, v] }, {}, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <%= form.label :expected_duration_hours, "Expected duration (hours)", class: "mb-2 block text-sm font-semibold text-slate-700" %>
+          <%= form.number_field :expected_duration_hours, min: 1, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <%= form.label :property_type, class: "mb-2 block text-sm font-semibold text-slate-700" %>
+          <%= form.select :property_type, Quotation::PROPERTY_TYPES.map { |p| [p.humanize, p] }, { include_blank: "Select property" }, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+        <label class="flex items-center gap-2 text-sm font-semibold text-slate-700">
+          <%= form.check_box :customer_details_released, class: "rounded border-slate-300 text-indigo-600" %>
+          Release customer details to driver (override)
+        </label>
+        <div>
           <%= form.label :status, class: "mb-2 block text-sm font-semibold text-slate-700" %>
           <%= form.select :status, Quotation.statuses.keys.map { |status| [status.humanize, status] }, {}, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500" %>
         </div>

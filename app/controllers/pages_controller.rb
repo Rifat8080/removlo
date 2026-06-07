@@ -63,9 +63,9 @@ class PagesController < ApplicationController
 
     @quick_actions = [
       ["Open my jobs", driver_jobs_path, "Assigned moves"],
-      ["View payslips", payslips_path, "Salary and commission records"],
-      ["Notifications", notifications_path, "Recent activity"],
-      ["Account settings", edit_user_registration_path, "Manage your login"]
+      ["Availability", driver_availabilities_path, "Set when you can work"],
+      ["Wallet", driver_wallet_path, "Earnings and payouts"],
+      ["View payslips", payslips_path, "Salary and commission records"]
     ]
   end
 
@@ -92,10 +92,10 @@ class PagesController < ApplicationController
     end
 
     @quick_actions = [
+      ["Control panel", admin_root_path, "Lead queue and marketplace"],
       ["Create quotation", new_admin_quotation_path, "Build a quote for a customer"],
       ["Manage quotations", admin_quotations_path, "Requests, negotiations, jobs"],
-      ["Notifications", notifications_path, "Customer and team updates"],
-      ["Account settings", edit_user_registration_path, "Manage your login"]
+      ["Driver performance", admin_driver_performances_path, "Ratings and revenue"]
     ]
     @quick_actions.insert(2, ["Accounting dashboard", admin_accounting_root_path, "Profit, invoices, payroll"]) if current_user.admin?
   end

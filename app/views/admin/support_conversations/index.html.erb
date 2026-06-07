@@ -1,0 +1,29 @@
+<% content_for :title, "Support Panel — Removlo" %>
+
+<div class="mx-auto max-w-7xl space-y-6">
+  <h1 class="text-3xl font-black text-slate-900">Support Panel</h1>
+
+  <section class="rounded-2xl border bg-white p-5 shadow-sm">
+    <h2 class="text-lg font-black text-slate-900">Support conversations</h2>
+    <div class="mt-4 space-y-2">
+      <% @support_conversations.each do |conversation| %>
+        <%= link_to admin_support_conversation_path(conversation), class: "block rounded-xl bg-slate-50 p-4" do %>
+          <p class="font-bold text-slate-900"><%= conversation.display_subject %></p>
+          <p class="text-sm text-slate-500"><%= conversation.participants.map(&:email).join(", ") %></p>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
+
+  <section class="rounded-2xl border bg-white p-5 shadow-sm">
+    <h2 class="text-lg font-black text-slate-900">Open job chats</h2>
+    <div class="mt-4 space-y-2">
+      <% @job_conversations.each do |conversation| %>
+        <%= link_to admin_support_conversation_path(conversation), class: "block rounded-xl bg-slate-50 p-4" do %>
+          <p class="font-bold text-slate-900"><%= conversation.display_subject %></p>
+          <p class="text-sm text-slate-500"><%= conversation.conversationable&.reference %></p>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
+</div>

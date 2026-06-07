@@ -1,0 +1,31 @@
+<% content_for :title, "Driver Performance — Removlo" %>
+
+<div class="mx-auto max-w-7xl">
+  <h1 class="text-3xl font-black text-slate-900">Driver Performance</h1>
+  <div class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <table class="min-w-full divide-y divide-slate-200 text-sm">
+      <thead class="bg-slate-50">
+        <tr>
+          <th class="px-4 py-3 text-left font-bold text-slate-600">Driver</th>
+          <th class="px-4 py-3 text-left font-bold text-slate-600">Jobs</th>
+          <th class="px-4 py-3 text-left font-bold text-slate-600">Revenue</th>
+          <th class="px-4 py-3 text-left font-bold text-slate-600">Cancellation</th>
+          <th class="px-4 py-3 text-left font-bold text-slate-600">Late arrivals</th>
+          <th class="px-4 py-3"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <% @summaries.each do |summary| %>
+          <tr>
+            <td class="px-4 py-3 font-semibold text-slate-900"><%= summary.driver.email %></td>
+            <td class="px-4 py-3"><%= summary.jobs_count %></td>
+            <td class="px-4 py-3"><%= money_from_cents(summary.revenue_cents) %></td>
+            <td class="px-4 py-3"><%= summary.cancellation_rate %>%</td>
+            <td class="px-4 py-3"><%= summary.late_arrivals %></td>
+            <td class="px-4 py-3 text-right"><%= link_to "View", admin_driver_performance_path(summary.driver), class: "font-semibold text-indigo-600" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

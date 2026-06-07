@@ -1,79 +1,60 @@
 <% content_for :title, "#{@job.reference} — Driver job" %>
 
 <div class="mx-auto max-w-7xl">
-  <div class="rounded-3xl bg-gradient-to-br from-slate-950 via-indigo-950 to-blue-900 p-6 text-white shadow-2xl shadow-indigo-950/20 min-[1025px]:p-8">
-    <div class="flex flex-col gap-6 min-[1025px]:flex-row min-[1025px]:items-start min-[1025px]:justify-between">
-      <div>
-        <div class="flex flex-wrap items-center gap-2">
-          <%= quotation_status_badge(@job.status) %>
-          <%= quotation_payment_badge(@job.payment_status) %>
-        </div>
-        <h1 class="mt-4 text-3xl font-black tracking-tight min-[1025px]:text-5xl"><%= @job.reference %></h1>
-        <p class="mt-3 text-sm text-slate-300"><%= @job.customer.email %> · <%= @job.pickup_postcode.presence || "Pickup" %> to <%= @job.delivery_postcode.presence || "Delivery" %></p>
-      </div>
-      <%= link_to "Back to jobs", driver_jobs_path, class: "inline-flex items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-bold text-indigo-700 transition hover:bg-indigo-50" %>
-    </div>
+  <div class="rounded-3xl bg-gradient-to-br from-slate-950 via-indigo-950 to-blue-900 p-6 text-white shadow-2xl">
+    <h1 class="text-3xl font-black"><%= @job.reference %></h1>
+    <p class="mt-2 text-sm text-slate-300">Customer details hidden until booking is confirmed and paid.</p>
+  </div>
 
-    <div class="mt-8 grid gap-3 sm:grid-cols-2 min-[1025px]:grid-cols-4">
-      <div class="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur">
-        <p class="text-xs font-semibold uppercase tracking-wide text-indigo-200">Schedule</p>
-        <p class="mt-2 text-lg font-black"><%= @job.scheduled_at&.to_fs(:long) || @job.preferred_move_date&.to_fs(:long) || "Pending" %></p>
-      </div>
-      <div class="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur">
-        <p class="text-xs font-semibold uppercase tracking-wide text-indigo-200">Move size</p>
-        <p class="mt-2 text-lg font-black"><%= @job.move_size.humanize %></p>
-      </div>
-      <div class="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur">
-        <p class="text-xs font-semibold uppercase tracking-wide text-indigo-200">Service</p>
-        <p class="mt-2 text-lg font-black"><%= @job.service_level.humanize %></p>
-      </div>
-      <div class="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur">
-        <p class="text-xs font-semibold uppercase tracking-wide text-indigo-200">Operator</p>
-        <p class="mt-2 truncate text-lg font-black"><%= @job.assigned_staff&.email || "Unassigned" %></p>
-      </div>
-    </div>
+  <div class="mt-6 grid gap-4 sm:grid-cols-2 min-[1025px]:grid-cols-4">
+    <div class="rounded-2xl border bg-white p-4"><p class="text-xs uppercase text-slate-400">Collection</p><p class="mt-2 font-black"><%= @job.driver_visible_collection_label %></p></div>
+    <div class="rounded-2xl border bg-white p-4"><p class="text-xs uppercase text-slate-400">Delivery</p><p class="mt-2 font-black"><%= @job.driver_visible_delivery_label %></p></div>
+    <div class="rounded-2xl border bg-white p-4"><p class="text-xs uppercase text-slate-400">Date</p><p class="mt-2 font-black"><%= @job.preferred_move_date&.to_fs(:long) || @job.scheduled_at&.to_fs(:long) || "TBC" %></p></div>
+    <div class="rounded-2xl border bg-white p-4"><p class="text-xs uppercase text-slate-400">Property</p><p class="mt-2 font-black"><%= @job.property_type&.humanize || @job.move_size.humanize %></p></div>
+    <div class="rounded-2xl border bg-white p-4"><p class="text-xs uppercase text-slate-400">Expected duration</p><p class="mt-2 font-black"><%= @job.expected_duration_hours.present? ? "#{@job.expected_duration_hours} hours" : "TBC" %></p></div>
+    <div class="rounded-2xl border bg-white p-4"><p class="text-xs uppercase text-slate-400">Vehicle required</p><p class="mt-2 font-black"><%= @job.vehicle_required&.humanize || "TBC" %></p></div>
   </div>
 
   <div class="mt-6 grid gap-6 min-[1025px]:grid-cols-[1.2fr_0.8fr]">
     <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <h2 class="text-lg font-black text-slate-900">Route and access</h2>
-      <div class="mt-5 grid gap-4 min-[1025px]:grid-cols-2">
-        <div class="rounded-2xl bg-slate-50 p-4">
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Pickup</p>
-          <p class="mt-2 whitespace-pre-line text-sm font-semibold text-slate-900"><%= @job.pickup_address %></p>
-        </div>
-        <div class="rounded-2xl bg-slate-50 p-4">
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Delivery</p>
-          <p class="mt-2 whitespace-pre-line text-sm font-semibold text-slate-900"><%= @job.delivery_address %></p>
-        </div>
-      </div>
       <div class="mt-4 grid gap-4 min-[1025px]:grid-cols-2">
-        <div>
-          <p class="text-sm font-bold text-slate-900">Access notes</p>
-          <p class="mt-1 whitespace-pre-line text-sm text-slate-600"><%= @job.access_notes.presence || "No access notes recorded." %></p>
+        <div class="rounded-2xl bg-slate-50 p-4">
+          <p class="text-xs font-semibold uppercase text-slate-400">Pickup</p>
+          <p class="mt-2 text-sm font-semibold text-slate-900"><%= @job.driver_visible_pickup_address %></p>
         </div>
-        <div>
-          <p class="text-sm font-bold text-slate-900">Customer notes</p>
-          <p class="mt-1 whitespace-pre-line text-sm text-slate-600"><%= @job.customer_notes.presence || "No customer notes recorded." %></p>
+        <div class="rounded-2xl bg-slate-50 p-4">
+          <p class="text-xs font-semibold uppercase text-slate-400">Delivery</p>
+          <p class="mt-2 text-sm font-semibold text-slate-900"><%= @job.driver_visible_delivery_address %></p>
         </div>
       </div>
+      <p class="mt-4 text-sm text-slate-600"><%= @job.access_notes.presence || "No access notes recorded." %></p>
     </section>
 
-    <aside class="space-y-6">
+    <% if @job.awaiting_driver_offers? %>
       <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 class="text-lg font-black text-slate-900">Inventory</h2>
-        <div class="mt-4 divide-y divide-slate-100">
-          <% @job.quotation_items.order(created_at: :desc).each do |item| %>
-            <div class="py-3">
-              <p class="font-bold text-slate-900"><%= item.quantity %> x <%= item.name %> <%= "- Fragile" if item.fragile? %></p>
-              <p class="text-sm text-slate-500"><%= item.notes.presence || "No notes" %></p>
-            </div>
-          <% end %>
-          <% if @job.quotation_items.none? %>
-            <p class="rounded-2xl bg-slate-50 p-4 text-sm text-slate-500">No inventory items recorded yet.</p>
-          <% end %>
-        </div>
+        <h2 class="text-lg font-black text-slate-900">Submit offer</h2>
+        <p class="mt-1 text-sm text-slate-500">Your bid is private. Other drivers cannot see it.</p>
+        <% offer_path = @offer.persisted? ? driver_job_offer_path(@job, @offer) : driver_job_offers_path(@job) %>
+        <% offer_method = @offer.persisted? ? :patch : :post %>
+        <%= form_with(model: @offer, url: offer_path, method: offer_method, scope: :driver_offer, class: "mt-4 space-y-3") do |form| %>
+          <%= form.label :amount, "Your offer (£)", class: "text-sm font-semibold text-slate-700" %>
+          <%= form.number_field :amount, value: @offer.amount_cents.positive? ? (@offer.amount_cents / 100.0) : nil, min: 1, step: "0.01", class: "block w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm" %>
+          <%= form.submit @offer.persisted? ? "Update offer" : "Submit offer", class: "w-full rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white" %>
+        <% end %>
       </section>
-    </aside>
+    <% end %>
+
+    <% if @job_chat_available %>
+      <% if @job_conversation %>
+        <%= render "conversations/chat_panel", conversation: @job_conversation, messages: @job_chat_messages %>
+      <% else %>
+        <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 class="text-lg font-black text-slate-900">Job chat</h2>
+          <p class="mt-1 text-sm text-slate-500">Message the customer through the platform without sharing contact details.</p>
+          <%= button_to "Open job chat", conversations_path(quotation_id: @job.id), method: :post, class: "mt-4 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white" %>
+        </section>
+      <% end %>
+    <% end %>
   </div>
 </div>

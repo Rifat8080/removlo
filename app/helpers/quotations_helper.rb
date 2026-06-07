@@ -30,4 +30,18 @@ module QuotationsHelper
   def money_from_cents(cents)
     number_to_currency(cents.to_i / 100.0, unit: "£")
   end
+
+  def customer_workflow_steps
+    [
+      [:request_quote, "Request quote"],
+      [:receive_quote, "Receive quote"],
+      [:accept_quote, "Accept quote"],
+      [:pay_deposit, "Pay deposit"],
+      [:track_booking, "Track booking"]
+    ]
+  end
+
+  def customer_workflow_step_index(step)
+    customer_workflow_steps.index { |key, _| key == step.to_sym } || 0
+  end
 end

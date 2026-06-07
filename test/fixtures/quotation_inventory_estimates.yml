@@ -1,0 +1,6 @@
+marketplace_estimate:
+  quotation: marketplace_job
+  estimate_status: pending
+  processing_status: pending
+  estimated_inventory: []
+  suggested_vehicle:

@@ -1,0 +1,8 @@
+<% content_for :title, "#{@conversation.display_subject} — Removlo" %>
+
+<div class="mx-auto max-w-4xl">
+  <%= link_to "Back to messages", conversations_path, class: "text-sm font-semibold text-indigo-600" %>
+  <div class="mt-4">
+    <%= render "conversations/chat_panel", conversation: @conversation, messages: @messages %>
+  </div>
+</div>

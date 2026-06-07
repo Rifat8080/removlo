@@ -8,7 +8,23 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   namespace :admin do
+    root to: "dashboard#index"
+
     resources :blog_posts
+    resources :driver_performances, only: %i[index show]
+    resources :support_conversations, only: %i[index show] do
+      member do
+        patch :close
+        patch :reopen
+      end
+      resources :messages, only: %i[create], controller: "support_messages"
+    end
+    resources :wallet_payouts, only: %i[index] do
+      member do
+        patch :approve
+        patch :payout
+      end
+    end
 
     resources :quotations do
       patch :transition, on: :member
@@ -16,6 +32,11 @@ Rails.application.routes.draw do
       resources :quotation_notes, path: :notes, only: %i[create update destroy]
       resources :quotation_payments, path: :payments, only: %i[create update destroy]
       resources :quotation_documents, path: :documents, only: %i[create update destroy]
+      resources :quotation_broadcasts, only: %i[create]
+      resources :driver_offers, only: %i[index] do
+        patch :select, on: :member
+      end
+      resource :inventory_estimate, only: %i[update]
     end
 
     resources :users
@@ -53,15 +74,28 @@ Rails.application.routes.draw do
 
   namespace :driver do
     resources :jobs, only: %i[index show]
+    resources :jobs, only: [] do
+      resources :offers, only: %i[create update]
+    end
+    resources :availabilities
+    resource :wallet, only: :show
   end
 
   resources :quotations, only: %i[index show new create] do
     patch :accept, on: :member
     patch :reject, on: :member
     patch :request_changes, on: :member
+    post :deposit_checkout, to: "quotation_deposits#create", on: :member
+    get :deposit_success, to: "quotation_deposits#success", on: :member
+    get :deposit_cancel, to: "quotation_deposits#cancel", on: :member
+    resources :inventory_photos, only: %i[create], controller: "quotation_inventory_photos"
   end
 
   resources :blog_posts, path: "blog", only: %i[index show]
+
+  resources :conversations, only: %i[index show create] do
+    resources :messages, only: %i[create]
+  end
 
   resources :notifications, only: :index do
     patch :read, on: :member

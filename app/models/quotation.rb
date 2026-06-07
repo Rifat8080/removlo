@@ -21,11 +21,14 @@ class Quotation < ApplicationRecord
 
   MOVE_SIZES = %w[studio one_bed two_bed three_bed four_plus office].freeze
   SERVICE_LEVELS = %w[standard packing storage full_service].freeze
+  VEHICLE_TYPES = DriverProfile::VEHICLE_TYPES
+  PROPERTY_TYPES = %w[studio flat house office storage].freeze
 
   belongs_to :customer, class_name: "User"
   belongs_to :created_by, class_name: "User", optional: true
   belongs_to :assigned_staff, class_name: "User", optional: true
   belongs_to :assigned_driver, class_name: "User", optional: true
+  belongs_to :selected_driver_offer, class_name: "DriverOffer", optional: true
 
   has_many :quotation_items, dependent: :destroy
   has_many :quotation_notes, dependent: :destroy
@@ -34,6 +37,10 @@ class Quotation < ApplicationRecord
   has_many :quotation_status_events, dependent: :destroy
   has_many :accounting_transactions, dependent: :nullify
   has_many :customer_invoices, dependent: :nullify
+  has_many :driver_offers, dependent: :destroy
+  has_many :quotation_broadcasts, dependent: :destroy
+  has_one :inventory_estimate, class_name: "QuotationInventoryEstimate", dependent: :destroy
+  has_one :job_conversation, class_name: "Conversation", as: :conversationable, dependent: :destroy
 
   enum :status, STATUSES, default: :draft, validate: true
   enum :payment_status, PAYMENT_STATUSES, default: :unpaid, validate: true
@@ -53,6 +60,10 @@ class Quotation < ApplicationRecord
   scope :recent, -> { order(created_at: :desc) }
   scope :for_customer, ->(user) { where(customer: user).recent }
   scope :for_driver, ->(user) { where(assigned_driver: user).recent }
+  scope :new_leads, -> { where(status: "requested") }
+  scope :pending_quotes, -> { where(status: %w[draft quoted negotiating]) }
+  scope :awaiting_driver, -> { where(awaiting_driver_offers: true) }
+  scope :booked_jobs, -> { where(status: %w[accepted scheduled in_progress]) }
 
   def quoted_price
     quoted_price_cents.to_i / 100.0
@@ -89,7 +100,61 @@ class Quotation < ApplicationRecord
     accepted? || scheduled? || in_progress? || completed?
   end
 
+  def deposit_protected?
+    deposit_paid? || paid?
+  end
+
+  def customer_details_releasable?
+    deposit_protected? || customer_details_released?
+  end
+
+  def driver_visible_pickup_address
+    return pickup_address if customer_details_releasable?
+
+    pickup_postcode.presence || "Collection area provided after booking confirmed"
+  end
+
+  def driver_visible_delivery_address
+    return delivery_address if customer_details_releasable?
+
+    delivery_postcode.presence || "Delivery area provided after booking confirmed"
+  end
+
+  def driver_visible_collection_label
+    extract_city_or_postcode(pickup_postcode, pickup_address, "Collection")
+  end
+
+  def driver_visible_delivery_label
+    extract_city_or_postcode(delivery_postcode, delivery_address, "Delivery")
+  end
+
+  def apply_markup_from_driver_cost!(driver_cost_cents:, markup_percentage: nil)
+    cost = driver_cost_cents.to_i
+    markup = markup_percentage || self.markup_percentage
+    customer_price = (cost * (1 + markup.to_f / 100.0)).round
+
+    update!(
+      driver_cost_cents: cost,
+      markup_percentage: markup,
+      admin_margin_cents: customer_price - cost,
+      quoted_price_cents: customer_price
+    )
+  end
+
+  def workflow_step_for_customer
+    return :track_booking if deposit_protected? || scheduled? || in_progress? || completed?
+    return :pay_deposit if accepted?
+    return :receive_quote if quoted? || negotiating?
+    :request_quote
+  end
+
   private
+
+  def extract_city_or_postcode(postcode, address, fallback)
+    return postcode if postcode.present?
+
+    address.to_s.split(",").last&.strip.presence || fallback
+  end
 
   def assign_reference
     self.reference ||= loop do
@@ -115,9 +180,16 @@ class Quotation < ApplicationRecord
   end
 
   def driver_assignment_requires_confirmed_quote
-    return if assigned_driver.blank? || confirmed_for_driver_assignment?
+    return if assigned_driver.blank?
 
-    errors.add(:assigned_driver, "can only be assigned after the quotation is accepted")
+    unless confirmed_for_driver_assignment?
+      errors.add(:assigned_driver, "can only be assigned after the quotation is accepted")
+      return
+    end
+
+    return if deposit_protected? || customer_details_released?
+
+    errors.add(:assigned_driver, "can only be assigned after deposit or full payment is received")
   end
 
   def timestamp_for(next_status)

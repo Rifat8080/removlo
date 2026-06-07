@@ -17,6 +17,10 @@ class User < ApplicationRecord
   has_many :created_quotations, class_name: "Quotation", foreign_key: :created_by_id, dependent: :nullify
   has_many :assigned_quotations, class_name: "Quotation", foreign_key: :assigned_staff_id, dependent: :nullify
   has_many :driver_jobs, class_name: "Quotation", foreign_key: :assigned_driver_id, dependent: :nullify
+  has_one :driver_profile, dependent: :destroy
+  has_many :driver_offers, foreign_key: :driver_id, dependent: :destroy
+  has_many :driver_availabilities, foreign_key: :driver_id, dependent: :destroy
+  has_many :driver_wallet_entries, foreign_key: :driver_id, dependent: :destroy
   has_many :quotation_notes, dependent: :nullify
   has_many :quotation_status_events, dependent: :nullify
   has_many :notifications, dependent: :destroy
@@ -28,8 +32,12 @@ class User < ApplicationRecord
   has_many :created_payroll_runs, class_name: "PayrollRun", foreign_key: :created_by_id, dependent: :nullify
   has_many :carts, dependent: :destroy
   has_many :material_orders, foreign_key: :customer_id, dependent: :nullify
+  has_many :conversation_participants, dependent: :destroy
+  has_many :conversations, through: :conversation_participants
+  has_many :messages, foreign_key: :sender_id, dependent: :nullify
 
   before_validation :set_default_role, on: :create
+  after_create :ensure_driver_profile
 
   scope :customers, -> { where(role: "customer").order(:email) }
   scope :operators, -> { where(role: %w[admin staff]).order(:email) }
@@ -44,9 +52,25 @@ class User < ApplicationRecord
     notifications.unread.count
   end
 
+  def wallet_balance_cents
+    driver_wallet_entries.where(status: %w[pending available withdrawn]).sum(:amount_cents)
+  end
+
+  def wallet_pending_cents
+    driver_wallet_entries.where(status: "pending").where("amount_cents > 0").sum(:amount_cents)
+  end
+
+  def wallet_available_cents
+    driver_wallet_entries.where(status: "available").where("amount_cents > 0").sum(:amount_cents)
+  end
+
   private
 
   def set_default_role
     self.role ||= "customer"
+  end
+
+  def ensure_driver_profile
+    DriverProfile.ensure_for!(self) if driver?
   end
 end

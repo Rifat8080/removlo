@@ -1,0 +1,11 @@
+offer_a:
+  quotation: marketplace_job
+  driver: driver_a
+  amount_cents: 55000
+  status: submitted
+
+offer_b:
+  quotation: marketplace_job
+  driver: driver_b
+  amount_cents: 57500
+  status: submitted

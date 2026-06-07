@@ -1,0 +1,21 @@
+driver_a_profile:
+  user: driver_a
+  vehicle_type: luton_van
+  service_areas: ["M", "B"]
+  rating: 4.9
+  completed_jobs_count: 250
+  completion_rate: 99.0
+  cancellation_rate: 1.2
+  late_arrivals_count: 3
+  revenue_generated_cents: 8400000
+
+driver_b_profile:
+  user: driver_b
+  vehicle_type: luton_van
+  service_areas: ["M"]
+  rating: 4.0
+  completed_jobs_count: 40
+  completion_rate: 92.0
+  cancellation_rate: 7.8
+  late_arrivals_count: 21
+  revenue_generated_cents: 1200000

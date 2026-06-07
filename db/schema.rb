@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_31_160100) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_07_210000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -110,6 +110,32 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_31_160100) do
     t.index ["user_id"], name: "index_carts_on_user_id"
   end
 
+  create_table "conversation_participants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "conversation_id", null: false
+    t.uuid "user_id", null: false
+    t.string "participant_role", null: false
+    t.datetime "last_read_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conversation_id", "user_id"], name: "index_conversation_participants_on_conversation_id_and_user_id", unique: true
+    t.index ["conversation_id"], name: "index_conversation_participants_on_conversation_id"
+    t.index ["user_id"], name: "index_conversation_participants_on_user_id"
+  end
+
+  create_table "conversations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "kind", default: "support", null: false
+    t.string "status", default: "open", null: false
+    t.string "subject"
+    t.string "conversationable_type"
+    t.uuid "conversationable_id"
+    t.datetime "last_message_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conversationable_type", "conversationable_id"], name: "idx_on_conversationable_type_conversationable_id_3a28560d11"
+    t.index ["kind"], name: "index_conversations_on_kind"
+    t.index ["status"], name: "index_conversations_on_status"
+  end
+
   create_table "customer_invoices", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "invoice_number", null: false
     t.string "invoice_type", default: "standard", null: false
@@ -128,6 +154,64 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_31_160100) do
     t.index ["quotation_id"], name: "index_customer_invoices_on_quotation_id"
     t.index ["quotation_payment_id"], name: "index_customer_invoices_on_quotation_payment_id"
     t.index ["quotation_payment_id"], name: "index_customer_invoices_on_quotation_payment_unique", unique: true, where: "(quotation_payment_id IS NOT NULL)"
+  end
+
+  create_table "driver_availabilities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "driver_id", null: false
+    t.date "available_on", null: false
+    t.string "status", default: "available", null: false
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["driver_id", "available_on"], name: "index_driver_availabilities_on_driver_id_and_available_on", unique: true
+    t.index ["driver_id"], name: "index_driver_availabilities_on_driver_id"
+  end
+
+  create_table "driver_offers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "quotation_id", null: false
+    t.uuid "driver_id", null: false
+    t.integer "amount_cents", null: false
+    t.string "status", default: "submitted", null: false
+    t.decimal "score", precision: 8, scale: 4
+    t.jsonb "score_breakdown", default: {}, null: false
+    t.boolean "selected_by_admin", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["driver_id"], name: "index_driver_offers_on_driver_id"
+    t.index ["quotation_id", "driver_id"], name: "index_driver_offers_on_quotation_id_and_driver_id", unique: true
+    t.index ["quotation_id"], name: "index_driver_offers_on_quotation_id"
+  end
+
+  create_table "driver_profiles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.string "vehicle_type", default: "luton_van", null: false
+    t.string "service_areas", default: [], null: false, array: true
+    t.decimal "rating", precision: 3, scale: 2, default: "5.0", null: false
+    t.integer "completed_jobs_count", default: 0, null: false
+    t.decimal "completion_rate", precision: 5, scale: 2, default: "100.0", null: false
+    t.decimal "cancellation_rate", precision: 5, scale: 2, default: "0.0", null: false
+    t.integer "late_arrivals_count", default: 0, null: false
+    t.integer "revenue_generated_cents", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_driver_profiles_on_user_id", unique: true
+  end
+
+  create_table "driver_wallet_entries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "driver_id", null: false
+    t.uuid "quotation_id"
+    t.uuid "approved_by_id"
+    t.string "entry_type", null: false
+    t.string "status", default: "pending", null: false
+    t.integer "amount_cents", null: false
+    t.string "reference"
+    t.text "notes"
+    t.datetime "approved_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["approved_by_id"], name: "index_driver_wallet_entries_on_approved_by_id"
+    t.index ["driver_id"], name: "index_driver_wallet_entries_on_driver_id"
+    t.index ["quotation_id"], name: "index_driver_wallet_entries_on_quotation_id"
   end
 
   create_table "material_order_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -175,6 +259,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_31_160100) do
     t.index ["payment_status"], name: "index_material_orders_on_payment_status"
     t.index ["status"], name: "index_material_orders_on_status"
     t.index ["stripe_checkout_session_id"], name: "index_material_orders_on_stripe_checkout_session_id", unique: true, where: "(stripe_checkout_session_id IS NOT NULL)"
+  end
+
+  create_table "messages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "conversation_id", null: false
+    t.uuid "sender_id", null: false
+    t.text "body", null: false
+    t.boolean "system_message", default: false, null: false
+    t.boolean "internal_only", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conversation_id", "created_at"], name: "index_messages_on_conversation_id_and_created_at"
+    t.index ["conversation_id"], name: "index_messages_on_conversation_id"
+    t.index ["sender_id"], name: "index_messages_on_sender_id"
   end
 
   create_table "notifications", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -254,6 +351,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_31_160100) do
     t.index ["status"], name: "index_products_on_status"
   end
 
+  create_table "quotation_broadcasts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "quotation_id", null: false
+    t.uuid "created_by_id", null: false
+    t.string "vehicle_types", default: [], null: false, array: true
+    t.string "service_areas", default: [], null: false, array: true
+    t.decimal "minimum_rating", precision: 3, scale: 2, default: "0.0", null: false
+    t.boolean "require_available", default: true, null: false
+    t.integer "drivers_notified_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_quotation_broadcasts_on_created_by_id"
+    t.index ["quotation_id"], name: "index_quotation_broadcasts_on_quotation_id"
+  end
+
   create_table "quotation_documents", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "quotation_id", null: false
     t.string "title", null: false
@@ -263,6 +374,23 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_31_160100) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["quotation_id"], name: "index_quotation_documents_on_quotation_id"
+  end
+
+  create_table "quotation_inventory_estimates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "quotation_id", null: false
+    t.jsonb "estimated_inventory", default: [], null: false
+    t.string "suggested_vehicle"
+    t.string "estimate_status", default: "pending", null: false
+    t.text "admin_notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "processing_status", default: "pending", null: false
+    t.string "ai_provider"
+    t.string "ai_model"
+    t.jsonb "ai_raw_response", default: {}, null: false
+    t.text "ai_error"
+    t.datetime "processed_at"
+    t.index ["quotation_id"], name: "index_quotation_inventory_estimates_on_quotation_id", unique: true
   end
 
   create_table "quotation_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -297,7 +425,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_31_160100) do
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "stripe_checkout_session_id"
+    t.string "stripe_payment_intent_id"
     t.index ["quotation_id"], name: "index_quotation_payments_on_quotation_id"
+    t.index ["stripe_checkout_session_id"], name: "index_quotation_payments_on_stripe_checkout_session_id", unique: true, where: "(stripe_checkout_session_id IS NOT NULL)"
   end
 
   create_table "quotation_status_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -338,6 +469,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_31_160100) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "assigned_driver_id"
+    t.integer "driver_cost_cents", default: 0, null: false
+    t.decimal "markup_percentage", precision: 5, scale: 2, default: "30.0", null: false
+    t.integer "admin_margin_cents", default: 0, null: false
+    t.string "vehicle_required", default: "luton_van"
+    t.integer "expected_duration_hours"
+    t.string "property_type"
+    t.boolean "awaiting_driver_offers", default: false, null: false
+    t.boolean "customer_details_released", default: false, null: false
+    t.uuid "selected_driver_offer_id"
     t.index ["assigned_driver_id"], name: "index_quotations_on_assigned_driver_id"
     t.index ["assigned_staff_id"], name: "index_quotations_on_assigned_staff_id"
     t.index ["created_by_id"], name: "index_quotations_on_created_by_id"
@@ -345,6 +485,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_31_160100) do
     t.index ["payment_status"], name: "index_quotations_on_payment_status"
     t.index ["preferred_move_date"], name: "index_quotations_on_preferred_move_date"
     t.index ["reference"], name: "index_quotations_on_reference", unique: true
+    t.index ["selected_driver_offer_id"], name: "index_quotations_on_selected_driver_offer_id"
     t.index ["status"], name: "index_quotations_on_status"
   end
 
@@ -387,26 +528,41 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_31_160100) do
   add_foreign_key "cart_items", "carts"
   add_foreign_key "cart_items", "products"
   add_foreign_key "carts", "users"
+  add_foreign_key "conversation_participants", "conversations"
+  add_foreign_key "conversation_participants", "users"
   add_foreign_key "customer_invoices", "quotation_payments"
   add_foreign_key "customer_invoices", "quotations"
   add_foreign_key "customer_invoices", "users", column: "customer_id"
+  add_foreign_key "driver_availabilities", "users", column: "driver_id"
+  add_foreign_key "driver_offers", "quotations"
+  add_foreign_key "driver_offers", "users", column: "driver_id"
+  add_foreign_key "driver_profiles", "users"
+  add_foreign_key "driver_wallet_entries", "quotations"
+  add_foreign_key "driver_wallet_entries", "users", column: "approved_by_id"
+  add_foreign_key "driver_wallet_entries", "users", column: "driver_id"
   add_foreign_key "material_order_items", "material_orders"
   add_foreign_key "material_order_items", "products"
   add_foreign_key "material_orders", "carts"
   add_foreign_key "material_orders", "users", column: "customer_id"
+  add_foreign_key "messages", "conversations"
+  add_foreign_key "messages", "users", column: "sender_id"
   add_foreign_key "notifications", "users"
   add_foreign_key "notifications", "users", column: "actor_id"
   add_foreign_key "payroll_runs", "users", column: "created_by_id"
   add_foreign_key "payslips", "payroll_runs"
   add_foreign_key "payslips", "users", column: "employee_id"
   add_foreign_key "products", "product_categories"
+  add_foreign_key "quotation_broadcasts", "quotations"
+  add_foreign_key "quotation_broadcasts", "users", column: "created_by_id"
   add_foreign_key "quotation_documents", "quotations"
+  add_foreign_key "quotation_inventory_estimates", "quotations"
   add_foreign_key "quotation_items", "quotations"
   add_foreign_key "quotation_notes", "quotations"
   add_foreign_key "quotation_notes", "users"
   add_foreign_key "quotation_payments", "quotations"
   add_foreign_key "quotation_status_events", "quotations"
   add_foreign_key "quotation_status_events", "users"
+  add_foreign_key "quotations", "driver_offers", column: "selected_driver_offer_id"
   add_foreign_key "quotations", "users", column: "assigned_driver_id"
   add_foreign_key "quotations", "users", column: "assigned_staff_id"
   add_foreign_key "quotations", "users", column: "created_by_id"

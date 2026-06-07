@@ -30,6 +30,12 @@ class StripeWebhooksController < ApplicationController
     metadata = session.is_a?(Hash) ? session["metadata"] : session.metadata
     payment_intent = session.is_a?(Hash) ? session["payment_intent"] : session.payment_intent
     customer_email = session.is_a?(Hash) ? session["customer_email"] : session.customer_email
+    payment_kind = metadata.is_a?(Hash) ? metadata["payment_kind"] : metadata&.payment_kind
+
+    if payment_kind == "quotation_deposit"
+      finalize_quotation_deposit(session_id, payment_intent, metadata)
+      return
+    end
 
     order = MaterialOrder.find_by(stripe_checkout_session_id: session_id) ||
             MaterialOrder.find_by(id: metadata.is_a?(Hash) ? metadata["material_order_id"] : metadata&.material_order_id)
@@ -38,6 +44,19 @@ class StripeWebhooksController < ApplicationController
     order.mark_paid!(stripe_payment_intent_id: payment_intent)
     clear_cart_for(order)
     link_guest_order_customer(order, customer_email || order.customer_email)
+  end
+
+  def finalize_quotation_deposit(session_id, payment_intent, metadata)
+    payment = QuotationPayment.find_by(stripe_checkout_session_id: session_id)
+    payment ||= QuotationPayment.find_by(id: metadata.is_a?(Hash) ? metadata["quotation_payment_id"] : metadata&.quotation_payment_id)
+    return if payment.blank? || payment.recorded?
+
+    payment.update!(
+      status: :recorded,
+      stripe_payment_intent_id: payment_intent,
+      stripe_checkout_session_id: session_id
+    )
+    payment.quotation.sync_payment_status!
   end
 
   def clear_cart_for(order)

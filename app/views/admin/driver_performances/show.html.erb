@@ -1,0 +1,15 @@
+<% content_for :title, "#{@driver.email} — Driver Performance" %>
+
+<div class="mx-auto max-w-7xl space-y-6">
+  <div class="rounded-3xl bg-gradient-to-br from-slate-950 via-indigo-950 to-blue-900 p-6 text-white">
+    <h1 class="text-3xl font-black"><%= @driver.email %></h1>
+    <p class="mt-2 text-sm text-slate-300">Rating <%= @summary.profile.rating %> · Completion <%= @summary.profile.completion_rate %>%</p>
+  </div>
+
+  <div class="grid gap-4 sm:grid-cols-4">
+    <div class="rounded-2xl border bg-white p-4"><p class="text-xs uppercase text-slate-400">Jobs</p><p class="mt-2 text-2xl font-black"><%= @summary.jobs_count %></p></div>
+    <div class="rounded-2xl border bg-white p-4"><p class="text-xs uppercase text-slate-400">Revenue</p><p class="mt-2 text-2xl font-black"><%= money_from_cents(@summary.revenue_cents) %></p></div>
+    <div class="rounded-2xl border bg-white p-4"><p class="text-xs uppercase text-slate-400">Cancellation</p><p class="mt-2 text-2xl font-black"><%= @summary.cancellation_rate %>%</p></div>
+    <div class="rounded-2xl border bg-white p-4"><p class="text-xs uppercase text-slate-400">Late arrivals</p><p class="mt-2 text-2xl font-black"><%= @summary.late_arrivals %></p></div>
+  </div>
+</div>

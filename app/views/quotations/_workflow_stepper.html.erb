@@ -1,0 +1,12 @@
+<section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+  <h2 class="text-lg font-black text-slate-900">Your move journey</h2>
+  <% current_index = customer_workflow_step_index(workflow_step) %>
+  <div class="mt-5 grid gap-3 sm:grid-cols-5">
+    <% customer_workflow_steps.each_with_index do |(key, label), index| %>
+      <div class="rounded-xl border px-3 py-3 text-center <%= index == current_index ? 'border-indigo-300 bg-indigo-50' : (index < current_index ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-slate-50') %>">
+        <p class="text-xs font-bold uppercase tracking-wide text-slate-500"><%= index + 1 %></p>
+        <p class="mt-1 text-sm font-bold text-slate-900"><%= label %></p>
+      </div>
+    <% end %>
+  </div>
+</section>

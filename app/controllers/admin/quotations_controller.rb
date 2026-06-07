@@ -12,6 +12,9 @@ module Admin
       @note = @quotation.quotation_notes.new(internal: true)
       @payment = @quotation.quotation_payments.new(paid_on: Date.current)
       @document = @quotation.quotation_documents.new
+      @broadcast = @quotation.quotation_broadcasts.new(minimum_rating: 4.5, require_available: true)
+      @comparison = DriverOffers::Score.call(offers: @quotation.driver_offers.active.for_comparison)
+      @inventory_estimate = @quotation.inventory_estimate || @quotation.build_inventory_estimate
     end
 
     def new
@@ -53,6 +56,10 @@ module Admin
 
     def transition
       @quotation.transition_to!(params.require(:status), actor: current_user, note: params[:note])
+      if @quotation.completed?
+        DriverWallet::RecordJobEarning.call(quotation: @quotation)
+        @quotation.update!(awaiting_driver_offers: false)
+      end
       notify_quote_participants("Quotation status changed", "#{@quotation.reference} is now #{@quotation.status.humanize}.", @quotation)
       redirect_to admin_quotation_path(@quotation), notice: "Quotation status updated."
     rescue ActiveRecord::RecordInvalid, ArgumentError => e
@@ -82,11 +89,24 @@ module Admin
         :access_notes,
         :customer_notes,
         :quoted_price,
-        :deposit
+        :deposit,
+        :driver_cost,
+        :markup_percentage,
+        :vehicle_required,
+        :expected_duration_hours,
+        :property_type,
+        :customer_details_released
       )
 
       normalize_money(attrs, :quoted_price, :quoted_price_cents)
       normalize_money(attrs, :deposit, :deposit_cents)
+      normalize_money(attrs, :driver_cost, :driver_cost_cents)
+      if attrs[:driver_cost_cents].to_i.positive? && attrs[:markup_percentage].present?
+        markup = BigDecimal(attrs[:markup_percentage].to_s)
+        customer_price = (attrs[:driver_cost_cents] * (1 + markup / 100)).round
+        attrs[:quoted_price_cents] = customer_price
+        attrs[:admin_margin_cents] = customer_price - attrs[:driver_cost_cents]
+      end
       attrs
     end
 

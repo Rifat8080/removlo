@@ -1,0 +1,9 @@
+driver_a_available:
+  driver: driver_a
+  available_on: 2026-07-15
+  status: available
+
+driver_b_busy:
+  driver: driver_b
+  available_on: 2026-07-15
+  status: busy

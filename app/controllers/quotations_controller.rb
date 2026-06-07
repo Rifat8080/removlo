@@ -12,6 +12,11 @@ class QuotationsController < ApplicationController
   def show
     @negotiation_note = @quotation.quotation_notes.new(internal: false)
     @invoices = @quotation.customer_invoices.recent
+    @inventory_estimate = @quotation.inventory_estimate
+    @workflow_step = @quotation.workflow_step_for_customer
+    @job_chat_available = @quotation.customer_details_releasable? && @quotation.assigned_driver.present?
+    @job_conversation = @quotation.job_conversation if @job_chat_available
+    @job_chat_messages = @job_conversation&.messages&.visible_to_participants&.chronological || []
   end
 
   def new
@@ -42,9 +47,14 @@ class QuotationsController < ApplicationController
   end
 
   def accept
+    unless @quotation.quoted_price_cents.positive?
+      redirect_to quotation_path(@quotation), alert: "A quote price must be set before acceptance."
+      return
+    end
+
     @quotation.transition_to!(:accepted, actor: current_user, note: "Customer accepted the quote")
     notify_operators("Quote accepted", "#{current_user.email} accepted #{@quotation.reference}.", @quotation)
-    redirect_to quotation_path(@quotation), notice: "Quote accepted. Our team will schedule your move."
+    redirect_to quotation_path(@quotation), notice: "Quote accepted. Please pay your deposit to secure your booking."
   end
 
   def reject

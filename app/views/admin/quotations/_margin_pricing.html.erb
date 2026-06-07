@@ -1,0 +1,19 @@
+<section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+  <h2 class="text-lg font-black text-slate-900">Hidden Margin System</h2>
+  <p class="mt-1 text-sm text-slate-500">Driver and customer never see each other's price. Only admin sees both.</p>
+  <div class="mt-4 grid gap-3 sm:grid-cols-3">
+    <div class="rounded-2xl bg-slate-50 p-4">
+      <p class="text-xs uppercase text-slate-400">Driver bid / cost</p>
+      <p class="mt-2 text-2xl font-black text-slate-900"><%= money_from_cents(quotation.driver_cost_cents) %></p>
+    </div>
+    <div class="rounded-2xl bg-slate-50 p-4">
+      <p class="text-xs uppercase text-slate-400">Markup</p>
+      <p class="mt-2 text-2xl font-black text-slate-900"><%= quotation.markup_percentage %>%</p>
+    </div>
+    <div class="rounded-2xl bg-slate-50 p-4">
+      <p class="text-xs uppercase text-slate-400">Customer sees</p>
+      <p class="mt-2 text-2xl font-black text-emerald-700"><%= money_from_cents(quotation.quoted_price_cents) %></p>
+      <p class="text-xs text-slate-500">Margin: <%= money_from_cents(quotation.admin_margin_cents) %></p>
+    </div>
+  </div>
+</section>

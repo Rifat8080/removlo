@@ -25,101 +25,133 @@
       </div>
       <div class="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur">
         <p class="text-xs font-semibold uppercase tracking-wide text-indigo-200">Move date</p>
-        <p class="mt-2 text-lg font-black"><%= @quotation.preferred_move_date&.to_fs(:long) || "Not set" %></p>
+        <p class="mt-2 text-lg font-black"><%= @quotation.preferred_move_date&.to_fs(:long) || @quotation.scheduled_at&.to_fs(:long) || "Not set" %></p>
       </div>
       <div class="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur">
-        <p class="text-xs font-semibold uppercase tracking-wide text-indigo-200">Service</p>
-        <p class="mt-2 text-lg font-black"><%= @quotation.service_level.humanize %></p>
+        <p class="text-xs font-semibold uppercase tracking-wide text-indigo-200">Booking status</p>
+        <p class="mt-2 text-lg font-black"><%= @quotation.status.humanize %></p>
       </div>
     </div>
   </div>
 
-  <div class="mt-6 grid gap-6 min-[1025px]:grid-cols-[1.2fr_0.8fr]">
-    <div class="space-y-6">
-      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 class="text-lg font-black text-slate-900">Quote decision</h2>
-        <p class="mt-1 text-sm text-slate-500">Once the team sends a price, you can accept, reject, or negotiate changes.</p>
+  <div class="mt-6 space-y-6">
+    <%= render "quotations/workflow_stepper", workflow_step: @workflow_step %>
 
-        <div class="mt-5 grid gap-3 sm:grid-cols-3">
-          <%= button_to "Accept quote", accept_quotation_path(@quotation), method: :patch, disabled: !@quotation.quoted_price_cents.positive?, class: "inline-flex w-full items-center justify-center rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300" %>
-          <%= button_to "Reject quote", reject_quotation_path(@quotation), method: :patch, disabled: !@quotation.quoted_price_cents.positive?, class: "inline-flex w-full items-center justify-center rounded-xl bg-rose-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:bg-slate-300" %>
-          <a href="#negotiate" class="inline-flex w-full items-center justify-center rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-bold text-indigo-700 transition hover:bg-indigo-100">Negotiate</a>
-        </div>
-      </section>
+    <div class="grid gap-6 min-[1025px]:grid-cols-[1.2fr_0.8fr]">
+      <div class="space-y-6">
+        <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 class="text-lg font-black text-slate-900">Quote decision</h2>
+          <p class="mt-1 text-sm text-slate-500">Once the team sends a price, you can accept, reject, or negotiate changes.</p>
+          <div class="mt-5 grid gap-3 sm:grid-cols-3">
+            <%= button_to "Accept quote", accept_quotation_path(@quotation), method: :patch, disabled: !@quotation.quoted_price_cents.positive?, class: "inline-flex w-full items-center justify-center rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300" %>
+            <%= button_to "Reject quote", reject_quotation_path(@quotation), method: :patch, disabled: !@quotation.quoted_price_cents.positive?, class: "inline-flex w-full items-center justify-center rounded-xl bg-rose-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:bg-slate-300" %>
+            <a href="#negotiate" class="inline-flex w-full items-center justify-center rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-bold text-indigo-700 transition hover:bg-indigo-100">Negotiate</a>
+          </div>
+        </section>
 
-      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 class="text-lg font-black text-slate-900">Move details</h2>
-        <div class="mt-5 grid gap-4 min-[1025px]:grid-cols-2">
-          <div class="rounded-2xl bg-slate-50 p-4">
-            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Pickup</p>
-            <p class="mt-2 whitespace-pre-line text-sm font-semibold text-slate-900"><%= @quotation.pickup_address %></p>
-          </div>
-          <div class="rounded-2xl bg-slate-50 p-4">
-            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Delivery</p>
-            <p class="mt-2 whitespace-pre-line text-sm font-semibold text-slate-900"><%= @quotation.delivery_address %></p>
-          </div>
-        </div>
-        <div class="mt-4 grid gap-4 min-[1025px]:grid-cols-2">
-          <div>
-            <p class="text-sm font-bold text-slate-900">Access notes</p>
-            <p class="mt-1 whitespace-pre-line text-sm text-slate-600"><%= @quotation.access_notes.presence || "No access notes recorded." %></p>
-          </div>
-          <div>
-            <p class="text-sm font-bold text-slate-900">Inventory and requirements</p>
-            <p class="mt-1 whitespace-pre-line text-sm text-slate-600"><%= @quotation.customer_notes.presence || "No requirements recorded." %></p>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <aside class="space-y-6">
-      <section id="negotiate" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 class="text-lg font-black text-slate-900">Negotiation</h2>
-        <p class="mt-1 text-sm text-slate-500">Ask a question or request a change. The quotation will move into negotiation.</p>
-        <%= form_with(url: request_changes_quotation_path(@quotation), method: :patch, scope: :quotation_note, class: "mt-4 space-y-3") do |form| %>
-          <%= form.text_area :content, rows: 4, class: "block w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Can we adjust the price, date, service, or inventory?" %>
-          <%= form.submit "Send negotiation request", class: "inline-flex w-full items-center justify-center rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-indigo-700" %>
+        <% if @quotation.accepted? && @quotation.deposit_cents.positive? && !@quotation.deposit_protected? %>
+          <section class="rounded-2xl border border-amber-200 bg-amber-50 p-5 shadow-sm">
+            <h2 class="text-lg font-black text-amber-900">Pay deposit</h2>
+            <p class="mt-1 text-sm text-amber-800">Secure your booking with a <%= money_from_cents(@quotation.deposit_cents) %> deposit. Your driver is assigned after payment.</p>
+            <%= button_to "Pay deposit", deposit_checkout_quotation_path(@quotation), method: :post, class: "mt-4 inline-flex rounded-xl bg-amber-600 px-5 py-3 text-sm font-bold text-white" %>
+          </section>
         <% end %>
-      </section>
 
-      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div class="flex items-center justify-between gap-3">
+        <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 class="text-lg font-black text-slate-900">Upload inventory photos</h2>
+          <p class="mt-1 text-sm text-slate-500">Upload photos so our team can estimate items and suggest the right vehicle.</p>
+          <%= form_with(url: quotation_inventory_photos_path(@quotation), method: :post, multipart: true, class: "mt-4 space-y-3") do %>
+            <input type="file" name="photos[]" multiple accept="image/*" class="block w-full text-sm text-slate-600">
+            <button type="submit" class="rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white">Upload photos</button>
+          <% end %>
+          <% if @inventory_estimate.present? %>
+            <p class="mt-3 text-sm font-semibold text-slate-700"><%= @inventory_estimate.ai_status_label %></p>
+            <% if @inventory_estimate.estimated_inventory.present? %>
+              <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-600">
+                <% @inventory_estimate.inventory_lines.each do |line| %>
+                  <li><%= line %></li>
+                <% end %>
+              </ul>
+              <% if @inventory_estimate.suggested_vehicle.present? %>
+                <p class="mt-2 text-sm text-slate-600">Suggested vehicle: <strong><%= @inventory_estimate.suggested_vehicle.humanize %></strong></p>
+              <% end %>
+            <% end %>
+          <% end %>
+          <% if @inventory_estimate&.photos&.attached? %>
+            <div class="mt-4 grid grid-cols-3 gap-2">
+              <% @inventory_estimate.photos.each do |photo| %>
+                <%= image_tag photo, class: "h-24 w-full rounded-lg object-cover" %>
+              <% end %>
+            </div>
+          <% end %>
+        </section>
+
+        <% if @job_chat_available %>
+          <% if @job_conversation %>
+            <%= render "conversations/chat_panel", conversation: @job_conversation, messages: @job_chat_messages %>
+          <% else %>
+            <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h2 class="text-lg font-black text-slate-900">Job chat</h2>
+              <p class="mt-1 text-sm text-slate-500">Message your assigned driver through the platform. No phone numbers shared.</p>
+              <%= button_to "Open job chat", conversations_path(quotation_id: @quotation.id), method: :post, class: "mt-4 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white" %>
+            </section>
+          <% end %>
+        <% end %>
+
+        <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 class="text-lg font-black text-slate-900">Move details</h2>
+          <div class="mt-5 grid gap-4 min-[1025px]:grid-cols-2">
+            <div class="rounded-2xl bg-slate-50 p-4">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Pickup</p>
+              <p class="mt-2 whitespace-pre-line text-sm font-semibold text-slate-900"><%= @quotation.pickup_address %></p>
+            </div>
+            <div class="rounded-2xl bg-slate-50 p-4">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Delivery</p>
+              <p class="mt-2 whitespace-pre-line text-sm font-semibold text-slate-900"><%= @quotation.delivery_address %></p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="space-y-6">
+        <section id="negotiate" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 class="text-lg font-black text-slate-900">Negotiation</h2>
+          <%= form_with(url: request_changes_quotation_path(@quotation), method: :patch, scope: :quotation_note, class: "mt-4 space-y-3") do |form| %>
+            <%= form.text_area :content, rows: 4, class: "block w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm", placeholder: "Can we adjust the price, date, service, or inventory?" %>
+            <%= form.submit "Send negotiation request", class: "inline-flex w-full items-center justify-center rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white" %>
+          <% end %>
+        </section>
+
+        <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <h2 class="text-lg font-black text-slate-900">Invoices</h2>
-          <%= link_to "All invoices", customer_invoices_path, class: "text-sm font-semibold text-indigo-600 hover:text-indigo-700" %>
-        </div>
-        <div class="mt-5 space-y-3">
-          <% @invoices.each do |invoice| %>
-            <div class="flex items-center justify-between gap-3 rounded-2xl bg-slate-50 p-4">
-              <div>
-                <p class="font-semibold text-slate-900"><%= invoice.invoice_number %></p>
-                <p class="text-xs text-slate-500"><%= invoice.invoice_type.humanize %> · <%= invoice.issued_on.strftime("%d %b %Y") %></p>
-              </div>
-              <div class="text-right">
-                <p class="font-semibold text-slate-900"><%= money_from_cents(invoice.amount_cents) %></p>
+          <div class="mt-5 space-y-3">
+            <% @invoices.each do |invoice| %>
+              <div class="flex items-center justify-between rounded-2xl bg-slate-50 p-4">
+                <div>
+                  <p class="font-semibold text-slate-900"><%= invoice.invoice_number %></p>
+                  <p class="text-xs text-slate-500"><%= money_from_cents(invoice.amount_cents) %></p>
+                </div>
                 <%= link_to "View", customer_invoice_path(invoice), class: "text-xs font-semibold text-indigo-600" %>
               </div>
-            </div>
-          <% end %>
-          <% if @invoices.empty? %>
-            <p class="rounded-2xl bg-slate-50 p-4 text-sm text-slate-500">Invoices will appear here when payments are recorded.</p>
-          <% end %>
-        </div>
-      </section>
+            <% end %>
+            <% if @invoices.empty? %>
+              <p class="rounded-2xl bg-slate-50 p-4 text-sm text-slate-500">Invoices will appear here when payments are recorded.</p>
+            <% end %>
+          </div>
+        </section>
 
-      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 class="text-lg font-black text-slate-900">Messages</h2>
-        <div class="mt-5 space-y-3">
-          <% @quotation.quotation_notes.where(internal: false).order(created_at: :desc).each do |note| %>
-            <div class="rounded-2xl bg-slate-50 p-4">
-              <p class="whitespace-pre-line text-sm text-slate-700"><%= note.content %></p>
-              <p class="mt-3 text-xs text-slate-500"><%= note.user&.email || "Removlo team" %> · <%= note.created_at.to_fs(:long) %></p>
-            </div>
-          <% end %>
-          <% if @quotation.quotation_notes.where(internal: false).none? %>
-            <p class="rounded-2xl bg-slate-50 p-4 text-sm text-slate-500">No negotiation messages yet.</p>
-          <% end %>
-        </div>
-      </section>
-    </aside>
+        <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 class="text-lg font-black text-slate-900">Messages</h2>
+          <div class="mt-5 space-y-3">
+            <% @quotation.quotation_notes.where(internal: false).order(created_at: :desc).each do |note| %>
+              <div class="rounded-2xl bg-slate-50 p-4">
+                <p class="whitespace-pre-line text-sm text-slate-700"><%= note.content %></p>
+                <p class="mt-3 text-xs text-slate-500">Removlo team · <%= note.created_at.to_fs(:long) %></p>
+              </div>
+            <% end %>
+          </div>
+        </section>
+      </aside>
+    </div>
   </div>
 </div>

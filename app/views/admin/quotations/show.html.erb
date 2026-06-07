@@ -43,6 +43,11 @@
 
   <div class="mt-6 grid gap-6 min-[1025px]:grid-cols-[1.4fr_0.9fr]">
     <div class="space-y-6">
+      <%= render "admin/quotations/margin_pricing", quotation: @quotation %>
+      <%= render "admin/quotations/broadcast_form", quotation: @quotation, broadcast: @broadcast %>
+      <%= render "admin/quotations/bid_comparison", quotation: @quotation, comparison: @comparison %>
+      <%= render "admin/quotations/inventory_estimate", quotation: @quotation, inventory_estimate: @inventory_estimate %>
+
       <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <div class="flex flex-col gap-3 min-[1025px]:flex-row min-[1025px]:items-center min-[1025px]:justify-between">
           <div>

@@ -1,0 +1,9 @@
+moving_services:
+  name: Moving services
+  slug: moving-services
+  category_type: income
+
+refunds:
+  name: Refunds
+  slug: refunds
+  category_type: expense

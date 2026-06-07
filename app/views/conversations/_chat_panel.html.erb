@@ -1,0 +1,20 @@
+<section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+  <div class="flex items-center justify-between gap-3">
+    <div>
+      <h2 class="text-lg font-black text-slate-900"><%= conversation.display_subject %></h2>
+      <p class="mt-1 text-sm text-slate-500">Platform chat. Contact details stay hidden.</p>
+    </div>
+    <%= link_to "Open inbox", conversations_path, class: "text-sm font-semibold text-indigo-600" %>
+  </div>
+
+  <div id="messages" class="mt-4 max-h-96 space-y-3 overflow-y-auto rounded-2xl bg-slate-50 p-4">
+    <% messages.each do |message| %>
+      <%= render "messages/message", message: message %>
+    <% end %>
+    <% if messages.empty? %>
+      <p class="text-sm text-slate-500">No messages yet. Start the conversation.</p>
+    <% end %>
+  </div>
+
+  <%= render "conversations/message_form", conversation: conversation, message: conversation.messages.new %>
+</section>

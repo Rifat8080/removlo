@@ -56,7 +56,8 @@
               </div>
               <ul class="py-1">
                 <li><%= link_to "Dashboard", dashboard_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
-                <li><%= link_to "Notifications", notifications_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
+                  <li><%= link_to "Messages", conversations_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
+                  <li><%= link_to "Notifications", notifications_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
                 <% if current_user.customer? %>
                   <li><%= link_to "My quotations", quotations_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
                   <li><%= link_to "My invoices", customer_invoices_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
@@ -65,12 +66,16 @@
                 <% end %>
                 <% if current_user.driver? %>
                   <li><%= link_to "My jobs", driver_jobs_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
+                  <li><%= link_to "Availability", driver_availabilities_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
+                  <li><%= link_to "Wallet", driver_wallet_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
                 <% end %>
                 <% if current_user.admin? || current_user.staff? || current_user.driver? %>
                   <li><%= link_to "My payslips", payslips_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
                 <% end %>
                 <% if current_user.operator? %>
+                  <li><%= link_to "Control panel", admin_root_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
                   <li><%= link_to "Quotations", admin_quotations_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
+                  <li><%= link_to "Support panel", admin_support_conversations_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
                 <% end %>
                 <% if current_user.admin? %>
                   <li><%= link_to "Accounting", admin_accounting_root_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
@@ -96,6 +101,7 @@
         <% nav_groups = [
           ["Main", [
             ["Overview", dashboard_path, "grid", current_page?(dashboard_path)],
+            ["Messages", conversations_path, "chat", controller_path == "conversations" || controller_path == "messages"],
             ["Notifications", notifications_path, "bell", controller_path == "notifications"]
           ]]
         ] %>
@@ -104,9 +110,15 @@
         <% work_links << ["My invoices", customer_invoices_path, "invoice", controller_path == "customer_invoices"] if current_user.customer? %>
         <% work_links << ["Material orders", material_orders_path, "shop", controller_path == "material_orders"] if current_user.customer? %>
         <% work_links << ["Shop", shop_products_path, "shop", controller_path.start_with?("shop/")] if current_user.customer? %>
-        <% work_links << ["My jobs", driver_jobs_path, "truck", controller_path.start_with?("driver/")] if current_user.driver? %>
+        <% work_links << ["My jobs", driver_jobs_path, "truck", controller_path == "driver/jobs"] if current_user.driver? %>
+        <% work_links << ["Availability", driver_availabilities_path, "calendar", controller_path == "driver/availabilities"] if current_user.driver? %>
+        <% work_links << ["Wallet", driver_wallet_path, "invoice", controller_path == "driver/wallets"] if current_user.driver? %>
         <% work_links << ["My payslips", payslips_path, "invoice", controller_path == "payslips"] if current_user.admin? || current_user.staff? || current_user.driver? %>
+        <% work_links << ["Control panel", admin_root_path, "grid", controller_path == "admin/dashboard"] if current_user.operator? %>
         <% work_links << ["Quotations", admin_quotations_path, "doc", controller_path.start_with?("admin/quotation")] if current_user.operator? %>
+        <% work_links << ["Driver performance", admin_driver_performances_path, "users", controller_path == "admin/driver_performances"] if current_user.operator? %>
+        <% work_links << ["Wallet payouts", admin_wallet_payouts_path, "invoice", controller_path == "admin/wallet_payouts"] if current_user.operator? %>
+        <% work_links << ["Support panel", admin_support_conversations_path, "chat", controller_path == "admin/support_conversations"] if current_user.operator? %>
         <% work_links << ["Accounting", admin_accounting_root_path, "chart", controller_path.start_with?("admin/accounting")] if current_user.admin? %>
         <% nav_groups << ["Work", work_links] if work_links.any? %>
         <% admin_links = [] %>

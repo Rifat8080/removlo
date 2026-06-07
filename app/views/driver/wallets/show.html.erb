@@ -1,0 +1,28 @@
+<% content_for :title, "Driver wallet — Removlo" %>
+
+<div class="mx-auto max-w-5xl space-y-6">
+  <div class="rounded-3xl bg-gradient-to-br from-slate-950 via-indigo-950 to-blue-900 p-6 text-white">
+    <h1 class="text-3xl font-black">Driver wallet</h1>
+  </div>
+
+  <div class="grid gap-4 sm:grid-cols-3">
+    <div class="rounded-2xl border bg-white p-5"><p class="text-xs uppercase text-slate-400">Total earnings</p><p class="mt-2 text-2xl font-black"><%= money_from_cents(@total_cents) %></p></div>
+    <div class="rounded-2xl border bg-white p-5"><p class="text-xs uppercase text-slate-400">Pending</p><p class="mt-2 text-2xl font-black"><%= money_from_cents(@pending_cents) %></p></div>
+    <div class="rounded-2xl border bg-white p-5"><p class="text-xs uppercase text-slate-400">Available to withdraw</p><p class="mt-2 text-2xl font-black text-emerald-700"><%= money_from_cents(@available_cents) %></p></div>
+  </div>
+
+  <div class="rounded-2xl border bg-white p-5 shadow-sm">
+    <h2 class="text-lg font-black text-slate-900">Ledger</h2>
+    <div class="mt-4 space-y-3">
+      <% @entries.each do |entry| %>
+        <div class="flex items-center justify-between rounded-xl bg-slate-50 p-4">
+          <div>
+            <p class="font-semibold text-slate-900"><%= entry.entry_type.humanize %></p>
+            <p class="text-sm text-slate-500"><%= entry.reference || entry.quotation&.reference %> · <%= entry.status.humanize %></p>
+          </div>
+          <p class="font-bold <%= entry.amount_cents.positive? ? 'text-emerald-700' : 'text-rose-700' %>"><%= money_from_cents(entry.amount_cents) %></p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
