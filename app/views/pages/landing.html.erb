@@ -5,10 +5,10 @@
   ["Storage Solutions", "Secure short or long-term storage options.", "storage_solutions_icon.svg", "storage_solutions_image.png"]
 ] %>
 <% trust_logos = [
-  ["Google", "Excellent 4.9"],
-  ["Trustpilot", "5-star service"],
-  ["feefo", "Verified reviews"],
-  ["Which?", "Trusted mover"]
+  ["Google", "Excellent 4.9", "google_logo_transparent.png"],
+  ["Trustpilot", "5-star service", "trustpilot_logo_transparent.png"],
+  ["feefo", "Verified reviews", "feefo_logo_transparent.png"],
+  ["Which?", "Trusted mover", "which_logo_transparent.png"]
 ] %>
 <% benefits = [
   ["Real-time tracking", "Know your route, ETA, and crew status.", "route-tracking.svg"],
@@ -35,7 +35,7 @@
   <div class="pointer-events-none absolute inset-x-0 top-0 z-0 h-[48rem] bg-[radial-gradient(circle_at_18%_20%,rgba(37,99,235,0.14),transparent_26%),radial-gradient(circle_at_80%_16%,rgba(124,58,237,0.13),transparent_28%),linear-gradient(180deg,#fbfdff_0%,#eef5ff_58%,#ffffff_100%)]"></div>
   <div class="pointer-events-none absolute left-1/2 top-28 z-0 h-[38rem] w-[58rem] -translate-x-1/2 rounded-full bg-blue-200/25 blur-3xl"></div>
 
-  <section class="relative isolate z-10 overflow-hidden px-3 pb-7 pt-24 min-[380px]:px-4 sm:px-6 sm:pt-24 lg:px-8">
+  <section class="relative isolate z-10 overflow-hidden px-3 pb-7 pt-28 min-[380px]:px-4 sm:px-6 sm:pt-28 min-[1360px]:pt-32 lg:px-8">
     <div class="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(37,99,235,0.055)_1px,transparent_1px),linear-gradient(to_bottom,rgba(37,99,235,0.055)_1px,transparent_1px)] bg-[size:3rem_3rem]"></div>
     <div class="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_45%_24%,rgba(96,165,250,0.16),transparent_34%),radial-gradient(circle_at_78%_22%,rgba(124,58,237,0.10),transparent_34%),linear-gradient(180deg,rgba(255,255,255,0.30),rgba(239,246,255,0.25)_55%,rgba(255,255,255,0.65))]"></div>
     <div class="mx-auto max-w-[1320px]">
@@ -211,13 +211,13 @@
         </div>
       </div>
 
-      <div class="reveal mt-6 grid gap-4 min-[1360px]:grid-cols-[0.74fr_1fr]">
+      <div class="reveal mt-6 grid gap-4 lg:grid-cols-[0.74fr_1fr]">
         <div class="rounded-[1.5rem] border border-white bg-white/90 p-5 shadow-xl shadow-blue-950/5 backdrop-blur">
           <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Trusted by thousands across the UK</p>
-          <div class="mt-4 grid gap-4 sm:grid-cols-2 min-[1360px]:grid-cols-4">
-            <% trust_logos.each do |name, rating| %>
-              <div class="border-slate-100 min-[1360px]:border-r min-[1360px]:last:border-r-0">
-                <p class="text-base font-black tracking-tight text-slate-900"><%= name %></p>
+          <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <% trust_logos.each do |name, rating, logo| %>
+              <div class="border-slate-100 lg:border-r lg:last:border-r-0">
+                <%= image_tag asset_image.call(logo), alt: "#{name} logo", class: "h-6 w-auto object-contain" %>
                 <div class="mt-1 flex text-amber-400" aria-hidden="true"><% 5.times do %><svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.05 2.93c.3-.92 1.6-.92 1.9 0l1.07 3.29a1 1 0 00.95.69h3.46c.97 0 1.37 1.24.59 1.81l-2.8 2.03a1 1 0 00-.36 1.12l1.07 3.29c.3.92-.76 1.69-1.54 1.12l-2.8-2.03a1 1 0 00-1.18 0l-2.8 2.03c-.78.57-1.84-.2-1.54-1.12l1.07-3.29a1 1 0 00-.36-1.12l-2.8-2.03c-.78-.57-.38-1.81.59-1.81h3.46a1 1 0 00.95-.69l1.07-3.29z"/></svg><% end %></div>
                 <p class="mt-1 text-[10px] font-bold uppercase tracking-wide text-slate-400"><%= rating %></p>
               </div>
@@ -225,9 +225,9 @@
           </div>
         </div>
 
-        <div class="grid gap-3 rounded-[1.5rem] border border-white bg-white/90 p-4 shadow-xl shadow-blue-950/5 backdrop-blur sm:grid-cols-2 min-[1360px]:grid-cols-4">
+        <div class="grid gap-3 rounded-[1.5rem] border border-white bg-white/90 p-4 shadow-xl shadow-blue-950/5 backdrop-blur sm:grid-cols-2 lg:grid-cols-4">
           <% [["15K+", "Moves completed", "users-customers.svg"], ["4.9/5", "Average rating", "rating-star.svg"], ["50+", "Trained movers", "shield-protection.svg"], ["20+", "UK locations", "location-contact.svg"]].each do |stat, label, icon| %>
-            <div class="flex items-center gap-3 border-slate-100 px-2 py-2 min-[1360px]:border-r min-[1360px]:last:border-r-0">
+            <div class="flex items-center gap-3 border-slate-100 px-2 py-2 lg:border-r lg:last:border-r-0">
               <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50">
                 <%= image_tag asset_image.call(icon), alt: "", class: "h-6 w-6", aria: { hidden: true } %>
               </span>

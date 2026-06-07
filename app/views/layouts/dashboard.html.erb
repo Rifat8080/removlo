@@ -24,11 +24,8 @@
               <span class="sr-only">Open sidebar</span>
               <svg class="h-5 w-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"><path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"/></svg>
             </button>
-            <%= link_to root_path, class: "flex items-center gap-2.5" do %>
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-600/30">
-                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8h4l3 3v5a1 1 0 01-1 1h-1m-4 0a1 1 0 001 1h1"/></svg>
-              </span>
-              <span class="self-center whitespace-nowrap text-xl font-extrabold tracking-tight text-slate-900">Removlo</span>
+            <%= link_to root_path, class: "flex items-center" do %>
+              <%= image_tag "images/logo.png", alt: "Removlo - Moving Made Simple", class: "h-auto w-36 shrink-0 min-[1025px]:w-40" %>
             <% end %>
           </div>
 
