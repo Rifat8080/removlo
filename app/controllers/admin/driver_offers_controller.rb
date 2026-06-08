@@ -8,19 +8,34 @@ module Admin
     end
 
     def select
-      @quotation.driver_offers.where.not(id: @offer.id).update_all(status: "rejected", selected_by_admin: false)
-      @offer.update!(status: :selected, selected_by_admin: true)
-      @quotation.update!(
-        selected_driver_offer: @offer,
-        driver_cost_cents: @offer.amount_cents,
-        assigned_driver: @offer.driver,
-        awaiting_driver_offers: false
-      )
+      assigned_now = false
 
       markup = params[:markup_percentage].presence || @quotation.markup_percentage
-      @quotation.apply_markup_from_driver_cost!(driver_cost_cents: @offer.amount_cents, markup_percentage: markup)
 
-      redirect_to admin_quotation_path(@quotation), notice: "Driver offer selected and customer quote updated."
+      Quotation.transaction do
+        @quotation.driver_offers.where.not(id: @offer.id).find_each do |offer|
+          offer.update!(status: :rejected, selected_by_admin: false)
+        end
+        @offer.update!(status: :selected, selected_by_admin: true)
+
+        attrs = {
+          selected_driver_offer: @offer,
+          driver_cost_cents: @offer.amount_cents,
+          awaiting_driver_offers: false
+        }
+        if @quotation.deposit_protected? || @quotation.customer_details_released?
+          attrs[:assigned_driver] = @offer.driver
+          assigned_now = true
+        end
+
+        @quotation.update!(attrs)
+        @quotation.apply_markup_from_driver_cost!(driver_cost_cents: @offer.amount_cents, markup_percentage: markup)
+      end
+
+      notice = assigned_now ? "Driver offer selected, assigned, and customer quote updated." : "Driver offer selected and customer quote updated. Driver assignment will unlock after deposit payment or admin release."
+      redirect_to admin_quotation_path(@quotation), notice: notice
+    rescue ActiveRecord::RecordInvalid, ArgumentError => e
+      redirect_to admin_quotation_path(@quotation), alert: e.message
     end
 
     private

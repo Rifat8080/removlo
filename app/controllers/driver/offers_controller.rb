@@ -39,6 +39,8 @@ module Driver
       attrs = params.require(:driver_offer).permit(:amount)
       amount = BigDecimal(attrs.delete(:amount).presence || "0") * 100
       { amount_cents: amount.to_i }
+    rescue ArgumentError
+      { amount_cents: 0 }
     end
   end
 end

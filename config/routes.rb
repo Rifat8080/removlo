@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :users, controllers: { registrations: "users/registrations" }
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -36,7 +36,6 @@ Rails.application.routes.draw do
       resources :driver_offers, only: %i[index] do
         patch :select, on: :member
       end
-      resource :inventory_estimate, only: %i[update]
     end
 
     resources :users
@@ -88,7 +87,6 @@ Rails.application.routes.draw do
     post :deposit_checkout, to: "quotation_deposits#create", on: :member
     get :deposit_success, to: "quotation_deposits#success", on: :member
     get :deposit_cancel, to: "quotation_deposits#cancel", on: :member
-    resources :inventory_photos, only: %i[create], controller: "quotation_inventory_photos"
   end
 
   resources :blog_posts, path: "blog", only: %i[index show]

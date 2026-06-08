@@ -17,6 +17,8 @@ module Admin
       end
     rescue ActiveRecord::RecordInvalid => e
       redirect_to admin_support_conversation_path(@conversation), alert: e.record.errors.full_messages.to_sentence
+  rescue ActionController::ParameterMissing
+    redirect_to admin_support_conversation_path(@conversation), alert: "Please enter a message."
     end
 
     private

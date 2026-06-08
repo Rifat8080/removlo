@@ -12,6 +12,7 @@ class DriverOffer < ApplicationRecord
   validates :amount_cents, numericality: { greater_than: 0 }
   validates :driver_id, uniqueness: { scope: :quotation_id }
   validate :driver_must_be_driver
+  validate :quotation_accepting_driver_offers, on: :create
 
   enum :status, STATUSES, default: :submitted, validate: true
 
@@ -37,5 +38,11 @@ class DriverOffer < ApplicationRecord
     return if driver.blank? || driver.driver?
 
     errors.add(:driver, "must have the driver role")
+  end
+
+  def quotation_accepting_driver_offers
+    return if quotation&.awaiting_driver_offers?
+
+    errors.add(:quotation, "is not accepting driver offers")
   end
 end

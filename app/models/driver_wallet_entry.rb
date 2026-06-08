@@ -31,11 +31,29 @@ class DriverWalletEntry < ApplicationRecord
   end
 
   def approve!(actor:)
+    unless approvable?
+      errors.add(:base, "Only pending credit entries can be approved")
+      raise ActiveRecord::RecordInvalid, self
+    end
+
     update!(status: :available, approved_by: actor, approved_at: Time.current)
   end
 
   def mark_withdrawn!
+    unless payable?
+      errors.add(:base, "Only available credit entries can be paid out")
+      raise ActiveRecord::RecordInvalid, self
+    end
+
     update!(status: :withdrawn)
+  end
+
+  def approvable?
+    pending? && amount_cents.positive?
+  end
+
+  def payable?
+    available? && amount_cents.positive?
   end
 
   private

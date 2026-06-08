@@ -13,12 +13,16 @@ module Messages
     end
 
     def call
-      message = conversation.messages.create!(
-        sender: sender,
-        body: body,
-        internal_only: internal_only
-      )
-      message.attachments.attach(attachments) if attachments.present?
+      message = nil
+
+      Conversation.transaction do
+        message = conversation.messages.create!(
+          sender: sender,
+          body: body.to_s.strip,
+          internal_only: internal_only
+        )
+        message.attachments.attach(attachments) if attachments.present?
+      end
 
       notify_participants(message)
       message
@@ -29,7 +33,12 @@ module Messages
     attr_reader :conversation, :sender, :body, :internal_only, :attachments
 
     def notify_participants(message)
-      recipients = conversation.participants.reject { |user| user.id == sender.id }
+      recipients = conversation.conversation_participants.includes(:user).filter_map do |participant|
+        next if participant.user_id == sender.id
+        next if message.internal_only? && !participant.user.operator?
+
+        participant.user
+      end
 
       ::ActivityNotifier.call(
         recipients: recipients,

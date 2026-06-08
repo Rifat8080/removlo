@@ -19,16 +19,20 @@ class ConversationsController < ApplicationController
     if params[:quotation_id].present?
       quotation = accessible_quotation
       @conversation = Conversations::FindOrCreateJob.call(quotation: quotation, actor: current_user)
+      notice = "Job conversation opened."
     else
       @conversation = Conversations::FindOrCreateSupport.call(
         user: current_user,
         subject: params.dig(:conversation, :subject)
       )
+      notice = "Support conversation opened."
     end
 
-    redirect_to conversation_path(@conversation), notice: "Conversation started."
+    redirect_to conversation_path(@conversation), notice: notice
   rescue ActiveRecord::RecordNotFound
     redirect_to conversations_path, alert: "You do not have access to that conversation."
+  rescue ActiveRecord::RecordInvalid => e
+    redirect_to conversations_path, alert: e.record.errors.full_messages.to_sentence
   end
 
   private

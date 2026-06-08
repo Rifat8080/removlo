@@ -14,7 +14,6 @@ module Admin
       @document = @quotation.quotation_documents.new
       @broadcast = @quotation.quotation_broadcasts.new(minimum_rating: 4.5, require_available: true)
       @comparison = DriverOffers::Score.call(offers: @quotation.driver_offers.active.for_comparison)
-      @inventory_estimate = @quotation.inventory_estimate || @quotation.build_inventory_estimate
     end
 
     def new
@@ -47,6 +46,8 @@ module Admin
       else
         render :edit, status: :unprocessable_entity
       end
+    rescue ArgumentError => e
+      redirect_to admin_quotation_path(@quotation), alert: "Quotation could not be updated: #{e.message}"
     end
 
     def destroy
@@ -101,12 +102,7 @@ module Admin
       normalize_money(attrs, :quoted_price, :quoted_price_cents)
       normalize_money(attrs, :deposit, :deposit_cents)
       normalize_money(attrs, :driver_cost, :driver_cost_cents)
-      if attrs[:driver_cost_cents].to_i.positive? && attrs[:markup_percentage].present?
-        markup = BigDecimal(attrs[:markup_percentage].to_s)
-        customer_price = (attrs[:driver_cost_cents] * (1 + markup / 100)).round
-        attrs[:quoted_price_cents] = customer_price
-        attrs[:admin_margin_cents] = customer_price - attrs[:driver_cost_cents]
-      end
+      normalize_margin_pricing(attrs)
       attrs
     end
 
@@ -124,6 +120,30 @@ module Admin
 
       value = attrs.delete(source)
       attrs[target] = (BigDecimal(value.presence || "0") * 100).to_i
+    end
+
+    def normalize_margin_pricing(attrs)
+      driver_cost_cents =
+        if attrs.key?(:driver_cost_cents)
+          attrs[:driver_cost_cents].to_i
+        else
+          @quotation&.driver_cost_cents.to_i
+        end
+      markup_percentage = attrs[:markup_percentage].presence || @quotation&.markup_percentage
+
+      if driver_cost_cents.positive? && markup_percentage.present? && (attrs.key?(:driver_cost_cents) || attrs.key?(:markup_percentage))
+        markup = BigDecimal(markup_percentage.to_s)
+        customer_price = (driver_cost_cents * (1 + markup / 100)).round
+        attrs[:driver_cost_cents] = driver_cost_cents
+        attrs[:markup_percentage] = markup
+        attrs[:quoted_price_cents] = customer_price
+        attrs[:admin_margin_cents] = customer_price - driver_cost_cents
+        return
+      end
+
+      return unless attrs.key?(:quoted_price_cents) && driver_cost_cents.positive?
+
+      attrs[:admin_margin_cents] = [attrs[:quoted_price_cents].to_i - driver_cost_cents, 0].max
     end
 
     def notify_customer(title, body, quotation)

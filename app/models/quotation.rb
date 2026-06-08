@@ -23,6 +23,17 @@ class Quotation < ApplicationRecord
   SERVICE_LEVELS = %w[standard packing storage full_service].freeze
   VEHICLE_TYPES = DriverProfile::VEHICLE_TYPES
   PROPERTY_TYPES = %w[studio flat house office storage].freeze
+  ADMIN_TRANSITION_LABELS = {
+    "draft" => "Move to draft",
+    "quoted" => "Send quote",
+    "negotiating" => "Start negotiation",
+    "accepted" => "Accept quote",
+    "scheduled" => "Schedule job",
+    "in_progress" => "Start move",
+    "completed" => "Complete job",
+    "rejected" => "Reject quote",
+    "cancelled" => "Cancel"
+  }.freeze
 
   belongs_to :customer, class_name: "User"
   belongs_to :created_by, class_name: "User", optional: true
@@ -39,7 +50,6 @@ class Quotation < ApplicationRecord
   has_many :customer_invoices, dependent: :nullify
   has_many :driver_offers, dependent: :destroy
   has_many :quotation_broadcasts, dependent: :destroy
-  has_one :inventory_estimate, class_name: "QuotationInventoryEstimate", dependent: :destroy
   has_one :job_conversation, class_name: "Conversation", as: :conversationable, dependent: :destroy
 
   enum :status, STATUSES, default: :draft, validate: true
@@ -49,7 +59,8 @@ class Quotation < ApplicationRecord
   validates :pickup_address, :delivery_address, :move_size, :service_level, presence: true
   validates :move_size, inclusion: { in: MOVE_SIZES }
   validates :service_level, inclusion: { in: SERVICE_LEVELS }
-  validates :quoted_price_cents, :deposit_cents, numericality: { greater_than_or_equal_to: 0 }
+  validates :quoted_price_cents, :deposit_cents, :driver_cost_cents, :admin_margin_cents, numericality: { greater_than_or_equal_to: 0 }
+  validates :markup_percentage, numericality: { greater_than_or_equal_to: 0 }
   validate :customer_must_be_customer
   validate :assigned_staff_must_be_operator
   validate :assigned_driver_must_be_driver
@@ -74,6 +85,10 @@ class Quotation < ApplicationRecord
   end
 
   def transition_to!(next_status, actor:, note: nil)
+    next_status = next_status.to_s
+    raise ArgumentError, "Unknown quotation status" unless self.class.statuses.key?(next_status)
+    raise ActiveRecord::RecordInvalid.new(self) unless admin_transition_allowed?(next_status)
+
     previous_status = status
     update!(status: next_status, **timestamp_for(next_status))
     quotation_status_events.create!(from_status: previous_status, to_status: next_status, user: actor, note: note)
@@ -94,6 +109,7 @@ class Quotation < ApplicationRecord
       end
 
     update_column(:payment_status, next_status)
+    assign_selected_driver_if_releasable!
   end
 
   def confirmed_for_driver_assignment?
@@ -106,6 +122,59 @@ class Quotation < ApplicationRecord
 
   def customer_details_releasable?
     deposit_protected? || customer_details_released?
+  end
+
+  def ready_to_schedule?
+    accepted? && assigned_driver.present? && customer_details_releasable?
+  end
+
+  def ready_to_start?
+    scheduled? && assigned_driver.present?
+  end
+
+  def ready_to_complete?
+    in_progress? && assigned_driver.present?
+  end
+
+  def admin_transition_options
+    statuses = case status
+               when "requested" then %w[draft quoted cancelled]
+               when "draft" then %w[quoted cancelled]
+               when "quoted" then %w[negotiating accepted rejected cancelled]
+               when "negotiating" then %w[quoted accepted rejected cancelled]
+               when "accepted" then ready_to_schedule? ? %w[scheduled cancelled] : %w[cancelled]
+               when "scheduled" then ready_to_start? ? %w[in_progress cancelled] : %w[cancelled]
+               when "in_progress" then ready_to_complete? ? %w[completed cancelled] : %w[cancelled]
+               when "rejected" then %w[quoted cancelled]
+               else []
+               end
+
+    statuses.map do |next_status|
+      {
+        status: next_status,
+        label: ADMIN_TRANSITION_LABELS.fetch(next_status),
+        note: "Changed to #{next_status.humanize}"
+      }
+    end
+  end
+
+  def admin_transition_allowed?(next_status)
+    next_status = next_status.to_s
+    return true if next_status == status
+
+    allowed = admin_transition_options.any? { |option| option[:status] == next_status }
+    errors.add(:status, "cannot move from #{status.humanize} to #{next_status.humanize} yet") unless allowed
+    allowed
+  end
+
+  def workflow_blocker_message
+    return "Select a driver and collect the deposit before scheduling this job." if accepted? && !ready_to_schedule?
+    return "Assign a driver before starting this scheduled job." if scheduled? && !ready_to_start?
+    return "Assign a driver before completing this job." if in_progress? && !ready_to_complete?
+    return "This quotation is already complete." if completed?
+    return "This quotation is cancelled." if cancelled?
+
+    nil
   end
 
   def driver_visible_pickup_address
@@ -149,6 +218,14 @@ class Quotation < ApplicationRecord
   end
 
   private
+
+  def assign_selected_driver_if_releasable!
+    return if assigned_driver.present?
+    return unless selected_driver_offer&.selected?
+    return unless confirmed_for_driver_assignment? && customer_details_releasable?
+
+    update!(assigned_driver: selected_driver_offer.driver, awaiting_driver_offers: false)
+  end
 
   def extract_city_or_postcode(postcode, address, fallback)
     return postcode if postcode.present?

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_07_210000) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_07_230000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -376,23 +376,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_07_210000) do
     t.index ["quotation_id"], name: "index_quotation_documents_on_quotation_id"
   end
 
-  create_table "quotation_inventory_estimates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "quotation_id", null: false
-    t.jsonb "estimated_inventory", default: [], null: false
-    t.string "suggested_vehicle"
-    t.string "estimate_status", default: "pending", null: false
-    t.text "admin_notes"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "processing_status", default: "pending", null: false
-    t.string "ai_provider"
-    t.string "ai_model"
-    t.jsonb "ai_raw_response", default: {}, null: false
-    t.text "ai_error"
-    t.datetime "processed_at"
-    t.index ["quotation_id"], name: "index_quotation_inventory_estimates_on_quotation_id", unique: true
-  end
-
   create_table "quotation_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "quotation_id", null: false
     t.string "name", null: false
@@ -555,7 +538,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_07_210000) do
   add_foreign_key "quotation_broadcasts", "quotations"
   add_foreign_key "quotation_broadcasts", "users", column: "created_by_id"
   add_foreign_key "quotation_documents", "quotations"
-  add_foreign_key "quotation_inventory_estimates", "quotations"
   add_foreign_key "quotation_items", "quotations"
   add_foreign_key "quotation_notes", "quotations"
   add_foreign_key "quotation_notes", "users"

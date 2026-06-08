@@ -11,6 +11,8 @@ module Admin
       else
         redirect_to admin_quotation_path(@quotation), alert: broadcast.errors.full_messages.to_sentence
       end
+    rescue StandardError => e
+      redirect_to admin_quotation_path(@quotation), alert: "Broadcast could not be sent: #{e.message}"
     end
 
     private

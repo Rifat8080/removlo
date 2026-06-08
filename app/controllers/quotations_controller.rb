@@ -12,7 +12,6 @@ class QuotationsController < ApplicationController
   def show
     @negotiation_note = @quotation.quotation_notes.new(internal: false)
     @invoices = @quotation.customer_invoices.recent
-    @inventory_estimate = @quotation.inventory_estimate
     @workflow_step = @quotation.workflow_step_for_customer
     @job_chat_available = @quotation.customer_details_releasable? && @quotation.assigned_driver.present?
     @job_conversation = @quotation.job_conversation if @job_chat_available

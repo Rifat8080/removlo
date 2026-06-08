@@ -39,7 +39,7 @@
         <% offer_method = @offer.persisted? ? :patch : :post %>
         <%= form_with(model: @offer, url: offer_path, method: offer_method, scope: :driver_offer, class: "mt-4 space-y-3") do |form| %>
           <%= form.label :amount, "Your offer (£)", class: "text-sm font-semibold text-slate-700" %>
-          <%= form.number_field :amount, value: @offer.amount_cents.positive? ? (@offer.amount_cents / 100.0) : nil, min: 1, step: "0.01", class: "block w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm" %>
+          <%= form.number_field :amount, value: @offer.amount_cents.to_i.positive? ? @offer.amount : nil, min: 1, step: "0.01", class: "block w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm" %>
           <%= form.submit @offer.persisted? ? "Update offer" : "Submit offer", class: "w-full rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white" %>
         <% end %>
       </section>

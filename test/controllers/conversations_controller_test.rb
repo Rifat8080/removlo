@@ -20,6 +20,17 @@ class ConversationsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to conversation_path(Conversation.support.last)
   end
 
+  test "customer support creation reuses open support conversation" do
+    existing = Conversations::FindOrCreateSupport.call(user: users(:customer), subject: "Need help")
+    sign_in users(:customer)
+
+    assert_no_difference "Conversation.support.count" do
+      post conversations_path, params: { conversation: { subject: "Need more help" } }
+    end
+
+    assert_redirected_to conversation_path(existing)
+  end
+
   test "customer can open job chat after deposit paid" do
     sign_in users(:customer)
 

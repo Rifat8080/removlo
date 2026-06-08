@@ -46,7 +46,6 @@
       <%= render "admin/quotations/margin_pricing", quotation: @quotation %>
       <%= render "admin/quotations/broadcast_form", quotation: @quotation, broadcast: @broadcast %>
       <%= render "admin/quotations/bid_comparison", quotation: @quotation, comparison: @comparison %>
-      <%= render "admin/quotations/inventory_estimate", quotation: @quotation, inventory_estimate: @inventory_estimate %>
 
       <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <div class="flex flex-col gap-3 min-[1025px]:flex-row min-[1025px]:items-center min-[1025px]:justify-between">
@@ -55,9 +54,15 @@
             <p class="mt-1 text-sm text-slate-500">Move the quote through pricing, acceptance, schedule, delivery, and completion.</p>
           </div>
         </div>
+        <% if @quotation.workflow_blocker_message.present? %>
+          <p class="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800"><%= @quotation.workflow_blocker_message %></p>
+        <% end %>
         <div class="mt-5 grid gap-2 sm:grid-cols-2 min-[1025px]:grid-cols-4">
-          <% [["quoted", "Send quote"], ["negotiating", "Start negotiation"], ["accepted", "Accept"], ["scheduled", "Schedule"], ["in_progress", "Start move"], ["completed", "Complete"], ["rejected", "Reject"], ["cancelled", "Cancel"]].each do |status, label| %>
-            <%= button_to label, transition_admin_quotation_path(@quotation), method: :patch, params: { status: status, note: "Changed to #{status.humanize}" }, class: "inline-flex w-full items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700" %>
+          <% @quotation.admin_transition_options.each do |action| %>
+            <%= button_to action[:label], transition_admin_quotation_path(@quotation), method: :patch, params: { status: action[:status], note: action[:note] }, class: "inline-flex w-full items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700" %>
+          <% end %>
+          <% if @quotation.admin_transition_options.blank? && @quotation.workflow_blocker_message.blank? %>
+            <p class="text-sm font-semibold text-slate-500">No workflow actions are available for this quotation.</p>
           <% end %>
         </div>
       </section>

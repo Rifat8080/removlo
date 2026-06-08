@@ -20,4 +20,16 @@ class MessagesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :not_found
   end
+
+  test "cannot post to closed conversation" do
+    conversation = Conversations::FindOrCreateSupport.call(user: users(:customer), subject: "Closed")
+    conversation.update!(status: :closed)
+    sign_in users(:customer)
+
+    assert_no_difference "Message.count" do
+      post conversation_messages_path(conversation), params: { message: { body: "Anyone there?" } }
+    end
+
+    assert_redirected_to conversation_path(conversation)
+  end
 end
