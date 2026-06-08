@@ -1,0 +1,86 @@
+<% content_for :title, "#{@job.reference} — Driver job alert" %>
+
+<div class="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+  <div class="rounded-3xl bg-gradient-to-br from-slate-950 via-indigo-950 to-blue-900 p-6 text-white shadow-2xl sm:p-8">
+    <span class="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold text-indigo-100">Open job alert</span>
+    <h1 class="mt-4 text-3xl font-black tracking-tight sm:text-4xl"><%= @job.reference %></h1>
+    <p class="mt-2 text-sm text-slate-300">Full job details for external drivers. Sign up and submit your bid through Removlo.</p>
+  </div>
+
+  <div class="mt-6 grid gap-4 sm:grid-cols-2">
+    <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Move date</p>
+      <p class="mt-2 text-lg font-black text-slate-900"><%= @job.preferred_move_date&.to_fs(:long) || @job.scheduled_at&.to_fs(:long) || "TBC" %></p>
+    </div>
+    <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Property</p>
+      <p class="mt-2 text-lg font-black text-slate-900"><%= @job.property_type&.humanize || @job.move_size.humanize %></p>
+    </div>
+    <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Vehicle required</p>
+      <p class="mt-2 text-lg font-black text-slate-900"><%= @job.vehicle_required&.humanize || "TBC" %></p>
+    </div>
+    <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Expected duration</p>
+      <p class="mt-2 text-lg font-black text-slate-900"><%= @job.expected_duration_hours.present? ? "#{@job.expected_duration_hours} hours" : "TBC" %></p>
+    </div>
+  </div>
+
+  <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <h2 class="text-lg font-black text-slate-900">Route and access</h2>
+    <div class="mt-4 grid gap-4 sm:grid-cols-2">
+      <div class="rounded-2xl bg-slate-50 p-4">
+        <p class="text-xs font-semibold uppercase text-slate-400">Pickup</p>
+        <p class="mt-2 whitespace-pre-line text-sm font-semibold text-slate-900"><%= @job.pickup_address %></p>
+        <% if @job.pickup_postcode.present? %>
+          <p class="mt-1 text-xs text-slate-500"><%= @job.pickup_postcode %></p>
+        <% end %>
+      </div>
+      <div class="rounded-2xl bg-slate-50 p-4">
+        <p class="text-xs font-semibold uppercase text-slate-400">Delivery</p>
+        <p class="mt-2 whitespace-pre-line text-sm font-semibold text-slate-900"><%= @job.delivery_address %></p>
+        <% if @job.delivery_postcode.present? %>
+          <p class="mt-1 text-xs text-slate-500"><%= @job.delivery_postcode %></p>
+        <% end %>
+      </div>
+    </div>
+    <div class="mt-4 grid gap-4 sm:grid-cols-2">
+      <div>
+        <p class="text-sm font-bold text-slate-900">Access notes</p>
+        <p class="mt-1 whitespace-pre-line text-sm text-slate-600"><%= @job.access_notes.presence || "No access notes recorded." %></p>
+      </div>
+      <div>
+        <p class="text-sm font-bold text-slate-900">Customer notes</p>
+        <p class="mt-1 whitespace-pre-line text-sm text-slate-600"><%= @job.customer_notes.presence || "No customer notes recorded." %></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-6 rounded-2xl border border-indigo-200 bg-indigo-50 p-5 shadow-sm">
+    <% if user_signed_in? && current_user.driver? %>
+      <h2 class="text-lg font-black text-slate-900">Submit your bid</h2>
+      <p class="mt-1 text-sm text-slate-600">Your bid is private. Other drivers cannot see it.</p>
+      <% offer_path = @offer.persisted? ? driver_job_offer_path(@job, @offer) : driver_job_offers_path(@job) %>
+      <% offer_method = @offer.persisted? ? :patch : :post %>
+      <%= form_with(model: @offer, url: offer_path, method: offer_method, scope: :driver_offer, class: "mt-4 space-y-3") do |form| %>
+        <%= form.label :amount, "Your offer (£)", class: "text-sm font-semibold text-slate-700" %>
+        <%= form.number_field :amount, value: @offer.amount_cents.to_i.positive? ? @offer.amount : nil, min: 1, step: "0.01", class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm" %>
+        <%= form.submit @offer.persisted? ? "Update offer" : "Submit offer", class: "w-full rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white" %>
+      <% end %>
+    <% elsif user_signed_in? %>
+      <h2 class="text-lg font-black text-slate-900">Driver account required</h2>
+      <p class="mt-1 text-sm text-slate-600">Sign in with a driver account to submit a bid for this job.</p>
+      <%= link_to "Open driver workspace", driver_jobs_path, class: "mt-4 inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white" %>
+    <% else %>
+      <h2 class="text-lg font-black text-slate-900">Sign up as a driver to bid</h2>
+      <p class="mt-1 text-sm text-slate-600">Create a free driver account, then return here to submit your offer.</p>
+      <%= link_to "Create driver account",
+          new_user_registration_path(role: "driver", return_to: public_job_path(@job.public_share_token)),
+          class: "mt-4 inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white" %>
+      <p class="mt-4 text-center text-sm text-slate-500">
+        Already have an account?
+        <%= link_to "Sign in", new_user_session_path, class: "font-semibold text-indigo-700 hover:text-indigo-800" %>
+      </p>
+    <% end %>
+  </section>
+</div>

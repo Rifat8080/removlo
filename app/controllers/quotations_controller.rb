@@ -35,6 +35,7 @@ class QuotationsController < ApplicationController
 
     if @quotation.save
       @quotation.quotation_status_events.create!(to_status: @quotation.status, user: current_user || customer, note: "Customer requested a quotation")
+      ::Quotations::PostForDrivers.call(quotation: @quotation, actor: current_user || customer)
       notify_operators("New quotation request", "#{customer.email} requested a quotation.", @quotation)
       sign_in(customer) if current_user.blank?
       redirect_to quotation_path(@quotation), notice: "Your quotation request has been sent."

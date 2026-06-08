@@ -1,20 +1,48 @@
-<section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-  <div class="flex items-center justify-between gap-3">
-    <div>
-      <h2 class="text-lg font-black text-slate-900"><%= conversation.display_subject %></h2>
-      <p class="mt-1 text-sm text-slate-500">Platform chat. Contact details stay hidden.</p>
+<section class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+  <%= turbo_stream_from conversation, current_user, :messages %>
+
+  <div class="border-b border-slate-100 bg-gradient-to-br from-white to-slate-50 px-5 py-4">
+    <div class="flex items-center justify-between gap-3">
+      <div class="flex min-w-0 items-center gap-3">
+        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-700">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 4v-4z"/></svg>
+        </div>
+        <div class="min-w-0">
+          <h2 class="truncate text-lg font-black text-slate-900"><%= conversation.display_subject %></h2>
+          <div class="mt-1 flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-500">
+            <span class="inline-flex items-center gap-1">
+              <span class="h-2 w-2 rounded-full <%= conversation.open? ? 'bg-emerald-500' : 'bg-slate-400' %>"></span>
+              <%= conversation.status.humanize %>
+            </span>
+            <span>·</span>
+            <span><%= pluralize(conversation.conversation_participants.size, "participant") %></span>
+            <span>·</span>
+            <span>Secure platform chat</span>
+          </div>
+        </div>
+      </div>
+      <%= link_to "Inbox", conversations_path, class: "shrink-0 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-indigo-600 transition hover:bg-indigo-50" %>
     </div>
-    <%= link_to "Open inbox", conversations_path, class: "text-sm font-semibold text-indigo-600" %>
   </div>
 
-  <div id="messages" class="mt-4 max-h-96 space-y-3 overflow-y-auto rounded-2xl bg-slate-50 p-4">
+  <div id="<%= dom_id(conversation, :messages) %>" data-controller="chat-scroll" data-chat-scroll-target="container" class="max-h-[32rem] min-h-80 space-y-4 overflow-y-auto bg-slate-50/80 p-5">
     <% messages.each do |message| %>
-      <%= render "messages/message", message: message %>
+      <%= render "messages/message", message: message, viewer: current_user %>
     <% end %>
     <% if messages.empty? %>
-      <p class="text-sm text-slate-500">No messages yet. Start the conversation.</p>
+      <div id="<%= dom_id(conversation, :empty_messages) %>" class="flex min-h-64 items-center justify-center">
+        <div class="max-w-sm rounded-3xl border border-dashed border-slate-300 bg-white p-6 text-center shadow-sm">
+          <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+          </div>
+          <p class="mt-4 text-sm font-black text-slate-900">No messages yet</p>
+          <p class="mt-1 text-sm text-slate-500">Start the conversation with a quick update or question.</p>
+        </div>
+      </div>
     <% end %>
   </div>
 
-  <%= render "conversations/message_form", conversation: conversation, message: conversation.messages.new %>
+  <div class="border-t border-slate-100 bg-white px-5 pb-5">
+    <%= render "conversations/message_form", conversation: conversation, message: conversation.messages.new %>
+  </div>
 </section>

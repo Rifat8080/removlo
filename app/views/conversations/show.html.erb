@@ -1,8 +1,11 @@
 <% content_for :title, "#{@conversation.display_subject} — Removlo" %>
 
-<div class="mx-auto max-w-4xl">
-  <%= link_to "Back to messages", conversations_path, class: "text-sm font-semibold text-indigo-600" %>
-  <div class="mt-4">
+<div class="mx-auto max-w-5xl space-y-4">
+  <%= link_to conversations_path, class: "inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50" do %>
+    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    Back to messages
+  <% end %>
+  <div>
     <%= render "conversations/chat_panel", conversation: @conversation, messages: @messages %>
   </div>
 </div>

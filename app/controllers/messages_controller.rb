@@ -17,9 +17,18 @@ class MessagesController < ApplicationController
       format.html { redirect_to conversation_path(@conversation) }
     end
   rescue ActiveRecord::RecordInvalid => e
-    redirect_to conversation_path(@conversation), alert: e.record.errors.full_messages.to_sentence
+    @message = e.record
+    respond_to do |format|
+      format.turbo_stream { render :error, status: :unprocessable_entity }
+      format.html { redirect_to conversation_path(@conversation), alert: @message.errors.full_messages.to_sentence }
+    end
   rescue ActionController::ParameterMissing
-    redirect_to conversation_path(@conversation), alert: "Please enter a message."
+    @message = @conversation.messages.new
+    @message.errors.add(:body, "can't be blank")
+    respond_to do |format|
+      format.turbo_stream { render :error, status: :unprocessable_entity }
+      format.html { redirect_to conversation_path(@conversation), alert: "Please enter a message." }
+    end
   end
 
   private

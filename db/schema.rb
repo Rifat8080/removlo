@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_07_230000) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_08_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -351,20 +351,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_07_230000) do
     t.index ["status"], name: "index_products_on_status"
   end
 
-  create_table "quotation_broadcasts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "quotation_id", null: false
-    t.uuid "created_by_id", null: false
-    t.string "vehicle_types", default: [], null: false, array: true
-    t.string "service_areas", default: [], null: false, array: true
-    t.decimal "minimum_rating", precision: 3, scale: 2, default: "0.0", null: false
-    t.boolean "require_available", default: true, null: false
-    t.integer "drivers_notified_count", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["created_by_id"], name: "index_quotation_broadcasts_on_created_by_id"
-    t.index ["quotation_id"], name: "index_quotation_broadcasts_on_quotation_id"
-  end
-
   create_table "quotation_documents", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "quotation_id", null: false
     t.string "title", null: false
@@ -461,12 +447,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_07_230000) do
     t.boolean "awaiting_driver_offers", default: false, null: false
     t.boolean "customer_details_released", default: false, null: false
     t.uuid "selected_driver_offer_id"
+    t.string "public_share_token", null: false
     t.index ["assigned_driver_id"], name: "index_quotations_on_assigned_driver_id"
     t.index ["assigned_staff_id"], name: "index_quotations_on_assigned_staff_id"
     t.index ["created_by_id"], name: "index_quotations_on_created_by_id"
     t.index ["customer_id"], name: "index_quotations_on_customer_id"
     t.index ["payment_status"], name: "index_quotations_on_payment_status"
     t.index ["preferred_move_date"], name: "index_quotations_on_preferred_move_date"
+    t.index ["public_share_token"], name: "index_quotations_on_public_share_token", unique: true
     t.index ["reference"], name: "index_quotations_on_reference", unique: true
     t.index ["selected_driver_offer_id"], name: "index_quotations_on_selected_driver_offer_id"
     t.index ["status"], name: "index_quotations_on_status"
@@ -535,8 +523,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_07_230000) do
   add_foreign_key "payslips", "payroll_runs"
   add_foreign_key "payslips", "users", column: "employee_id"
   add_foreign_key "products", "product_categories"
-  add_foreign_key "quotation_broadcasts", "quotations"
-  add_foreign_key "quotation_broadcasts", "users", column: "created_by_id"
   add_foreign_key "quotation_documents", "quotations"
   add_foreign_key "quotation_items", "quotations"
   add_foreign_key "quotation_notes", "quotations"

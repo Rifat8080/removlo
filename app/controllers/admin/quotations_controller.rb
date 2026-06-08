@@ -12,7 +12,6 @@ module Admin
       @note = @quotation.quotation_notes.new(internal: true)
       @payment = @quotation.quotation_payments.new(paid_on: Date.current)
       @document = @quotation.quotation_documents.new
-      @broadcast = @quotation.quotation_broadcasts.new(minimum_rating: 4.5, require_available: true)
       @comparison = DriverOffers::Score.call(offers: @quotation.driver_offers.active.for_comparison)
     end
 
@@ -29,6 +28,7 @@ module Admin
 
       if @quotation.save
         @quotation.quotation_status_events.create!(to_status: @quotation.status, user: current_user, note: "Quotation created")
+        ::Quotations::PostForDrivers.call(quotation: @quotation, actor: current_user)
         notify_customer("Quotation created", "Your quotation #{@quotation.reference} has been created.", @quotation)
         redirect_to admin_quotation_path(@quotation), notice: "Quotation was created successfully."
       else

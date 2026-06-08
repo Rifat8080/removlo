@@ -1,5 +1,6 @@
 marketplace_job:
   reference: Q-TEST-001
+  public_share_token: share-token-marketplace-job
   customer: customer
   status: quoted
   move_size: three_bed
@@ -21,6 +22,7 @@ marketplace_job:
 
 accepted_job:
   reference: Q-TEST-002
+  public_share_token: share-token-accepted-job
   customer: customer
   status: accepted
   move_size: two_bed
@@ -38,6 +40,7 @@ accepted_job:
 
 booked_job:
   reference: Q-TEST-003
+  public_share_token: share-token-booked-job
   customer: customer
   assigned_driver: driver_a
   status: scheduled

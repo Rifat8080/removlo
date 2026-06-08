@@ -12,20 +12,46 @@
     </div>
   </div>
 
-  <section class="rounded-2xl border bg-white p-5 shadow-sm">
-    <h1 class="text-2xl font-black text-slate-900"><%= @conversation.display_subject %></h1>
-    <div id="messages" class="mt-4 max-h-[28rem] space-y-3 overflow-y-auto rounded-2xl bg-slate-50 p-4">
+  <section class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+    <%= turbo_stream_from @conversation, current_user, :messages %>
+
+    <div class="border-b border-slate-100 bg-gradient-to-br from-white to-slate-50 px-5 py-4">
+      <div class="flex min-w-0 items-center gap-3">
+        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-700">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M12 3v3m0 12v3m9-9h-3M6 12H3"/></svg>
+        </div>
+        <div class="min-w-0">
+          <h1 class="truncate text-2xl font-black text-slate-900"><%= @conversation.display_subject %></h1>
+          <div class="mt-1 flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-500">
+            <span class="inline-flex items-center gap-1">
+              <span class="h-2 w-2 rounded-full <%= @conversation.open? ? 'bg-emerald-500' : 'bg-slate-400' %>"></span>
+              <%= @conversation.status.humanize %>
+            </span>
+            <span>·</span>
+            <span><%= pluralize(@conversation.conversation_participants.size, "participant") %></span>
+            <span>·</span>
+            <span>Support workspace</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="<%= dom_id(@conversation, :messages) %>" data-controller="chat-scroll" data-chat-scroll-target="container" class="max-h-[34rem] min-h-80 space-y-4 overflow-y-auto bg-slate-50/80 p-5">
       <% @messages.each do |message| %>
-        <%= render "messages/message", message: message %>
+        <%= render "messages/message", message: message, viewer: current_user %>
+      <% end %>
+      <% if @messages.empty? %>
+        <div id="<%= dom_id(@conversation, :empty_messages) %>" class="flex min-h-64 items-center justify-center">
+          <div class="max-w-sm rounded-3xl border border-dashed border-slate-300 bg-white p-6 text-center shadow-sm">
+            <p class="text-sm font-black text-slate-900">No messages yet</p>
+            <p class="mt-1 text-sm text-slate-500">Send the first support reply below.</p>
+          </div>
+        </div>
       <% end %>
     </div>
-    <%= form_with(url: admin_support_conversation_messages_path(@conversation), model: @message, scope: :message, data: { turbo: true }, id: "message_form", class: "mt-4 space-y-3") do |form| %>
-      <%= form.text_area :body, rows: 3, required: true, class: "block w-full rounded-xl border px-3 py-2.5 text-sm" %>
-      <label class="flex items-center gap-2 text-sm font-semibold text-slate-700">
-        <%= check_box_tag "message[internal_only]", "1", false, class: "rounded border-slate-300 text-indigo-600" %>
-        Internal note (operators only)
-      </label>
-      <%= form.submit "Send reply", class: "rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white" %>
-    <% end %>
+
+    <div class="border-t border-slate-100 bg-white px-5 pb-5">
+      <%= render "conversations/message_form", conversation: @conversation, message: @message, url: admin_support_conversation_messages_path(@conversation), internal_only_option: true %>
+    </div>
   </section>
 </div>

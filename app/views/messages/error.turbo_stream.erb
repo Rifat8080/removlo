@@ -1,0 +1,1 @@
+<%= turbo_stream.replace dom_id(@conversation, :message_form), partial: "conversations/message_form", locals: { conversation: @conversation, message: @message, url: local_assigns[:message_form_url], internal_only_option: local_assigns.fetch(:internal_only_option, false) } %>

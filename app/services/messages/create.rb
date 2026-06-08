@@ -24,6 +24,7 @@ module Messages
         message.attachments.attach(attachments) if attachments.present?
       end
 
+      broadcast_to_participants(message)
       notify_participants(message)
       message
     end
@@ -31,6 +32,28 @@ module Messages
     private
 
     attr_reader :conversation, :sender, :body, :internal_only, :attachments
+
+    def broadcast_to_participants(message)
+      conversation.conversation_participants.includes(:user).find_each do |participant|
+        next if participant.user_id == sender.id
+        next if message.internal_only? && !participant.user.operator?
+
+        Turbo::StreamsChannel.broadcast_remove_to(
+          conversation,
+          participant.user,
+          :messages,
+          target: ActionView::RecordIdentifier.dom_id(conversation, :empty_messages)
+        )
+        Turbo::StreamsChannel.broadcast_append_to(
+          conversation,
+          participant.user,
+          :messages,
+          target: ActionView::RecordIdentifier.dom_id(conversation, :messages),
+          partial: "messages/message",
+          locals: { message: message, viewer: participant.user }
+        )
+      end
+    end
 
     def notify_participants(message)
       recipients = conversation.conversation_participants.includes(:user).filter_map do |participant|

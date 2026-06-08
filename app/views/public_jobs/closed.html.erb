@@ -1,0 +1,7 @@
+<% content_for :title, "Job closed — Removlo" %>
+
+<div class="mx-auto max-w-2xl px-4 py-16 text-center">
+  <h1 class="text-3xl font-black text-slate-900">This job is no longer open</h1>
+  <p class="mt-3 text-sm text-slate-600">Bids are closed for <%= @job.reference %>. Contact Removlo if you still need help.</p>
+  <%= link_to "Back to Removlo", root_path, class: "mt-6 inline-flex items-center justify-center rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white" %>
+</div>

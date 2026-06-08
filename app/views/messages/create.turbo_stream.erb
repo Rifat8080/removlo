@@ -1,2 +1,3 @@
-<%= turbo_stream.append "messages", partial: "messages/message", locals: { message: @message } %>
-<%= turbo_stream.replace "message_form", partial: "conversations/message_form", locals: { conversation: @conversation, message: @conversation.messages.new } %>
+<%= turbo_stream.remove dom_id(@conversation, :empty_messages) %>
+<%= turbo_stream.append dom_id(@conversation, :messages), partial: "messages/message", locals: { message: @message, viewer: current_user } %>
+<%= turbo_stream.replace dom_id(@conversation, :message_form), partial: "conversations/message_form", locals: { conversation: @conversation, message: @conversation.messages.new, url: local_assigns[:message_form_url], internal_only_option: local_assigns.fetch(:internal_only_option, false) } %>

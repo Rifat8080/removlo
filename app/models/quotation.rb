@@ -49,13 +49,13 @@ class Quotation < ApplicationRecord
   has_many :accounting_transactions, dependent: :nullify
   has_many :customer_invoices, dependent: :nullify
   has_many :driver_offers, dependent: :destroy
-  has_many :quotation_broadcasts, dependent: :destroy
   has_one :job_conversation, class_name: "Conversation", as: :conversationable, dependent: :destroy
 
   enum :status, STATUSES, default: :draft, validate: true
   enum :payment_status, PAYMENT_STATUSES, default: :unpaid, validate: true
 
   validates :reference, presence: true, uniqueness: true
+  validates :public_share_token, presence: true, uniqueness: true
   validates :pickup_address, :delivery_address, :move_size, :service_level, presence: true
   validates :move_size, inclusion: { in: MOVE_SIZES }
   validates :service_level, inclusion: { in: SERVICE_LEVELS }
@@ -67,6 +67,7 @@ class Quotation < ApplicationRecord
   validate :driver_assignment_requires_confirmed_quote
 
   before_validation :assign_reference, on: :create
+  before_validation :assign_public_share_token, on: :create
 
   scope :recent, -> { order(created_at: :desc) }
   scope :for_customer, ->(user) { where(customer: user).recent }
@@ -74,6 +75,14 @@ class Quotation < ApplicationRecord
   scope :new_leads, -> { where(status: "requested") }
   scope :pending_quotes, -> { where(status: %w[draft quoted negotiating]) }
   scope :awaiting_driver, -> { where(awaiting_driver_offers: true) }
+
+  def self.find_by_share_token!(token)
+    find_by!(public_share_token: token)
+  end
+
+  def public_share_url
+    Rails.application.routes.url_helpers.public_job_url(public_share_token)
+  end
   scope :booked_jobs, -> { where(status: %w[accepted scheduled in_progress]) }
 
   def quoted_price
@@ -237,6 +246,13 @@ class Quotation < ApplicationRecord
     self.reference ||= loop do
       token = "Q-#{Time.current.strftime('%Y%m%d')}-#{SecureRandom.hex(3).upcase}"
       break token unless self.class.exists?(reference: token)
+    end
+  end
+
+  def assign_public_share_token
+    self.public_share_token ||= loop do
+      token = SecureRandom.urlsafe_base64(24)
+      break token unless self.class.exists?(public_share_token: token)
     end
   end
 

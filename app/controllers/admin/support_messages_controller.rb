@@ -3,6 +3,8 @@ module Admin
     before_action :set_conversation
 
     def create
+      @message_form_url = admin_support_conversation_messages_path(@conversation)
+      @internal_only_option = true
       @message = Messages::Create.call(
         conversation: @conversation,
         sender: current_user,
@@ -12,13 +14,22 @@ module Admin
       @conversation.mark_read_for!(current_user)
 
       respond_to do |format|
-        format.turbo_stream { render "messages/create" }
+        format.turbo_stream { render "messages/create", locals: { message_form_url: @message_form_url, internal_only_option: @internal_only_option } }
         format.html { redirect_to admin_support_conversation_path(@conversation) }
       end
     rescue ActiveRecord::RecordInvalid => e
-      redirect_to admin_support_conversation_path(@conversation), alert: e.record.errors.full_messages.to_sentence
-  rescue ActionController::ParameterMissing
-    redirect_to admin_support_conversation_path(@conversation), alert: "Please enter a message."
+      @message = e.record
+      respond_to do |format|
+        format.turbo_stream { render "messages/error", locals: { message_form_url: @message_form_url, internal_only_option: @internal_only_option }, status: :unprocessable_entity }
+        format.html { redirect_to admin_support_conversation_path(@conversation), alert: @message.errors.full_messages.to_sentence }
+      end
+    rescue ActionController::ParameterMissing
+      @message = @conversation.messages.new
+      @message.errors.add(:body, "can't be blank")
+      respond_to do |format|
+        format.turbo_stream { render "messages/error", locals: { message_form_url: @message_form_url, internal_only_option: @internal_only_option }, status: :unprocessable_entity }
+        format.html { redirect_to admin_support_conversation_path(@conversation), alert: "Please enter a message." }
+      end
     end
 
     private

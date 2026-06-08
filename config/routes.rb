@@ -32,7 +32,6 @@ Rails.application.routes.draw do
       resources :quotation_notes, path: :notes, only: %i[create update destroy]
       resources :quotation_payments, path: :payments, only: %i[create update destroy]
       resources :quotation_documents, path: :documents, only: %i[create update destroy]
-      resources :quotation_broadcasts, only: %i[create]
       resources :driver_offers, only: %i[index] do
         patch :select, on: :member
       end
@@ -100,7 +99,7 @@ Rails.application.routes.draw do
     patch :read_all, on: :collection
   end
   resource :web_push_subscription, only: %i[create destroy]
-  get "web_push/config", to: "web_push_subscriptions#config", as: :web_push_config
+  get "web_push/config", to: "web_push_subscriptions#configuration", as: :web_push_config
 
   resources :customer_invoices, path: "invoices", only: %i[index show] do
     get :pdf, on: :member
@@ -131,5 +130,6 @@ Rails.application.routes.draw do
   post "stripe/webhook", to: "stripe_webhooks#create"
 
   get "dashboard", to: "pages#dashboard", as: :dashboard
+  get "jobs/:token", to: "public_jobs#show", as: :public_job
   root to: "pages#landing"
 end
