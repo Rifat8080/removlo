@@ -14,7 +14,7 @@ class NotificationsController < ApplicationController
   end
 
   def read_all
-    current_user.notifications.unread.update_all(read_at: Time.current, updated_at: Time.current)
+    current_user.notifications.unread.find_each(&:mark_as_read!)
     redirect_to notifications_path, notice: "All notifications marked as read."
   end
 

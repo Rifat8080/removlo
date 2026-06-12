@@ -39,7 +39,7 @@ class WebPushSubscriptionsController < ApplicationController
   private
 
   def subscription_params
-    params.require(:subscription).permit(:endpoint, keys: %i[p256dh auth])
+    params.require(:subscription).permit(:endpoint, :expirationTime, keys: %i[p256dh auth])
   end
 
   def require_json_request!

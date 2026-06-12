@@ -3,12 +3,12 @@ require "test_helper"
 class MessagesControllerTest < ActionDispatch::IntegrationTest
   TURBO_STREAM_HEADERS = { "Accept" => "text/vnd.turbo-stream.html" }.freeze
 
-  test "message creation notifies other participants" do
+  test "message creation does not create notification records" do
     conversation = Conversations::FindOrCreateSupport.call(user: users(:customer), subject: "Help")
     sign_in users(:customer)
 
     assert_difference "Message.count", 1 do
-      assert_difference -> { users(:admin).notifications.count }, 1 do
+      assert_no_difference -> { users(:admin).notifications.count } do
         post conversation_messages_path(conversation), params: { message: { body: "Hello support" } }
       end
     end

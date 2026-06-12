@@ -1,0 +1,2 @@
+<%= turbo_stream_from current_user, :message_alerts %>
+<div id="<%= dom_id(current_user, :message_alerts) %>" class="hidden" aria-hidden="true"></div>

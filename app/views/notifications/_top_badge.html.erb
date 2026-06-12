@@ -1,0 +1,5 @@
+<span id="<%= dom_id(user, :notification_top_badge) %>">
+  <% if user.unread_notifications_count.positive? %>
+    <span class="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-black text-white"><%= user.unread_notifications_count %></span>
+  <% end %>
+</span>

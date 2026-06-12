@@ -24,9 +24,9 @@ class WebPushNotificationJobTest < ActiveJob::TestCase
       auth_key: "auth-key"
     )
     notification = user.notifications.create!(
-      event_type: "chat.message",
-      title: "New message",
-      body: "A coordinator replied.",
+      event_type: "driver_job_alert",
+      title: "New job available",
+      body: "A new move is ready for review.",
       url: "/conversations/123"
     )
     deliveries = []
@@ -37,7 +37,7 @@ class WebPushNotificationJobTest < ActiveJob::TestCase
 
     assert_equal 1, deliveries.size
     payload = JSON.parse(deliveries.first[:message])
-    assert_equal "New message", payload["title"]
+    assert_equal "New job available", payload["title"]
     assert_equal "/conversations/123", payload["url"]
     assert_equal "high", deliveries.first[:urgency]
     assert_equal "notification-#{notification.id}", deliveries.first[:topic]

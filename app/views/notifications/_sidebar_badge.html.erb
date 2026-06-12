@@ -1,0 +1,5 @@
+<span id="<%= dom_id(user, :notification_sidebar_badge) %>">
+  <% if user.unread_notifications_count.positive? %>
+    <span class="rounded-full bg-rose-500 px-2 py-0.5 text-[11px] font-black text-white"><%= user.unread_notifications_count %></span>
+  <% end %>
+</span>

@@ -1,0 +1,8 @@
+<div
+  data-controller="message-alert"
+  data-message-alert-title-value="<%= "New message from #{message.sender_label}" %>"
+  data-message-alert-body-value="<%= message.body.truncate(120) %>"
+  data-message-alert-url-value="<%= conversation_path(message.conversation) %>"
+  data-message-alert-tag-value="<%= dom_id(message.conversation, :alert) %>"
+  data-message-alert-sent-by-viewer-value="false"
+></div>

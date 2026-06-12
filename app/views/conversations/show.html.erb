@@ -1,4 +1,5 @@
 <% content_for :title, "#{@conversation.display_subject} — Removlo" %>
+<%= render "messages/alert_stream" %>
 
 <div class="mx-auto max-w-5xl space-y-4">
   <%= link_to conversations_path, class: "inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50" do %>

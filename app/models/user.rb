@@ -52,6 +52,10 @@ class User < ApplicationRecord
     notifications.unread.count
   end
 
+  def display_name
+    email.to_s.split("@").first.to_s.tr("._-", " ").squish.titleize.presence || email
+  end
+
   def wallet_balance_cents
     driver_wallet_entries.where(status: %w[pending available withdrawn]).sum(:amount_cents)
   end

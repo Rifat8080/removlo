@@ -13,8 +13,8 @@ self.addEventListener("push", (event) => {
   event.waitUntil(
     self.registration.showNotification(title, {
       body: data.body || "You have a new activity update.",
-      icon: data.icon || "/icon.png",
-      badge: data.badge || "/icon.png",
+      icon: data.icon || "/icon.svg",
+      badge: data.badge || "/icon.svg",
       tag: data.tag || data.notification_id || "removlo-notification",
       renotify: true,
       timestamp: data.timestamp || Date.now(),

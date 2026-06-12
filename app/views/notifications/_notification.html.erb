@@ -1,0 +1,22 @@
+<div id="<%= dom_id(notification) %>" class="flex flex-col gap-4 p-5 min-[1025px]:flex-row min-[1025px]:items-center min-[1025px]:justify-between <%= notification.read? ? 'bg-white' : 'bg-indigo-50/50' %>">
+  <div class="flex gap-4">
+    <span class="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl <%= notification.read? ? 'bg-slate-100 text-slate-500' : 'bg-indigo-600 text-white' %>">
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0a3 3 0 11-6 0h6z"/></svg>
+    </span>
+    <div>
+      <div class="flex flex-wrap items-center gap-2">
+        <h2 class="font-black text-slate-900"><%= notification.title %></h2>
+        <% unless notification.read? %>
+          <span class="rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-bold text-indigo-700">New</span>
+        <% end %>
+      </div>
+      <% if notification.body.present? %>
+        <p class="mt-1 text-sm text-slate-600"><%= notification.body %></p>
+      <% end %>
+      <p class="mt-2 text-xs text-slate-400"><%= notification.event_type.humanize %> · <%= notification.created_at.to_fs(:long) %></p>
+    </div>
+  </div>
+  <div class="flex gap-2 min-[1025px]:justify-end">
+    <%= button_to notification.read? ? "Open" : "Read and open", read_notification_path(notification), method: :patch, class: "inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-indigo-700" %>
+  </div>
+</div>

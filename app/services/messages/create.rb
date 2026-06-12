@@ -25,7 +25,6 @@ module Messages
       end
 
       broadcast_to_participants(message)
-      notify_participants(message)
       message
     end
 
@@ -52,26 +51,15 @@ module Messages
           partial: "messages/message",
           locals: { message: message, viewer: participant.user }
         )
+        Turbo::StreamsChannel.broadcast_append_to(
+          participant.user,
+          :message_alerts,
+          target: ActionView::RecordIdentifier.dom_id(participant.user, :message_alerts),
+          partial: "messages/alert",
+          locals: { message: message }
+        )
       end
     end
 
-    def notify_participants(message)
-      recipients = conversation.conversation_participants.includes(:user).filter_map do |participant|
-        next if participant.user_id == sender.id
-        next if message.internal_only? && !participant.user.operator?
-
-        participant.user
-      end
-
-      ::ActivityNotifier.call(
-        recipients: recipients,
-        event_type: "chat.message",
-        title: "New message in #{conversation.display_subject}",
-        body: message.body.truncate(120),
-        url: Rails.application.routes.url_helpers.conversation_path(conversation),
-        actor: sender,
-        notifiable: message
-      )
-    end
   end
 end

@@ -46,8 +46,8 @@ class WebPushNotificationJob < ApplicationJob
       tag: topic_for(notification),
       timestamp: notification.created_at.to_i * 1000,
       unread_count: notification.user.unread_notifications_count,
-      icon: "/icon.png",
-      badge: "/icon.png",
+      icon: "/icon.svg",
+      badge: "/icon.svg",
       actions: [
         { action: "open", title: "Open" }
       ]
@@ -64,7 +64,7 @@ class WebPushNotificationJob < ApplicationJob
 
   def urgency_for(notification)
     case notification.event_type
-    when /driver_job_alert|message|payment|assigned/
+    when /driver_job_alert|payment|assigned/
       "high"
     else
       "normal"
@@ -84,6 +84,6 @@ class WebPushNotificationJob < ApplicationJob
   end
 
   def vapid_subject
-    ENV.fetch("VAPID_SUBJECT", "mailto:hello@removlo.co.uk")
+    ENV.fetch("VAPID_SUBJECT", "mailto:hello@removlo.co.uk").strip.gsub(/\Amailto:\s+/, "mailto:")
   end
 end

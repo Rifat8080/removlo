@@ -75,6 +75,7 @@ class WebPushSubscriptionsControllerTest < ActionDispatch::IntegrationTest
     {
       subscription: {
         endpoint: "https://push.example/subscription/1",
+        expirationTime: nil,
         keys: {
           p256dh: "p256dh-key",
           auth: "auth-key"

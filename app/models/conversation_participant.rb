@@ -9,8 +9,7 @@ class ConversationParticipant < ApplicationRecord
 
   def display_name
     case participant_role
-    when "customer" then "Customer"
-    when "driver" then "Driver"
+    when "customer", "driver" then user.display_name
     when "admin", "staff" then "Support"
     else user.email
     end
