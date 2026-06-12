@@ -62,5 +62,20 @@ module Users
 
       assert_redirected_to return_path
     end
+
+    test "account update does not allow users to change their own role" do
+      user = users(:customer)
+      sign_in user
+
+      patch user_registration_path, params: {
+        user: {
+          email: user.email,
+          role: "driver",
+          current_password: "password123"
+        }
+      }
+
+      assert_equal "customer", user.reload.role
+    end
   end
 end

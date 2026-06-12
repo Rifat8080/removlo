@@ -5,6 +5,7 @@ module Users
     before_action :set_signup_role, only: %i[new create]
     before_action :store_return_to, only: :new
     before_action :configure_sign_up_params, only: :create
+    before_action :configure_account_update_params, only: :update
 
     def new
       super do |resource|
@@ -27,6 +28,10 @@ module Users
 
     def configure_sign_up_params
       devise_parameter_sanitizer.permit(:sign_up, keys: [:role])
+    end
+
+    def configure_account_update_params
+      devise_parameter_sanitizer.permit(:account_update, keys: [])
     end
 
     private

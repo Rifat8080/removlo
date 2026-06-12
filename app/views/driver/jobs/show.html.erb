@@ -49,10 +49,50 @@
       <p class="mt-4 text-sm text-slate-600"><%= @job.access_notes.presence || "No access notes recorded." %></p>
     </section>
 
+    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm min-[1025px]:col-span-2">
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 class="text-lg font-black text-slate-900">Item list</h2>
+          <p class="mt-1 text-sm text-slate-500">Review the items the customer listed for this move.</p>
+        </div>
+        <span class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-black text-indigo-700"><%= pluralize(@job.quotation_items.count, "item") %></span>
+      </div>
+
+      <% items = @job.quotation_items.order(created_at: :asc) %>
+      <% if items.any? %>
+        <div class="mt-5 grid gap-3 min-[1025px]:grid-cols-2">
+          <% items.each do |item| %>
+            <div class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100">
+              <div class="flex flex-wrap items-center gap-2">
+                <p class="font-black text-slate-900"><%= item.quantity %> x <%= item.name %></p>
+                <% if item.fragile? %>
+                  <span class="rounded-full bg-rose-100 px-2 py-0.5 text-xs font-black text-rose-700">Fragile</span>
+                <% end %>
+              </div>
+              <p class="mt-2 text-sm text-slate-500"><%= item.notes.presence || "No item notes." %></p>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="mt-5 rounded-2xl bg-slate-50 p-4 text-sm font-semibold text-slate-500 ring-1 ring-slate-100">No item list has been added yet.</p>
+      <% end %>
+    </section>
+
     <% if @job.awaiting_driver_offers? %>
       <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <h2 class="text-lg font-black text-slate-900">Submit offer</h2>
-        <p class="mt-1 text-sm text-slate-500">Your bid is private. Other drivers cannot see it.</p>
+        <p class="mt-1 text-sm text-slate-500">Your bid is private. Other drivers cannot see it. Bidding stays open even while negotiated prices are being confirmed.</p>
+        <% if @offer.pending_renegotiation? %>
+          <div class="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+            <p class="text-xs font-black uppercase tracking-wide text-amber-700">Negotiated price request</p>
+            <p class="mt-2 text-sm font-semibold text-amber-900">The customer negotiation is approved at <span class="font-black"><%= money_from_cents(@offer.renegotiation_price_cents) %></span>. Accept to update your bid to this amount.</p>
+            <%= button_to "Accept negotiated price", accept_negotiation_driver_job_offer_path(@job, @offer), method: :patch, class: "mt-3 inline-flex w-full items-center justify-center rounded-xl bg-amber-600 px-4 py-2.5 text-sm font-black text-white transition hover:bg-amber-700" %>
+          </div>
+        <% elsif @offer.accepted_renegotiation? %>
+          <div class="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800">
+            Negotiated price accepted. Your current bid is <%= money_from_cents(@offer.amount_cents) %>.
+          </div>
+        <% end %>
         <% offer_path = @offer.persisted? ? driver_job_offer_path(@job, @offer) : driver_job_offers_path(@job) %>
         <% offer_method = @offer.persisted? ? :patch : :post %>
         <%= form_with(model: @offer, url: offer_path, method: offer_method, scope: :driver_offer, class: "mt-4 space-y-3") do |form| %>

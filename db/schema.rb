@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_12_120000) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_12_124000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -195,6 +195,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_12_120000) do
     t.boolean "selected_by_admin", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "renegotiation_price_cents"
+    t.string "renegotiation_status", default: "none", null: false
+    t.datetime "renegotiation_requested_at"
+    t.datetime "renegotiation_responded_at"
     t.index ["driver_id"], name: "index_driver_offers_on_driver_id"
     t.index ["quotation_id", "driver_id"], name: "index_driver_offers_on_quotation_id_and_driver_id", unique: true
     t.index ["quotation_id"], name: "index_driver_offers_on_quotation_id"
@@ -476,10 +480,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_12_120000) do
     t.text "route_polyline"
     t.datetime "route_estimated_at"
     t.string "route_estimate_error"
+    t.integer "pending_quoted_price_cents"
+    t.string "negotiated_price_approval_status", default: "none", null: false
+    t.datetime "negotiated_price_requested_at"
+    t.datetime "negotiated_price_approved_at"
+    t.uuid "negotiated_price_requested_by_id"
+    t.uuid "negotiated_price_approved_by_id"
     t.index ["assigned_driver_id"], name: "index_quotations_on_assigned_driver_id"
     t.index ["assigned_staff_id"], name: "index_quotations_on_assigned_staff_id"
     t.index ["created_by_id"], name: "index_quotations_on_created_by_id"
     t.index ["customer_id"], name: "index_quotations_on_customer_id"
+    t.index ["negotiated_price_approved_by_id"], name: "index_quotations_on_negotiated_price_approved_by_id"
+    t.index ["negotiated_price_requested_by_id"], name: "index_quotations_on_negotiated_price_requested_by_id"
     t.index ["payment_status"], name: "index_quotations_on_payment_status"
     t.index ["preferred_move_date"], name: "index_quotations_on_preferred_move_date"
     t.index ["public_share_token"], name: "index_quotations_on_public_share_token", unique: true
@@ -565,5 +577,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_12_120000) do
   add_foreign_key "quotations", "users", column: "assigned_staff_id"
   add_foreign_key "quotations", "users", column: "created_by_id"
   add_foreign_key "quotations", "users", column: "customer_id"
+  add_foreign_key "quotations", "users", column: "negotiated_price_approved_by_id"
+  add_foreign_key "quotations", "users", column: "negotiated_price_requested_by_id"
   add_foreign_key "web_push_subscriptions", "users"
 end

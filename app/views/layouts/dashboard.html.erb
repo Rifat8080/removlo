@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
+    <% google_maps_browser_key = ENV["GOOGLE_MAPS_BROWSER_KEY"].presence %>
+    <% if google_maps_browser_key.present? %>
+      <meta name="google-maps-browser-key" content="<%= google_maps_browser_key %>">
+    <% end %>
     <%= favicon_link_tag "images/icon.svg", type: "image/svg+xml" %>
     <link rel="apple-touch-icon" href="<%= asset_path("images/icon.svg") %>">
     <%= csrf_meta_tags %>

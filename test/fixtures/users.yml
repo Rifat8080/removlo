@@ -8,6 +8,11 @@ admin:
   encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
   role: admin
 
+staff:
+  email: staff@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
+  role: staff
+
 driver_a:
   email: drivera@example.com
   encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>

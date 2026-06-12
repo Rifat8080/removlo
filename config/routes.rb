@@ -28,6 +28,8 @@ Rails.application.routes.draw do
 
     resources :quotations do
       patch :transition, on: :member
+      patch :approve_negotiated_price, on: :member
+      patch :reject_negotiated_price, on: :member
       resources :quotation_items, path: :items, only: %i[create update destroy]
       resources :quotation_notes, path: :notes, only: %i[create update destroy]
       resources :quotation_payments, path: :payments, only: %i[create update destroy]
@@ -73,13 +75,15 @@ Rails.application.routes.draw do
   namespace :driver do
     resources :jobs, only: %i[index show] do
       resource :location, only: %i[create], controller: "locations"
-      resources :offers, only: %i[create update]
+      resources :offers, only: %i[create update] do
+        patch :accept_negotiation, on: :member
+      end
     end
     resources :availabilities
     resource :wallet, only: :show
   end
 
-  resources :quotations, only: %i[index show new create] do
+  resources :quotations, only: %i[index show new create edit update] do
     patch :accept, on: :member
     patch :reject, on: :member
     patch :request_changes, on: :member

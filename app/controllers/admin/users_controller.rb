@@ -33,6 +33,7 @@ module Admin
       attrs = update_user_params
       attrs.delete(:password) if attrs[:password].blank?
       attrs.delete(:password_confirmation) if attrs[:password_confirmation].blank?
+      attrs.delete(:role) if @user == current_user
 
       if @user.update(attrs)
         notify_user(@user, "Account updated", "Your Removlo account details were updated.")

@@ -6,13 +6,14 @@ class QuotationDepositsController < ApplicationController
   layout "dashboard"
 
   def create
-    unless @quotation.accepted? && @quotation.deposit_cents.positive?
+    unless @quotation.quoted_price_cents.positive? && @quotation.deposit_cents.positive?
       redirect_to quotation_path(@quotation), alert: "Deposit payment is not available for this quotation."
       return
     end
 
     if @quotation.deposit_protected?
-      redirect_to quotation_path(@quotation), notice: "Deposit already received."
+      accept_quotation_after_deposit!
+      redirect_to quotation_path(@quotation), notice: "Deposit already received. Your quote is accepted."
       return
     end
 
@@ -30,7 +31,8 @@ class QuotationDepositsController < ApplicationController
   def success
     @quotation = Quotation.for_customer(current_user).find(params[:id])
     finalize_payment if params[:session_id].present?
-    redirect_to quotation_path(@quotation), notice: "Deposit payment received. Your booking is now protected."
+    accept_quotation_after_deposit! if @quotation.deposit_protected?
+    redirect_to quotation_path(@quotation), notice: "Deposit payment received. Your quote is now accepted and protected."
   end
 
   def cancel
@@ -54,7 +56,8 @@ class QuotationDepositsController < ApplicationController
     if ENV["STRIPE_SECRET_KEY"].blank?
       payment.update!(status: :recorded, stripe_payment_intent_id: "dev-simulated")
       @quotation.sync_payment_status!
-      redirect_to quotation_path(@quotation), notice: "Deposit recorded (dev mode)."
+      accept_quotation_after_deposit!
+      redirect_to quotation_path(@quotation), notice: "Deposit recorded and quote accepted (dev mode)."
       return
     end
 
@@ -81,5 +84,20 @@ class QuotationDepositsController < ApplicationController
     @quotation.sync_payment_status!
   rescue Stripe::StripeError
     nil
+  end
+
+  def accept_quotation_after_deposit!
+    return if @quotation.accepted?
+
+    @quotation.transition_to!(:accepted, actor: current_user, note: "Customer accepted the quote after deposit payment")
+    ::ActivityNotifier.call(
+      recipients: User.operators,
+      event_type: "quotation.customer_activity",
+      title: "Quote accepted",
+      body: "#{current_user.email} accepted #{@quotation.reference} after paying the deposit.",
+      url: admin_quotation_path(@quotation),
+      actor: current_user,
+      notifiable: @quotation
+    )
   end
 end

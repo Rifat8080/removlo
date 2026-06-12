@@ -40,6 +40,8 @@ class Quotation < ApplicationRecord
   belongs_to :assigned_staff, class_name: "User", optional: true
   belongs_to :assigned_driver, class_name: "User", optional: true
   belongs_to :selected_driver_offer, class_name: "DriverOffer", optional: true
+  belongs_to :negotiated_price_requested_by, class_name: "User", optional: true
+  belongs_to :negotiated_price_approved_by, class_name: "User", optional: true
 
   has_many :quotation_items, dependent: :destroy
   has_many :quotation_notes, dependent: :destroy
@@ -52,6 +54,8 @@ class Quotation < ApplicationRecord
   has_many :driver_locations, dependent: :destroy
   has_one :job_conversation, class_name: "Conversation", as: :conversationable, dependent: :destroy
 
+  accepts_nested_attributes_for :quotation_items, allow_destroy: true, reject_if: :quotation_item_blank?
+
   after_commit :enqueue_route_estimate, on: %i[create update], if: :should_estimate_route?
 
   enum :status, STATUSES, default: :draft, validate: true
@@ -63,6 +67,8 @@ class Quotation < ApplicationRecord
   validates :move_size, inclusion: { in: MOVE_SIZES }
   validates :service_level, inclusion: { in: SERVICE_LEVELS }
   validates :quoted_price_cents, :deposit_cents, :driver_cost_cents, :admin_margin_cents, numericality: { greater_than_or_equal_to: 0 }
+  validates :pending_quoted_price_cents, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :negotiated_price_approval_status, inclusion: { in: %w[none pending approved rejected] }
   validates :markup_percentage, numericality: { greater_than_or_equal_to: 0 }
   validate :customer_must_be_customer
   validate :assigned_staff_must_be_operator
@@ -99,6 +105,7 @@ class Quotation < ApplicationRecord
   def transition_to!(next_status, actor:, note: nil)
     next_status = next_status.to_s
     raise ArgumentError, "Unknown quotation status" unless self.class.statuses.key?(next_status)
+    raise ArgumentError, "Negotiated price must be approved by an admin before sending this quote." if negotiated_price_approval_required_for?(next_status)
     raise ActiveRecord::RecordInvalid.new(self) unless admin_transition_allowed?(next_status)
 
     previous_status = status
@@ -177,6 +184,77 @@ class Quotation < ApplicationRecord
     allowed = admin_transition_options.any? { |option| option[:status] == next_status }
     errors.add(:status, "cannot move from #{status.humanize} to #{next_status.humanize} yet") unless allowed
     allowed
+  end
+
+  def customer_editable?
+    requested? || draft? || quoted? || negotiating?
+  end
+
+  def pending_negotiated_price?
+    negotiated_price_approval_status == "pending" && pending_quoted_price_cents.present?
+  end
+
+  def approved_negotiated_price?
+    negotiated_price_approval_status == "approved" && pending_quoted_price_cents.present?
+  end
+
+  def rejected_negotiated_price?
+    negotiated_price_approval_status == "rejected" && pending_quoted_price_cents.present?
+  end
+
+  def negotiated_price_approval_required_for?(next_status)
+    negotiating? && next_status.to_s == "quoted" && pending_negotiated_price?
+  end
+
+  def propose_negotiated_price!(price_cents:, actor:)
+    raise ArgumentError, "Negotiated prices can only be proposed while the quotation is negotiating." unless negotiating?
+
+    update!(
+      pending_quoted_price_cents: price_cents,
+      negotiated_price_approval_status: "pending",
+      negotiated_price_requested_by: actor,
+      negotiated_price_requested_at: Time.current,
+      negotiated_price_approved_by: nil,
+      negotiated_price_approved_at: nil
+    )
+  end
+
+  def approve_negotiated_price!(actor:)
+    raise ArgumentError, "There is no pending negotiated price to approve." unless pending_negotiated_price?
+
+    update!(
+      quoted_price_cents: pending_quoted_price_cents,
+      admin_margin_cents: [pending_quoted_price_cents.to_i - driver_cost_cents.to_i, 0].max,
+      negotiated_price_approval_status: "approved",
+      negotiated_price_approved_by: actor,
+      negotiated_price_approved_at: Time.current
+    )
+  end
+
+  def reject_negotiated_price!(actor:)
+    raise ArgumentError, "There is no pending negotiated price to reject." unless pending_negotiated_price?
+
+    update!(
+      negotiated_price_approval_status: "rejected",
+      negotiated_price_approved_by: actor,
+      negotiated_price_approved_at: Time.current
+    )
+  end
+
+  def request_driver_offer_renegotiation!
+    driver_offers.active.find_each do |offer|
+      offer.request_renegotiation!(price_cents: quoted_price_cents)
+    end
+
+    update!(selected_driver_offer: nil, awaiting_driver_offers: true)
+  end
+
+  def driver_negotiation_active?
+    approved_negotiated_price? && awaiting_driver_offers?
+  end
+
+  def quotation_item_blank?(attrs)
+    attrs["name"].blank?
   end
 
   def workflow_blocker_message

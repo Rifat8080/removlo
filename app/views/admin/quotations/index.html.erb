@@ -52,7 +52,9 @@
 
             <div class="flex gap-2 min-[1025px]:justify-end">
               <%= link_to "Open", admin_quotation_path(quotation), class: "inline-flex flex-1 items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-indigo-700 min-[1025px]:flex-none" %>
-              <%= link_to "Edit", edit_admin_quotation_path(quotation), class: "inline-flex flex-1 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50 min-[1025px]:flex-none" %>
+              <% if current_user.admin? %>
+                <%= link_to "Edit", edit_admin_quotation_path(quotation), class: "inline-flex flex-1 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50 min-[1025px]:flex-none" %>
+              <% end %>
             </div>
           </div>
         <% end %>

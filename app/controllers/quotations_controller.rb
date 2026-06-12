@@ -1,7 +1,8 @@
 class QuotationsController < ApplicationController
   before_action :authenticate_user!, except: :create
   before_action :require_customer!, except: :create
-  before_action :set_quotation, only: %i[show accept reject request_changes]
+  before_action :set_quotation, only: %i[show edit update accept reject request_changes]
+  before_action :require_customer_editable!, only: %i[edit update]
 
   layout "dashboard"
 
@@ -18,12 +19,17 @@ class QuotationsController < ApplicationController
     @job_chat_messages = @job_conversation&.messages&.visible_to_participants&.chronological || []
   end
 
+  def edit
+    build_blank_item
+  end
+
   def new
     @quotation = current_user.customer_quotations.new(
       status: :requested,
       move_size: "studio",
       service_level: "standard"
     )
+    build_blank_item
   end
 
   def create
@@ -46,15 +52,32 @@ class QuotationsController < ApplicationController
     end
   end
 
+  def update
+    previous_status = @quotation.status
+
+    if @quotation.update(quotation_request_params)
+      mark_customer_edit!(previous_status)
+      notify_operators("Quotation request updated", "#{current_user.email} updated #{@quotation.reference}.", @quotation)
+      redirect_to quotation_path(@quotation), notice: "Your quotation request has been updated."
+    else
+      build_blank_item
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
   def accept
     unless @quotation.quoted_price_cents.positive?
       redirect_to quotation_path(@quotation), alert: "A quote price must be set before acceptance."
       return
     end
 
-    @quotation.transition_to!(:accepted, actor: current_user, note: "Customer accepted the quote")
-    notify_operators("Quote accepted", "#{current_user.email} accepted #{@quotation.reference}.", @quotation)
-    redirect_to quotation_path(@quotation), notice: "Quote accepted. Please pay your deposit to secure your booking."
+    if @quotation.deposit_cents.positive? && !@quotation.deposit_protected?
+      redirect_to deposit_checkout_quotation_path(@quotation), status: :see_other, notice: "Pay the deposit to accept and secure this quote."
+      return
+    end
+
+    accept_quotation_after_deposit!
+    redirect_to quotation_path(@quotation), notice: "Quote accepted. Your booking is now secured."
   end
 
   def reject
@@ -81,6 +104,13 @@ class QuotationsController < ApplicationController
 
   private
 
+  def accept_quotation_after_deposit!
+    return if @quotation.accepted?
+
+    @quotation.transition_to!(:accepted, actor: current_user, note: "Customer accepted the quote after deposit payment")
+    notify_operators("Quote accepted", "#{current_user.email} accepted #{@quotation.reference}.", @quotation)
+  end
+
   def set_quotation
     @quotation = Quotation.for_customer(current_user).find(params[:id])
   end
@@ -95,7 +125,8 @@ class QuotationsController < ApplicationController
       :pickup_address,
       :delivery_address,
       :access_notes,
-      :customer_notes
+        :customer_notes,
+        quotation_items_attributes: %i[id name quantity fragile notes _destroy]
     )
 
     attrs[:service_level] = attrs[:service_level].presence || "standard"
@@ -104,6 +135,29 @@ class QuotationsController < ApplicationController
     attrs[:delivery_address] = attrs[:delivery_address].presence || fallback_address("Delivery", attrs[:delivery_postcode])
     attrs[:customer_notes] = attrs[:customer_notes].presence || "Submitted from the landing page 2-minute quotation form."
     attrs
+  end
+
+  def require_customer_editable!
+    return if @quotation.customer_editable?
+
+    redirect_to quotation_path(@quotation), alert: "This quotation can no longer be edited. Message the team if you need a change."
+  end
+
+  def build_blank_item
+    @quotation.quotation_items.build if @quotation.quotation_items.empty?
+  end
+
+  def mark_customer_edit!(previous_status)
+    return unless previous_status.in?(%w[quoted negotiating])
+
+    @quotation.transition_to!(:negotiating, actor: current_user, note: "Customer edited quotation request details")
+  rescue ActiveRecord::RecordInvalid, ArgumentError
+    @quotation.quotation_status_events.create!(
+      from_status: previous_status,
+      to_status: @quotation.status,
+      user: current_user,
+      note: "Customer edited quotation request details"
+    )
   end
 
   def require_customer!

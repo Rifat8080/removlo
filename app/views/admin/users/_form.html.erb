@@ -16,10 +16,20 @@
       <%= f.email_field :email, autocomplete: "email", placeholder: "customer@example.com", class: "block w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm text-slate-900 placeholder-slate-400 transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200" %>
     </div>
 
-    <div>
-      <%= f.label :role, class: "mb-2 block text-sm font-medium text-slate-900" %>
-      <%= f.select :role, User.roles.keys.map { |role| [role.titleize, role] }, {}, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm capitalize text-slate-900 transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200" %>
-    </div>
+    <% if user.persisted? && user == current_user %>
+      <div>
+        <p class="mb-2 block text-sm font-medium text-slate-900">Role</p>
+        <div class="rounded-xl border border-slate-200 bg-slate-100 px-3.5 py-3 text-sm font-semibold capitalize text-slate-500">
+          <%= user.role.humanize %>
+        </div>
+        <p class="mt-1.5 text-xs font-semibold text-slate-400">Admins cannot change their own role.</p>
+      </div>
+    <% else %>
+      <div>
+        <%= f.label :role, class: "mb-2 block text-sm font-medium text-slate-900" %>
+        <%= f.select :role, User.roles.keys.map { |role| [role.titleize, role] }, {}, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm capitalize text-slate-900 transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200" %>
+      </div>
+    <% end %>
   </div>
 
   <div class="grid gap-5 min-[1025px]:grid-cols-2">

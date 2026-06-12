@@ -2,7 +2,7 @@
   <div class="flex items-center justify-between gap-3">
     <div>
       <h2 class="text-lg font-black text-slate-900">Bid Comparison</h2>
-      <p class="mt-1 text-sm text-slate-500">Only admin can see driver bids, ratings, and margin.</p>
+      <p class="mt-1 text-sm text-slate-500"><%= current_user.admin? ? "Compare driver bids, ratings, and margins before selecting the best offer." : "Compare driver bids, ratings, and availability before selecting the best offer." %></p>
     </div>
     <% if comparison.best_value %>
       <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">Suggested: <%= comparison.best_value.driver.email %></span>
@@ -32,6 +32,11 @@
                 <span><%= offer.driver.email %></span>
                 <% if selected %>
                   <span class="rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-bold text-indigo-700">Selected</span>
+                <% end %>
+                <% if offer.pending_renegotiation? %>
+                  <span class="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-700">Awaiting driver</span>
+                <% elsif offer.accepted_renegotiation? %>
+                  <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-700">Negotiated accepted</span>
                 <% end %>
               </div>
             </td>

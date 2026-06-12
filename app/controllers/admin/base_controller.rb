@@ -12,5 +12,11 @@ module Admin
 
       redirect_to dashboard_path, alert: "You are not authorized to access operations."
     end
+
+    def require_admin!
+      return if current_user&.admin?
+
+      redirect_to admin_root_path, alert: "Only admins can perform this action."
+    end
   end
 end

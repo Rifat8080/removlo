@@ -8,10 +8,15 @@ module Admin
     end
 
     def select
+      if @offer.pending_renegotiation?
+        redirect_to admin_quotation_path(@quotation), alert: "This driver must accept the negotiated price before their bid can be selected."
+        return
+      end
+
       assigned_now = false
       unselected = false
 
-      markup = params[:markup_percentage].presence || @quotation.markup_percentage
+      markup = current_user.admin? ? params[:markup_percentage].presence || @quotation.markup_percentage : @quotation.markup_percentage
 
       Quotation.transaction do
         if @quotation.selected_driver_offer == @offer
