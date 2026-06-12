@@ -1,0 +1,21 @@
+<div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+  <% marketing_service_cards.each do |card| %>
+    <article class="group relative min-h-[18rem] overflow-hidden rounded-[1.45rem] border border-blue-100/80 bg-white shadow-[0_14px_45px_rgba(30,64,175,0.07)] transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-950/10 sm:min-h-[18.5rem] xl:min-h-[15.5rem]">
+      <div class="relative z-10 flex items-start gap-4 px-5 pt-5 sm:px-6 sm:pt-6 xl:gap-3 xl:px-4 xl:pt-4">
+        <span class="flex h-12 w-12 shrink-0 items-center justify-center text-blue-700 xl:h-11 xl:w-11">
+          <%= image_tag marketing_asset_image(card[:icon]), alt: "", class: "h-10 w-10 xl:h-9 xl:w-9", aria: { hidden: true } %>
+        </span>
+        <div class="min-w-0 pt-1">
+          <h3 class="text-base font-black tracking-tight text-slate-950 xl:text-sm"><%= card[:title] %></h3>
+          <p class="mt-2 max-w-[12rem] text-sm font-semibold leading-6 text-slate-500 xl:max-w-[9.5rem] xl:text-[11px] xl:leading-5"><%= card[:description] %></p>
+        </div>
+      </div>
+      <div class="absolute inset-x-0 bottom-0 h-[58%] overflow-hidden bg-slate-100">
+        <%= image_tag marketing_asset_image(card[:image]), alt: "#{card[:title]} service", class: "h-full w-full object-cover object-bottom transition duration-700 group-hover:scale-105" %>
+      </div>
+      <%= link_to card[:path], class: "absolute bottom-5 right-5 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white text-blue-700 shadow-lg shadow-blue-950/15 ring-1 ring-slate-200 transition group-hover:-translate-y-0.5 group-hover:bg-blue-600 group-hover:text-white xl:bottom-4 xl:right-4 xl:h-10 xl:w-10", aria: { label: "Learn more about #{card[:title]}" } do %>
+        <%= image_tag marketing_asset_image("arrow-right.svg"), alt: "", class: "h-4 w-4 transition group-hover:brightness-0 group-hover:invert", aria: { hidden: true } %>
+      <% end %>
+    </article>
+  <% end %>
+</div>

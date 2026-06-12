@@ -1,0 +1,35 @@
+<% content_for :title, "Removlo Services — Home & Office Removals, Packing & Storage" %>
+<% content_for :meta_description, "Explore Removlo's UK removal services: home removals, office relocations, professional packing, and secure storage with transparent quotes and live tracking." %>
+
+<main data-controller="reveal" class="relative flex-1 overflow-hidden bg-[#f7f9ff] text-slate-800">
+  <div class="pointer-events-none absolute inset-x-0 top-0 z-0 h-[48rem] bg-[radial-gradient(circle_at_18%_20%,rgba(37,99,235,0.14),transparent_26%),radial-gradient(circle_at_80%_16%,rgba(124,58,237,0.13),transparent_28%),linear-gradient(180deg,#fbfdff_0%,#eef5ff_58%,#ffffff_100%)]"></div>
+
+  <%= render "pages/marketing_hero",
+    badge: "Our services",
+    title: "Everything you need for a smoother move",
+    subtitle: "From family homes to office floors, Removlo combines careful crews, smart logistics, and human support across the UK." %>
+
+  <section class="relative z-10 px-4 pb-8 sm:px-6 lg:px-10 2xl:px-14">
+    <div class="reveal mx-auto w-full max-w-[1600px] rounded-[2rem] border border-white/90 bg-white/80 p-4 shadow-[0_24px_80px_rgba(30,64,175,0.10)] ring-1 ring-blue-100/70 backdrop-blur-xl sm:p-6 lg:p-7">
+      <%= render "pages/service_cards" %>
+    </div>
+  </section>
+
+  <section class="relative z-10 px-4 pb-8 sm:px-6 lg:px-10 2xl:px-14">
+    <div class="reveal mx-auto grid w-full max-w-[1600px] gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <% marketing_benefits.each do |title, copy, icon| %>
+        <div class="rounded-[1.5rem] border border-white/90 bg-white/85 p-5 shadow-lg shadow-blue-950/5 ring-1 ring-blue-100/70">
+          <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50">
+            <%= image_tag marketing_asset_image(icon), alt: "", class: "h-6 w-6", aria: { hidden: true } %>
+          </span>
+          <h3 class="mt-4 text-sm font-black text-slate-950"><%= title %></h3>
+          <p class="mt-2 text-xs font-semibold leading-5 text-slate-500"><%= copy %></p>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <%= render "pages/marketing_cta" %>
+</main>
+
+<%= render "shared/marketing_footer" %>

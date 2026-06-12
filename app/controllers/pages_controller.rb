@@ -6,6 +6,37 @@ class PagesController < ApplicationController
   def landing
   end
 
+  def services
+  end
+
+  def home_removals
+    @service = service_page(:home_removals)
+  end
+
+  def office_removals
+    @service = service_page(:office_removals)
+  end
+
+  def packing_services
+    @service = service_page(:packing_services)
+  end
+
+  def storage_solutions
+    @service = service_page(:storage_solutions)
+  end
+
+  def how_it_works
+  end
+
+  def about
+  end
+
+  def reviews
+  end
+
+  def contact
+  end
+
   def dashboard
     @recent_notifications = current_user.notifications.recent.limit(5)
 
@@ -102,5 +133,46 @@ class PagesController < ApplicationController
 
   def pages_layout
     action_name == "dashboard" ? "dashboard" : "landing"
+  end
+
+  def service_page(key)
+    {
+      home_removals: {
+        title: "Home Removals",
+        slug: "home-removals",
+        icon: "home_removals_icon.svg",
+        image: "home_removals_image.png",
+        description: "Professional home moves for flats, houses, and family relocations across the UK.",
+        features: ["Room-by-room planning", "Careful loading and protection", "Live move tracking", "Flexible packing add-ons"],
+        highlights: ["Ideal for local and long-distance moves", "Transparent crew and vehicle allocation", "Insurance options explained upfront"]
+      },
+      office_removals: {
+        title: "Office Removals",
+        slug: "office-removals",
+        icon: "office_removals_icon.svg",
+        image: "office_removals_image.png",
+        description: "Minimise downtime with planned office relocations, weekend moves, and IT-safe handling.",
+        features: ["Out-of-hours scheduling", "Desk and equipment labelling", "Phased move planning", "Dedicated move coordinator"],
+        highlights: ["Designed for minimal business disruption", "Suitable for SMEs and multi-site teams", "Clear timelines before move day"]
+      },
+      packing_services: {
+        title: "Packing Services",
+        slug: "packing-services",
+        icon: "packing_services_icon.svg",
+        image: "packing_services_image.png",
+        description: "Full or partial packing with quality materials, fragile-item care, and inventory support.",
+        features: ["Professional packing teams", "Fragile-only options", "Materials supplied on request", "Labelled boxes for easy unpacking"],
+        highlights: ["Great for busy households and professionals", "Reduces damage risk on move day", "Can be combined with removals"]
+      },
+      storage_solutions: {
+        title: "Storage Solutions",
+        slug: "storage-solutions",
+        icon: "storage_solutions_icon.svg",
+        image: "storage_solutions_image.png",
+        description: "Secure short or long-term storage while you stage, renovate, or coordinate your move.",
+        features: ["Flexible storage terms", "Collection and redelivery options", "Inventory on request", "Climate-suitable handling guidance"],
+        highlights: ["Bridge the gap between exchange dates", "Useful during renovations", "Works alongside Removlo removals"]
+      }
+    }[key]
   end
 end

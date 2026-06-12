@@ -1,0 +1,22 @@
+<section class="relative z-10 px-4 pb-9 pt-3 sm:px-6 sm:pb-12 lg:px-10 2xl:px-14">
+  <div class="reveal mx-auto w-full max-w-[1600px] overflow-hidden rounded-[1.5rem] bg-gradient-to-r from-blue-700 via-indigo-700 to-violet-700 p-5 text-white shadow-2xl shadow-blue-950/20 sm:p-6 lg:p-7">
+    <div class="grid gap-6 min-[1360px]:grid-cols-[1fr_auto] min-[1360px]:items-center">
+      <div class="flex gap-4">
+        <span class="hidden h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/15 ring-1 ring-white/20 sm:flex">
+          <%= image_tag marketing_asset_image("home-removals.svg"), alt: "", class: "h-8 w-8 brightness-0 invert", aria: { hidden: true } %>
+        </span>
+        <div>
+          <h2 class="text-2xl font-black tracking-[-0.04em] sm:text-3xl">Ready to move smarter?</h2>
+          <p class="mt-2 max-w-2xl text-sm font-semibold leading-6 text-blue-100">Get your free instant quote now and let us take care of the rest.</p>
+        </div>
+      </div>
+      <div>
+        <%= link_to marketing_quote_path, class: "inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-black text-slate-950 shadow-xl shadow-blue-950/20 transition hover:-translate-y-0.5 hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-white/25 sm:w-auto" do %>
+          Get your free quote
+          <%= image_tag marketing_asset_image("arrow-right.svg"), alt: "", class: "h-4 w-4", aria: { hidden: true } %>
+        <% end %>
+        <p class="mt-2 text-center text-[10px] font-bold text-blue-100">No obligation. Response within 24 hours.</p>
+      </div>
+    </div>
+  </div>
+</section>

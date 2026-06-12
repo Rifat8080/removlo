@@ -1,0 +1,60 @@
+<% content_for :title, "#{@service[:title]} — Removlo UK Removals" %>
+<% content_for :meta_description, @service[:description] %>
+
+<main data-controller="reveal" class="relative flex-1 overflow-hidden bg-[#f7f9ff] text-slate-800">
+  <div class="pointer-events-none absolute inset-x-0 top-0 z-0 h-[48rem] bg-[radial-gradient(circle_at_18%_20%,rgba(37,99,235,0.14),transparent_26%),radial-gradient(circle_at_80%_16%,rgba(124,58,237,0.13),transparent_28%),linear-gradient(180deg,#fbfdff_0%,#eef5ff_58%,#ffffff_100%)]"></div>
+
+  <%= render "pages/marketing_hero",
+    badge: "Service",
+    title: @service[:title],
+    subtitle: @service[:description] %>
+
+  <section class="relative z-10 px-4 pb-8 sm:px-6 lg:px-10 2xl:px-14">
+    <div class="reveal mx-auto grid w-full max-w-[1600px] gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+      <div class="rounded-[2rem] border border-white/90 bg-white/85 p-6 shadow-[0_24px_80px_rgba(30,64,175,0.10)] ring-1 ring-blue-100/70 backdrop-blur-xl sm:p-8">
+        <h2 class="text-xl font-black tracking-[-0.03em] text-slate-950 sm:text-2xl">What's included</h2>
+        <ul class="mt-5 space-y-3">
+          <% @service[:features].each do |feature| %>
+            <li class="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50/70 px-4 py-3">
+              <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-600 text-[10px] font-black text-white">✓</span>
+              <span class="text-sm font-semibold text-slate-700"><%= feature %></span>
+            </li>
+          <% end %>
+        </ul>
+
+        <h3 class="mt-8 text-lg font-black text-slate-950">Why customers choose this</h3>
+        <ul class="mt-4 space-y-2">
+          <% @service[:highlights].each do |highlight| %>
+            <li class="flex items-center gap-2 text-sm font-medium text-slate-600">
+              <span class="h-1.5 w-1.5 rounded-full bg-blue-600"></span>
+              <%= highlight %>
+            </li>
+          <% end %>
+        </ul>
+
+        <div class="mt-8 flex flex-wrap gap-3">
+          <%= link_to marketing_quote_path, class: "inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-blue-600/25 transition hover:-translate-y-0.5" do %>
+            Get a quote
+            <%= image_tag marketing_asset_image("arrow-right.svg"), alt: "", class: "h-4 w-4 brightness-0 invert", aria: { hidden: true } %>
+          <% end %>
+          <%= link_to "All services", services_path, class: "inline-flex items-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 transition hover:border-blue-200 hover:text-blue-700" %>
+        </div>
+      </div>
+
+      <div class="overflow-hidden rounded-[2rem] border border-white/90 bg-white shadow-[0_24px_80px_rgba(30,64,175,0.10)] ring-1 ring-blue-100/70">
+        <div class="flex items-center gap-3 border-b border-slate-100 px-6 py-5">
+          <%= image_tag marketing_asset_image(@service[:icon]), alt: "", class: "h-10 w-10", aria: { hidden: true } %>
+          <div>
+            <p class="text-xs font-black uppercase tracking-wide text-slate-400">Removlo service</p>
+            <p class="text-sm font-black text-slate-950"><%= @service[:title] %></p>
+          </div>
+        </div>
+        <%= image_tag marketing_asset_image(@service[:image]), alt: @service[:title], class: "h-72 w-full object-cover object-bottom sm:h-96 lg:h-[28rem]" %>
+      </div>
+    </div>
+  </section>
+
+  <%= render "pages/marketing_cta" %>
+</main>
+
+<%= render "shared/marketing_footer" %>

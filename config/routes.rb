@@ -129,6 +129,16 @@ Rails.application.routes.draw do
 
   post "stripe/webhook", to: "stripe_webhooks#create"
 
+  get "services", to: "pages#services", as: :services
+  get "services/home-removals", to: "pages#home_removals", as: :home_removals
+  get "services/office-removals", to: "pages#office_removals", as: :office_removals
+  get "services/packing-services", to: "pages#packing_services", as: :packing_services
+  get "services/storage-solutions", to: "pages#storage_solutions", as: :storage_solutions
+  get "how-it-works", to: "pages#how_it_works", as: :how_it_works
+  get "about", to: "pages#about", as: :about
+  get "reviews", to: "pages#reviews", as: :reviews
+  get "contact", to: "pages#contact", as: :contact
+
   get "dashboard", to: "pages#dashboard", as: :dashboard
   get "jobs/:token", to: "public_jobs#show", as: :public_job
   root to: "pages#landing"

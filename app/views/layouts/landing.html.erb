@@ -36,49 +36,57 @@
 
   <body class="flex min-h-screen flex-col bg-[#f6f8ff] text-slate-700 antialiased">
     <!-- Navbar -->
-    <nav id="site-nav" data-controller="nav-scroll" class="fixed top-0 z-50 w-full border-b border-slate-200/80 bg-white/96 px-4 shadow-sm shadow-slate-900/5 backdrop-blur-xl transition-[background-color,box-shadow,border-color] duration-300 sm:px-6 lg:px-10 2xl:px-14">
-      <div class="mx-auto flex w-full max-w-[1600px] items-center justify-between gap-6 py-2.5">
-        <%= link_to root_path, class: "group flex h-12 w-48 shrink-0 items-center overflow-hidden sm:h-14 sm:w-56" do %>
-          <%= image_tag "images/logo.svg", alt: "Removlo - Moving Made Simple", class: "h-full w-full object-cover object-center transition duration-300 group-hover:opacity-90" %>
+    <nav id="site-nav" data-controller="nav-scroll" class="fixed top-0 z-50 w-full px-2.5 py-2 transition-[background-color,box-shadow,border-color] duration-300 sm:px-6 sm:py-3 lg:px-10 2xl:px-14">
+      <div class="relative mx-auto flex w-full max-w-[1600px] items-center justify-between gap-2 overflow-hidden rounded-2xl border border-white/80 bg-white/95 px-2.5 py-2 shadow-[0_18px_50px_rgba(15,23,42,0.08)] ring-1 ring-slate-900/5 backdrop-blur-2xl min-[390px]:gap-3 min-[390px]:px-3 sm:gap-6 sm:px-5 sm:py-2.5">
+        <div class="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600"></div>
+
+        <%= link_to root_path, class: "group flex h-10 w-36 shrink-0 items-center overflow-hidden rounded-xl min-[390px]:w-40 sm:h-14 sm:w-56 sm:border-r sm:border-slate-100 sm:pr-4" do %>
+          <%= image_tag "images/logo.svg", alt: "Removlo - Moving Made Simple", class: "h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.015] group-hover:opacity-95" %>
         <% end %>
 
-        <div class="hidden items-center gap-7 min-[1280px]:flex" id="landing-navbar">
-          <% [["Services", "#{root_path}#services"], ["How it works", "#{root_path}#how-it-works"], ["About us", "#{root_path}#how-it-works"], ["Reviews", "#{root_path}#reviews"], ["Resources", blog_posts_path], ["Shop", shop_products_path], ["Contact", "#{root_path}#contact"]].each do |label, href| %>
-            <%= link_to href, class: "group relative py-2 text-sm font-semibold text-slate-600 transition hover:text-blue-700" do %>
+        <div class="hidden items-center rounded-full border border-slate-200 bg-slate-50/90 p-1 shadow-inner shadow-white min-[1280px]:flex" id="landing-navbar">
+          <% marketing_nav_links.each do |label, href| %>
+            <%= link_to href, class: "rounded-full px-3.5 py-2 text-xs font-black text-slate-600 transition hover:bg-white hover:text-blue-700 hover:shadow-sm hover:shadow-slate-900/5 min-[1440px]:px-4 min-[1536px]:px-5" do %>
               <%= label %>
-              <span class="absolute -bottom-0.5 left-0 h-0.5 w-0 rounded-full bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
             <% end %>
           <% end %>
         </div>
 
-        <div class="flex items-center gap-2 sm:gap-3">
+        <div class="flex shrink-0 items-center gap-1.5 sm:gap-3">
           <% if user_signed_in? %>
-            <%= link_to "Dashboard", dashboard_path, class: "hidden rounded-lg px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-blue-700 sm:inline-flex" %>
-            <%= button_to "Sign out", destroy_user_session_path, method: :delete, form: { class: "hidden sm:inline" }, class: "rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50" %>
+            <%= link_to "Dashboard", dashboard_path, class: "hidden rounded-full px-4 py-2 text-sm font-black text-slate-700 transition hover:bg-slate-100 hover:text-blue-700 sm:inline-flex" %>
+            <%= button_to "Sign out", destroy_user_session_path, method: :delete, form: { class: "hidden sm:inline" }, class: "rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 transition hover:border-slate-300 hover:bg-slate-50" %>
           <% else %>
-            <%= link_to "Sign in", new_user_session_path, class: "hidden rounded-lg px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-blue-700 sm:inline-flex" %>
-            <%= link_to "#quote", class: "inline-flex items-center gap-2 rounded-lg bg-slate-950 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-slate-950/15 transition hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-blue-700/25 focus:outline-none focus:ring-4 focus:ring-blue-200" do %>
-              Get a quote
+            <div class="hidden text-right min-[1360px]:block">
+              <p class="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Need help?</p>
+              <a href="tel:<%= ENV.fetch("REMOVLO_CONTACT_PHONE", "+440000000000") %>" class="text-xs font-black text-slate-700 transition hover:text-blue-700">Speak to us</a>
+            </div>
+            <%= link_to "Sign in", new_user_session_path, class: "hidden rounded-full px-4 py-2 text-sm font-black text-slate-700 transition hover:bg-slate-100 hover:text-blue-700 sm:inline-flex" %>
+            <%= link_to "#quote", class: "inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-slate-950 to-blue-950 px-3 py-2 text-[11px] font-black leading-none text-white shadow-lg shadow-slate-950/15 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-700/20 focus:outline-none focus:ring-4 focus:ring-blue-200 min-[390px]:px-3.5 sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm" do %>
+              <span class="sm:hidden">Quote</span>
+              <span class="hidden sm:inline">Get a quote</span>
               <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
             <% end %>
           <% end %>
 
-          <button data-collapse-toggle="landing-navbar-mobile" type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100 min-[1280px]:hidden" aria-controls="landing-navbar-mobile" aria-expanded="false">
+          <button data-collapse-toggle="landing-navbar-mobile" type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100 sm:h-10 sm:w-10 min-[1280px]:hidden" aria-controls="landing-navbar-mobile" aria-expanded="false">
             <span class="sr-only">Open main menu</span>
             <svg class="h-5 w-5" aria-hidden="true" fill="none" viewBox="0 0 17 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/></svg>
           </button>
         </div>
       </div>
 
-      <div class="hidden border-t border-slate-100 bg-white px-4 py-4 sm:px-6 min-[1280px]:hidden" id="landing-navbar-mobile">
-        <div class="mx-auto flex w-full max-w-[1600px] flex-col gap-1">
-          <% [["Services", "#{root_path}#services"], ["How it works", "#{root_path}#how-it-works"], ["About us", "#{root_path}#how-it-works"], ["Reviews", "#{root_path}#reviews"], ["Resources", blog_posts_path], ["Shop", shop_products_path], ["Contact", "#{root_path}#contact"]].each do |label, href| %>
+      <div class="hidden px-2.5 pt-1.5 sm:px-6 sm:pt-2 lg:px-10 2xl:px-14 min-[1280px]:hidden" id="landing-navbar-mobile">
+        <div class="relative mx-auto flex w-full max-w-[1600px] flex-col gap-1 overflow-hidden rounded-2xl border border-white/80 bg-white/96 p-3 shadow-2xl shadow-slate-950/10 ring-1 ring-slate-900/5 backdrop-blur-xl">
+          <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600"></div>
+          <% marketing_nav_links.each do |label, href| %>
             <%= link_to label, href, class: "rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-blue-700" %>
           <% end %>
           <% if user_signed_in? %>
-            <%= link_to "Dashboard", dashboard_path, class: "mt-2 rounded-lg bg-blue-600 px-3 py-2.5 text-center text-sm font-semibold text-white" %>
+            <%= link_to "Dashboard", dashboard_path, class: "mt-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-3 py-2.5 text-center text-sm font-black text-white shadow-lg shadow-blue-600/20" %>
           <% else %>
             <%= link_to "Sign in", new_user_session_path, class: "mt-2 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-blue-700" %>
+            <%= link_to "Get a quote", "#quote", class: "rounded-xl bg-gradient-to-r from-slate-950 to-blue-950 px-3 py-2.5 text-center text-sm font-black text-white shadow-lg shadow-slate-950/15" %>
           <% end %>
         </div>
       </div>

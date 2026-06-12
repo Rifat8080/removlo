@@ -1,0 +1,66 @@
+<% content_for :title, "Contact Removlo — UK Removals Support & Quotes" %>
+<% content_for :meta_description, "Contact Removlo for UK removals quotes, move-day support, and help with packing or storage. Phone, email, and online quote available." %>
+
+<main data-controller="reveal" class="relative flex-1 overflow-hidden bg-[#f7f9ff] text-slate-800">
+  <div class="pointer-events-none absolute inset-x-0 top-0 z-0 h-[48rem] bg-[radial-gradient(circle_at_18%_20%,rgba(37,99,235,0.14),transparent_26%),radial-gradient(circle_at_80%_16%,rgba(124,58,237,0.13),transparent_28%),linear-gradient(180deg,#fbfdff_0%,#eef5ff_58%,#ffffff_100%)]"></div>
+
+  <%= render "pages/marketing_hero",
+    badge: "Contact",
+    title: "We're here to help",
+    subtitle: "Questions about your quote, move date, packing, or storage? Reach our team by phone or email — or start a free quote online." %>
+
+  <section class="relative z-10 px-4 pb-8 sm:px-6 lg:px-10 2xl:px-14">
+    <div class="reveal mx-auto grid w-full max-w-[1600px] gap-6 lg:grid-cols-[1fr_1fr]">
+      <div class="rounded-[2rem] border border-white/90 bg-white/85 p-6 shadow-[0_24px_80px_rgba(30,64,175,0.10)] ring-1 ring-blue-100/70 sm:p-8">
+        <h2 class="text-xl font-black tracking-[-0.03em] text-slate-950 sm:text-2xl">Get in touch</h2>
+        <div class="mt-6 space-y-4">
+          <a href="tel:02079460958" class="flex items-center gap-4 rounded-xl border border-slate-100 bg-slate-50/70 px-4 py-4 transition hover:border-blue-200 hover:bg-white">
+            <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50">
+              <%= image_tag marketing_asset_image("location-contact.svg"), alt: "", class: "h-6 w-6", aria: { hidden: true } %>
+            </span>
+            <div>
+              <p class="text-xs font-black uppercase tracking-wide text-slate-400">Phone</p>
+              <p class="text-sm font-black text-slate-950">020 7946 0958</p>
+              <p class="text-xs font-semibold text-slate-500">Mon–Fri, 8am–8pm</p>
+            </div>
+          </a>
+          <a href="mailto:hello@removlo.com" class="flex items-center gap-4 rounded-xl border border-slate-100 bg-slate-50/70 px-4 py-4 transition hover:border-blue-200 hover:bg-white">
+            <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50">
+              <%= image_tag marketing_asset_image("headset-support.svg"), alt: "", class: "h-6 w-6", aria: { hidden: true } %>
+            </span>
+            <div>
+              <p class="text-xs font-black uppercase tracking-wide text-slate-400">Email</p>
+              <p class="text-sm font-black text-slate-950">hello@removlo.com</p>
+              <p class="text-xs font-semibold text-slate-500">We aim to reply within 24 hours</p>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="rounded-[2rem] border border-white/90 bg-white/85 p-6 shadow-[0_24px_80px_rgba(30,64,175,0.10)] ring-1 ring-blue-100/70 sm:p-8">
+        <h2 class="text-xl font-black tracking-[-0.03em] text-slate-950 sm:text-2xl">Quick answers</h2>
+        <ul class="mt-5 space-y-3">
+          <% [
+            ["Need a quote?", "Use our online form on the homepage for a fast, no-obligation estimate."],
+            ["Changing your move date?", "Contact us as soon as possible and your coordinator will help reschedule."],
+            ["Packing or storage?", "Mention these when requesting a quote so we can include the right options."],
+            ["On move day", "Your coordinator and live tracking keep you updated from collection to delivery."]
+          ].each do |title, copy| %>
+            <li class="rounded-xl border border-slate-100 bg-slate-50/70 px-4 py-3">
+              <h3 class="text-sm font-black text-slate-950"><%= title %></h3>
+              <p class="mt-1 text-sm font-medium text-slate-600"><%= copy %></p>
+            </li>
+          <% end %>
+        </ul>
+        <%= link_to marketing_quote_path, class: "mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-blue-600/25 transition hover:-translate-y-0.5" do %>
+          Start your free quote
+          <%= image_tag marketing_asset_image("arrow-right.svg"), alt: "", class: "h-4 w-4 brightness-0 invert", aria: { hidden: true } %>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <%= render "pages/marketing_cta" %>
+</main>
+
+<%= render "shared/marketing_footer" %>
