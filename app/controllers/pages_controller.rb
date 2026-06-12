@@ -37,6 +37,9 @@ class PagesController < ApplicationController
   def contact
   end
 
+  def get_quotation
+  end
+
   def dashboard
     @recent_notifications = current_user.notifications.recent.limit(5)
 

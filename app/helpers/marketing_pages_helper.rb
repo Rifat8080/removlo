@@ -17,7 +17,7 @@ module MarketingPagesHelper
   end
 
   def marketing_quote_path
-    "#{root_path}#quote"
+    get_quotation_path
   end
 
   def marketing_service_cards

@@ -40,7 +40,7 @@ class QuotationsController < ApplicationController
       sign_in(customer) if current_user.blank?
       redirect_to quotation_path(@quotation), notice: "Your quotation request has been sent."
     elsif current_user.blank?
-      redirect_to "#{root_path}#quote", alert: @quotation.errors.full_messages.to_sentence
+      redirect_to get_quotation_path, alert: @quotation.errors.full_messages.to_sentence
     else
       render :new, status: :unprocessable_entity
     end
@@ -123,7 +123,7 @@ class QuotationsController < ApplicationController
     email = params.dig(:quotation, :customer_email).to_s.strip.downcase
 
     if email.blank?
-      redirect_to "#{root_path}#quote", alert: "Please add your email so we can create your quotation request."
+      redirect_to get_quotation_path, alert: "Please add your email so we can create your quotation request."
       return
     end
 
@@ -135,7 +135,7 @@ class QuotationsController < ApplicationController
 
     User.create!(email: email, role: :customer, password: SecureRandom.urlsafe_base64(24))
   rescue ActiveRecord::RecordInvalid => e
-    redirect_to "#{root_path}#quote", alert: e.record.errors.full_messages.to_sentence
+    redirect_to get_quotation_path, alert: e.record.errors.full_messages.to_sentence
     nil
   end
 

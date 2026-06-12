@@ -1,6 +1,25 @@
 require "test_helper"
 
 class QuotationsControllerTest < ActionDispatch::IntegrationTest
+  test "anonymous visitor can request quotation from public form" do
+    assert_difference "User.count", 1 do
+      assert_difference "Quotation.count", 1 do
+        post quotations_path, params: {
+          quotation: {
+            customer_email: "new-mover@example.com",
+            move_size: "two_bed",
+            service_level: "standard",
+            pickup_postcode: "SW1A 1AA",
+            delivery_postcode: "M1 1AD",
+            customer_notes: "Need packing help"
+          }
+        }
+      end
+    end
+
+    assert_redirected_to quotation_path(Quotation.order(:created_at).last)
+  end
+
   test "customer quotation request posts job and alerts drivers" do
     sign_in users(:customer)
 

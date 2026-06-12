@@ -1,30 +1,41 @@
 <% content_for(:title, "Shop materials — Removlo") %>
 
-<section class="relative overflow-hidden bg-slate-50 pt-20 sm:pt-24 min-[1360px]:pt-28">
-  <div class="pointer-events-none absolute -left-24 top-20 h-72 w-72 rounded-full bg-indigo-200/40 blur-3xl"></div>
-  <div class="pointer-events-none absolute -right-24 top-48 h-72 w-72 rounded-full bg-blue-200/40 blur-3xl"></div>
+<section class="relative overflow-hidden bg-[#f7f9ff] pt-20 text-slate-800 sm:pt-24 min-[1360px]:pt-28">
+  <div class="pointer-events-none absolute inset-x-0 top-0 h-[42rem] bg-[radial-gradient(circle_at_16%_18%,rgba(37,99,235,0.16),transparent_28%),radial-gradient(circle_at_86%_20%,rgba(124,58,237,0.14),transparent_30%),linear-gradient(180deg,#fbfdff_0%,#edf4ff_60%,#f7f9ff_100%)]"></div>
+  <div class="pointer-events-none absolute -left-24 top-20 h-80 w-80 rounded-full bg-indigo-200/45 blur-3xl"></div>
+  <div class="pointer-events-none absolute -right-24 top-48 h-80 w-80 rounded-full bg-blue-200/45 blur-3xl"></div>
 
-  <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 min-[1025px]:px-8 min-[1025px]:py-16">
-    <div class="mb-10 overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-950 via-indigo-950 to-blue-900 p-6 text-white shadow-2xl shadow-indigo-950/20 min-[1025px]:p-10">
-      <div class="grid gap-8 min-[1025px]:grid-cols-[1.2fr_0.8fr] min-[1025px]:items-center">
+  <div class="relative z-10 mx-auto w-full max-w-[1600px] px-4 py-8 sm:px-6 sm:py-10 lg:px-10 min-[1360px]:py-14 2xl:px-14">
+    <div class="relative mb-10 overflow-hidden rounded-[2.25rem] border border-white/20 bg-gradient-to-br from-slate-950 via-indigo-950 to-blue-900 p-5 text-white shadow-[0_30px_90px_rgba(30,41,59,0.22)] ring-1 ring-slate-950/5 sm:p-7 min-[1025px]:p-10">
+      <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_18%,rgba(96,165,250,0.26),transparent_28%),radial-gradient(circle_at_82%_18%,rgba(168,85,247,0.22),transparent_30%)]"></div>
+      <div class="relative grid gap-8 min-[1025px]:grid-cols-[1.05fr_0.95fr] min-[1025px]:items-center">
         <div>
-          <p class="text-sm font-black uppercase tracking-[0.22em] text-indigo-200">Moving supplies</p>
-          <h1 class="mt-3 text-4xl font-black tracking-tight min-[1025px]:text-6xl">Pack smarter before moving day.</h1>
-          <p class="mt-4 max-w-2xl text-sm leading-6 text-slate-300 min-[1025px]:text-base">Boxes, tape, bubble wrap, protection covers, and ready-made moving kits delivered to your door or prepared for collection.</p>
-          <div class="mt-6 flex flex-col gap-3 sm:flex-row">
-            <%= link_to cart_path, class: "inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-bold text-indigo-700 shadow-lg transition hover:-translate-y-0.5 hover:bg-indigo-50" do %>
+          <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-indigo-100 shadow-sm backdrop-blur">
+            <span class="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_0_4px_rgba(52,211,153,0.16)]"></span>
+            Moving supplies
+          </span>
+          <h1 class="mt-4 max-w-3xl text-4xl font-black leading-[0.98] tracking-[-0.05em] min-[1025px]:text-6xl">Pack smarter before moving day.</h1>
+          <p class="mt-4 max-w-2xl text-sm font-medium leading-7 text-indigo-100/85 min-[1025px]:text-base">Boxes, tape, bubble wrap, protection covers, and ready-made moving kits delivered to your door or prepared for collection.</p>
+          <div class="mt-7 flex flex-col gap-3 sm:flex-row">
+            <%= link_to cart_path, class: "inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-black text-indigo-700 shadow-xl shadow-slate-950/15 transition hover:-translate-y-0.5 hover:bg-indigo-50" do %>
               <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
               View cart (<%= current_cart.item_count %>)
             <% end %>
-            <a href="#catalog" class="inline-flex items-center justify-center rounded-2xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-bold text-white backdrop-blur transition hover:bg-white/20">Browse catalog</a>
+            <a href="#catalog" class="inline-flex items-center justify-center rounded-2xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-black text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/20">Browse catalog</a>
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
-          <% [["Free collection", "Pickup-ready orders"], ["Secure payment", "Stripe checkout"], ["Fast packing", "Move-ready kits"], ["Live stock", "Real quantities"]].each do |title, body| %>
-            <div class="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur">
-              <p class="text-sm font-bold text-white"><%= title %></p>
-              <p class="mt-1 text-xs text-indigo-100"><%= body %></p>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <% [["Free collection", "Pickup-ready orders", "Ready now"], ["Secure payment", "Stripe checkout", "SSL protected"], ["Fast packing", "Move-ready kits", "Same-week"], ["Live stock", "Real quantities", "Updated now"]].each do |title, body, meta| %>
+            <div class="group rounded-2xl border border-white/12 bg-white/10 p-4 shadow-lg shadow-slate-950/10 backdrop-blur transition hover:-translate-y-1 hover:bg-white/15">
+              <div class="mb-4 flex items-center justify-between gap-3">
+                <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/12 ring-1 ring-white/10">
+                  <svg class="h-5 w-5 text-blue-100" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                </span>
+                <span class="rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-indigo-100"><%= meta %></span>
+              </div>
+              <p class="text-sm font-black text-white"><%= title %></p>
+              <p class="mt-1 text-xs font-medium text-indigo-100/80"><%= body %></p>
             </div>
           <% end %>
         </div>
@@ -35,10 +46,10 @@
       <div class="mb-10">
         <div class="mb-4 flex items-end justify-between gap-4">
           <div>
-            <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">Popular picks</p>
-            <h2 class="mt-1 text-2xl font-black tracking-tight text-slate-900">Featured materials</h2>
+            <p class="text-xs font-black uppercase tracking-[0.18em] text-indigo-600">Popular picks</p>
+            <h2 class="mt-1 text-2xl font-black tracking-[-0.03em] text-slate-950">Featured materials</h2>
           </div>
-          <span class="hidden rounded-full bg-white px-4 py-2 text-xs font-bold text-slate-500 shadow-sm ring-1 ring-slate-200 sm:inline-flex">Delivery or collection</span>
+          <span class="hidden rounded-full bg-white/90 px-4 py-2 text-xs font-black text-slate-500 shadow-sm ring-1 ring-slate-200 sm:inline-flex">Delivery or collection</span>
         </div>
         <div class="grid gap-4 sm:grid-cols-2 min-[1025px]:grid-cols-4">
           <% @featured.each do |product| %>
@@ -48,22 +59,22 @@
       </div>
     <% end %>
 
-    <div id="catalog" class="mb-6 rounded-3xl border border-slate-200/80 bg-white/80 p-4 shadow-sm backdrop-blur">
+    <div id="catalog" class="mb-6 rounded-[1.75rem] border border-white/90 bg-white/85 p-4 shadow-[0_18px_55px_rgba(30,64,175,0.07)] ring-1 ring-blue-100/70 backdrop-blur-xl sm:p-5">
       <div class="flex flex-col gap-4 min-[1025px]:flex-row min-[1025px]:items-center min-[1025px]:justify-between">
         <div>
-          <h2 class="text-xl font-black text-slate-900">Catalog</h2>
-          <p class="mt-1 text-sm text-slate-500"><%= pluralize(@products.size, "product") %> available for your next move.</p>
+          <h2 class="text-xl font-black tracking-[-0.03em] text-slate-950">Catalog</h2>
+          <p class="mt-1 text-sm font-medium text-slate-500"><%= pluralize(@products.size, "product") %> available for your next move.</p>
         </div>
         <div class="flex gap-2 overflow-x-auto pb-1">
-          <%= link_to "All", shop_products_path, class: "shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition #{params[:category].blank? ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/25' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}" %>
+          <%= link_to "All", shop_products_path, class: "shrink-0 rounded-full px-4 py-2 text-sm font-black transition #{params[:category].blank? ? 'bg-gradient-to-r from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-600/25' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}" %>
           <% @categories.each do |category| %>
-            <%= link_to category.name, shop_products_path(category: category.id), class: "shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition #{params[:category].to_s == category.id.to_s ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/25' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}" %>
+            <%= link_to category.name, shop_products_path(category: category.id), class: "shrink-0 rounded-full px-4 py-2 text-sm font-black transition #{params[:category].to_s == category.id.to_s ? 'bg-gradient-to-r from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-600/25' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}" %>
           <% end %>
         </div>
       </div>
     </div>
 
-    <div class="grid gap-5 sm:grid-cols-2 min-[1025px]:grid-cols-3">
+    <div class="grid gap-5 sm:grid-cols-2 min-[1025px]:grid-cols-3 min-[1360px]:grid-cols-4">
       <% @products.each do |product| %>
         <%= render "shop/products/card", product: product %>
       <% end %>

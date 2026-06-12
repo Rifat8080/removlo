@@ -12,6 +12,7 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     about
     reviews
     contact
+    get_quotation
   ].each do |route_name|
     test "#{route_name} page renders successfully" do
       get send("#{route_name}_path")

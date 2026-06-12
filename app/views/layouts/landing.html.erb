@@ -62,7 +62,7 @@
               <a href="tel:<%= ENV.fetch("REMOVLO_CONTACT_PHONE", "+440000000000") %>" class="text-xs font-black text-slate-700 transition hover:text-blue-700">Speak to us</a>
             </div>
             <%= link_to "Sign in", new_user_session_path, class: "hidden rounded-full px-4 py-2 text-sm font-black text-slate-700 transition hover:bg-slate-100 hover:text-blue-700 sm:inline-flex" %>
-            <%= link_to "#quote", class: "inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-slate-950 to-blue-950 px-3 py-2 text-[11px] font-black leading-none text-white shadow-lg shadow-slate-950/15 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-700/20 focus:outline-none focus:ring-4 focus:ring-blue-200 min-[390px]:px-3.5 sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm" do %>
+            <%= link_to marketing_quote_path, class: "inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-slate-950 to-blue-950 px-3 py-2 text-[11px] font-black leading-none text-white shadow-lg shadow-slate-950/15 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-700/20 focus:outline-none focus:ring-4 focus:ring-blue-200 min-[390px]:px-3.5 sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm" do %>
               <span class="sm:hidden">Quote</span>
               <span class="hidden sm:inline">Get a quote</span>
               <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
@@ -86,7 +86,7 @@
             <%= link_to "Dashboard", dashboard_path, class: "mt-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-3 py-2.5 text-center text-sm font-black text-white shadow-lg shadow-blue-600/20" %>
           <% else %>
             <%= link_to "Sign in", new_user_session_path, class: "mt-2 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-blue-700" %>
-            <%= link_to "Get a quote", "#quote", class: "rounded-xl bg-gradient-to-r from-slate-950 to-blue-950 px-3 py-2.5 text-center text-sm font-black text-white shadow-lg shadow-slate-950/15" %>
+            <%= link_to "Get a quote", marketing_quote_path, class: "rounded-xl bg-gradient-to-r from-slate-950 to-blue-950 px-3 py-2.5 text-center text-sm font-black text-white shadow-lg shadow-slate-950/15" %>
           <% end %>
         </div>
       </div>

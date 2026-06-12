@@ -174,7 +174,7 @@
                   <%= image_tag asset_image.call("arrow-right.svg"), alt: "", class: "h-4 w-4 brightness-0 invert", aria: { hidden: true } %>
                 <% end %>
               <% else %>
-                <%= link_to "#quote", class: "soft-shine inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 px-4 py-3 text-[11px] font-black text-white shadow-xl shadow-blue-600/25 transition hover:-translate-y-0.5 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-blue-200 sm:px-5 sm:text-xs" do %>
+                <%= link_to marketing_quote_path, class: "soft-shine inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 px-4 py-3 text-[11px] font-black text-white shadow-xl shadow-blue-600/25 transition hover:-translate-y-0.5 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-blue-200 sm:px-5 sm:text-xs" do %>
                   Get your free quote
                   <%= image_tag asset_image.call("arrow-right.svg"), alt: "", class: "h-4 w-4 brightness-0 invert", aria: { hidden: true } %>
                 <% end %>
@@ -600,7 +600,7 @@
           </div>
         </div>
         <div>
-          <%= link_to "#quote", class: "inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-black text-slate-950 shadow-xl shadow-blue-950/20 transition hover:-translate-y-0.5 hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-white/25 sm:w-auto" do %>
+          <%= link_to marketing_quote_path, class: "inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-black text-slate-950 shadow-xl shadow-blue-950/20 transition hover:-translate-y-0.5 hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-white/25 sm:w-auto" do %>
             Get your free quote
             <%= image_tag asset_image.call("arrow-right.svg"), alt: "", class: "h-4 w-4", aria: { hidden: true } %>
           <% end %>
