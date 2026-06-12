@@ -62,15 +62,17 @@
               </span>
               <h2 class="mt-4 text-2xl font-black tracking-[-0.04em] text-slate-950">Get your removals quotation</h2>
               <p class="mt-2 text-sm font-semibold leading-6 text-slate-500">Required fields help us price the job accurately.</p>
+              <p data-google-places-target="status" class="mt-2 text-xs font-bold text-slate-500">Start typing a postcode or use current location.</p>
             </div>
             <div class="hidden shrink-0 rounded-2xl bg-gradient-to-br from-blue-600 to-violet-600 p-3 shadow-lg shadow-blue-600/25 sm:block">
               <%= image_tag marketing_asset_image("price-receipt.svg"), alt: "", class: "h-6 w-6 brightness-0 invert", aria: { hidden: true } %>
             </div>
           </div>
 
-          <%= form_with scope: :quotation, url: quotations_path, method: :post, local: true, class: "mt-6 space-y-5" do |f| %>
+          <%= form_with scope: :quotation, url: quotations_path, method: :post, local: true, data: { controller: "google-places" }, class: "mt-6 space-y-5" do |f| %>
             <% field_class = "block w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm font-semibold text-slate-900 placeholder-slate-400 shadow-sm transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 sm:px-4" %>
             <% label_class = "mb-1.5 block text-[10px] font-black uppercase tracking-wide text-slate-500" %>
+            <% inline_label_class = "block text-[10px] font-black uppercase tracking-wide text-slate-500" %>
 
             <% unless user_signed_in? %>
               <div>
@@ -81,12 +83,18 @@
 
             <div class="grid gap-4 sm:grid-cols-2">
               <div>
-                <%= f.label :pickup_postcode, "From postcode", class: label_class %>
-                <%= f.text_field :pickup_postcode, required: true, placeholder: "SW1A 1AA", class: field_class %>
+                <div class="mb-1.5 flex items-center justify-between gap-3">
+                  <%= f.label :pickup_postcode, "From postcode", class: inline_label_class %>
+                  <button type="button" data-action="google-places#useCurrentLocation" data-google-places-input-param="quotation_pickup_postcode" class="text-[10px] font-black uppercase tracking-wide text-blue-700 transition hover:text-blue-900">Use current</button>
+                </div>
+                <%= f.text_field :pickup_postcode, required: true, placeholder: "SW1A 1AA", data: { google_places_target: "postcode", google_places_address_field_id: "quotation_pickup_address" }, class: field_class %>
               </div>
               <div>
-                <%= f.label :delivery_postcode, "To postcode", class: label_class %>
-                <%= f.text_field :delivery_postcode, required: true, placeholder: "M1 1AD", class: field_class %>
+                <div class="mb-1.5 flex items-center justify-between gap-3">
+                  <%= f.label :delivery_postcode, "To postcode", class: inline_label_class %>
+                  <button type="button" data-action="google-places#useCurrentLocation" data-google-places-input-param="quotation_delivery_postcode" class="text-[10px] font-black uppercase tracking-wide text-blue-700 transition hover:text-blue-900">Use current</button>
+                </div>
+                <%= f.text_field :delivery_postcode, required: true, placeholder: "M1 1AD", data: { google_places_target: "postcode", google_places_address_field_id: "quotation_delivery_address" }, class: field_class %>
               </div>
             </div>
 
