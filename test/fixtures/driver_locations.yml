@@ -1,0 +1,9 @@
+booked_job_location:
+  quotation: booked_job
+  driver: driver_a
+  latitude: 53.4808
+  longitude: -2.2426
+  accuracy_meters: 12.5
+  eta_seconds: 900
+  eta_destination: Pickup
+  recorded_at: <%= 2.minutes.ago.to_fs(:db) %>

@@ -49,7 +49,10 @@ class Quotation < ApplicationRecord
   has_many :accounting_transactions, dependent: :nullify
   has_many :customer_invoices, dependent: :nullify
   has_many :driver_offers, dependent: :destroy
+  has_many :driver_locations, dependent: :destroy
   has_one :job_conversation, class_name: "Conversation", as: :conversationable, dependent: :destroy
+
+  after_commit :enqueue_route_estimate, on: %i[create update], if: :should_estimate_route?
 
   enum :status, STATUSES, default: :draft, validate: true
   enum :payment_status, PAYMENT_STATUSES, default: :unpaid, validate: true
@@ -226,7 +229,84 @@ class Quotation < ApplicationRecord
     :request_quote
   end
 
+  def route_estimated?
+    route_estimated_at.present? && route_distance_meters.present? && route_duration_seconds.present?
+  end
+
+  def tracking_visible_to_customer?
+    assigned_driver.present? && (scheduled? || in_progress?)
+  end
+
+  def tracking_active?
+    tracking_visible_to_customer?
+  end
+
+  def latest_driver_location
+    driver_locations.recent.first
+  end
+
+  def route_distance_miles
+    return nil unless route_distance_meters
+
+    (route_distance_meters / 1609.344).round(1)
+  end
+
+  def route_duration_label
+    return nil unless route_duration_seconds
+
+    minutes = (route_duration_seconds / 60.0).ceil
+    hours, mins = minutes.divmod(60)
+    return "#{hours}h #{mins}m drive" if hours.positive?
+
+    "#{mins} min drive"
+  end
+
+  def google_directions_url(destination: :delivery)
+    origin = pickup_query
+    dest = destination == :pickup ? pickup_query : delivery_query
+    return nil if origin.blank? || dest.blank?
+
+    "https://www.google.com/maps/dir/?api=1&origin=#{ERB::Util.url_encode(origin)}&destination=#{ERB::Util.url_encode(dest)}&travelmode=driving"
+  end
+
+  def google_maps_pickup_url
+    query = pickup_query
+    return nil if query.blank?
+
+    "https://www.google.com/maps/search/?api=1&query=#{ERB::Util.url_encode(query)}"
+  end
+
+  def google_maps_delivery_url
+    query = delivery_query
+    return nil if query.blank?
+
+    "https://www.google.com/maps/search/?api=1&query=#{ERB::Util.url_encode(query)}"
+  end
+
+  def tracking_destination_query
+    in_progress? ? delivery_query : pickup_query
+  end
+
   private
+
+  def pickup_query
+    [pickup_address, pickup_postcode, "UK"].compact_blank.join(", ")
+  end
+
+  def delivery_query
+    [delivery_address, delivery_postcode, "UK"].compact_blank.join(", ")
+  end
+
+  def should_estimate_route?
+    saved_change_to_pickup_address? ||
+      saved_change_to_pickup_postcode? ||
+      saved_change_to_delivery_address? ||
+      saved_change_to_delivery_postcode?
+  end
+
+  def enqueue_route_estimate
+    GoogleMaps::EstimateRouteJob.perform_later(id)
+  end
 
   def assign_selected_driver_if_releasable!
     return if assigned_driver.present?

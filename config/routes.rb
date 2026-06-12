@@ -71,8 +71,8 @@ Rails.application.routes.draw do
   end
 
   namespace :driver do
-    resources :jobs, only: %i[index show]
-    resources :jobs, only: [] do
+    resources :jobs, only: %i[index show] do
+      resource :location, only: %i[create], controller: "locations"
       resources :offers, only: %i[create update]
     end
     resources :availabilities

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_08_140000) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_12_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -165,6 +165,24 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_08_140000) do
     t.datetime "updated_at", null: false
     t.index ["driver_id", "available_on"], name: "index_driver_availabilities_on_driver_id_and_available_on", unique: true
     t.index ["driver_id"], name: "index_driver_availabilities_on_driver_id"
+  end
+
+  create_table "driver_locations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "quotation_id", null: false
+    t.uuid "driver_id", null: false
+    t.decimal "latitude", precision: 10, scale: 7, null: false
+    t.decimal "longitude", precision: 10, scale: 7, null: false
+    t.decimal "accuracy_meters", precision: 8, scale: 2
+    t.decimal "heading", precision: 6, scale: 2
+    t.decimal "speed_mps", precision: 8, scale: 2
+    t.integer "eta_seconds"
+    t.string "eta_destination"
+    t.datetime "recorded_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["driver_id"], name: "index_driver_locations_on_driver_id"
+    t.index ["quotation_id", "recorded_at"], name: "index_driver_locations_on_quotation_id_and_recorded_at"
+    t.index ["quotation_id"], name: "index_driver_locations_on_quotation_id"
   end
 
   create_table "driver_offers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -448,6 +466,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_08_140000) do
     t.boolean "customer_details_released", default: false, null: false
     t.uuid "selected_driver_offer_id"
     t.string "public_share_token", null: false
+    t.decimal "pickup_latitude", precision: 10, scale: 7
+    t.decimal "pickup_longitude", precision: 10, scale: 7
+    t.decimal "delivery_latitude", precision: 10, scale: 7
+    t.decimal "delivery_longitude", precision: 10, scale: 7
+    t.integer "route_distance_meters"
+    t.integer "route_duration_seconds"
+    t.string "route_summary"
+    t.text "route_polyline"
+    t.datetime "route_estimated_at"
+    t.string "route_estimate_error"
     t.index ["assigned_driver_id"], name: "index_quotations_on_assigned_driver_id"
     t.index ["assigned_staff_id"], name: "index_quotations_on_assigned_staff_id"
     t.index ["created_by_id"], name: "index_quotations_on_created_by_id"
@@ -505,6 +533,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_08_140000) do
   add_foreign_key "customer_invoices", "quotations"
   add_foreign_key "customer_invoices", "users", column: "customer_id"
   add_foreign_key "driver_availabilities", "users", column: "driver_id"
+  add_foreign_key "driver_locations", "quotations"
+  add_foreign_key "driver_locations", "users", column: "driver_id"
   add_foreign_key "driver_offers", "quotations"
   add_foreign_key "driver_offers", "users", column: "driver_id"
   add_foreign_key "driver_profiles", "users"
