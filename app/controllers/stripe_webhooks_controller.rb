@@ -67,6 +67,18 @@ class StripeWebhooksController < ApplicationController
     if type.in?(%w[refund.created refund.updated charge.refunded charge.refund.updated])
       stripe_object = event.is_a?(Hash) ? event.dig("data", "object") : event.data.object
       refund_quotation_payment(stripe_object)
+      return
+    end
+
+    if type == "account.updated"
+      account = event.is_a?(Hash) ? event.dig("data", "object") : event.data.object
+      sync_driver_stripe_account(account)
+      return
+    end
+
+    if type.in?(%w[transfer.reversed transfer.failed])
+      stripe_object = event.is_a?(Hash) ? event.dig("data", "object") : event.data.object
+      handle_transfer_failure(stripe_object, type)
     end
   end
 
@@ -152,5 +164,31 @@ class StripeWebhooksController < ApplicationController
     return metadata.public_send(key) if metadata&.respond_to?(key)
 
     nil
+  end
+
+  def sync_driver_stripe_account(account)
+    account_id = stripe_value(account, "id")
+    profile = DriverProfile.find_by(stripe_account_id: account_id)
+    return if profile.blank?
+
+    profile.sync_stripe_account!(account)
+  end
+
+  def handle_transfer_failure(stripe_object, type)
+    transfer_id = stripe_value(stripe_object, "id")
+    entry = DriverWalletEntry.find_by(stripe_transfer_id: transfer_id)
+    return if entry.blank? || !entry.withdrawn?
+
+    message = type == "transfer.reversed" ? "Stripe transfer was reversed." : "Stripe transfer failed."
+    entry.mark_transfer_reversed!(message: message)
+
+    ::ActivityNotifier.call(
+      recipients: User.where(role: "admin"),
+      event_type: "driver_wallet.transfer_failed",
+      title: "Driver payout transfer failed",
+      body: "#{entry.driver.email}'s transfer of £#{'%.2f' % (entry.amount_cents.abs / 100.0)} needs attention.",
+      url: admin_wallet_payouts_path,
+      notifiable: entry
+    )
   end
 end

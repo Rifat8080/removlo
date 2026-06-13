@@ -29,20 +29,26 @@ module Accounting
     attr_reader :payment, :quotation, :actor
 
     def sync_income
+      margin_cents = quotation.margin_income_cents_for_payment(payment)
       transaction = AccountingTransaction.find_or_initialize_by(quotation_payment: payment)
-      transaction.assign_attributes(
-        transaction_type: :income,
-        amount_cents: payment.amount_cents,
-        transaction_date: payment.paid_on || Date.current,
-        description: "Payment for #{quotation.reference}",
-        vendor_payee: quotation.customer.email,
-        payment_method: payment.payment_method,
-        reference: payment.reference,
-        quotation: quotation,
-        user: quotation.customer,
-        accounting_category: income_category
-      )
-      transaction.save!
+
+      if margin_cents.positive?
+        transaction.assign_attributes(
+          transaction_type: :income,
+          amount_cents: margin_cents,
+          transaction_date: payment.paid_on || Date.current,
+          description: "Removlo margin for #{quotation.reference}",
+          vendor_payee: quotation.customer.email,
+          payment_method: payment.payment_method,
+          reference: payment.reference,
+          quotation: quotation,
+          user: quotation.customer,
+          accounting_category: income_category
+        )
+        transaction.save!
+      else
+        AccountingTransaction.where(quotation_payment: payment).destroy_all
+      end
 
       invoice = CustomerInvoice.find_or_initialize_by(quotation_payment: payment)
       invoice.assign_attributes(
@@ -63,20 +69,26 @@ module Accounting
     end
 
     def sync_refund
+      margin_cents = recognized_margin_cents_for_refund
       transaction = AccountingTransaction.find_or_initialize_by(quotation_payment: payment)
-      transaction.assign_attributes(
-        transaction_type: :refund,
-        amount_cents: payment.amount_cents,
-        transaction_date: payment.paid_on || Date.current,
-        description: "Refund for #{quotation.reference}",
-        vendor_payee: quotation.customer.email,
-        payment_method: payment.payment_method,
-        reference: payment.reference,
-        quotation: quotation,
-        user: quotation.customer,
-        accounting_category: refund_category
-      )
-      transaction.save!
+
+      if margin_cents.positive?
+        transaction.assign_attributes(
+          transaction_type: :refund,
+          amount_cents: margin_cents,
+          transaction_date: payment.paid_on || Date.current,
+          description: "Margin refund for #{quotation.reference}",
+          vendor_payee: quotation.customer.email,
+          payment_method: payment.payment_method,
+          reference: payment.reference,
+          quotation: quotation,
+          user: quotation.customer,
+          accounting_category: refund_category
+        )
+        transaction.save!
+      else
+        AccountingTransaction.where(quotation_payment: payment).destroy_all
+      end
 
       invoice = CustomerInvoice.find_by(quotation_payment: payment)
       if invoice.present?
@@ -186,6 +198,13 @@ module Accounting
       notes = existing_notes.to_s.split(" — ").reject(&:blank?)
       notes << refund_note unless notes.include?(refund_note)
       notes.join(" — ")
+    end
+
+    def recognized_margin_cents_for_refund
+      existing_income = AccountingTransaction.income.find_by(quotation_payment: payment)
+      return existing_income.amount_cents if existing_income.present?
+
+      quotation.margin_income_cents_for_payment(payment)
     end
   end
 end

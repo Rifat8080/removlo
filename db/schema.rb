@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_12_124000) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_13_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -216,6 +216,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_12_124000) do
     t.integer "revenue_generated_cents", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "stripe_account_id"
+    t.string "stripe_onboarding_status", default: "not_started", null: false
+    t.boolean "stripe_charges_enabled", default: false, null: false
+    t.boolean "stripe_payouts_enabled", default: false, null: false
+    t.index ["stripe_account_id"], name: "index_driver_profiles_on_stripe_account_id", unique: true, where: "(stripe_account_id IS NOT NULL)"
     t.index ["user_id"], name: "index_driver_profiles_on_user_id", unique: true
   end
 
@@ -231,9 +236,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_12_124000) do
     t.datetime "approved_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "stripe_transfer_id"
+    t.string "stripe_transfer_status"
+    t.text "stripe_transfer_error"
+    t.string "payout_method"
     t.index ["approved_by_id"], name: "index_driver_wallet_entries_on_approved_by_id"
     t.index ["driver_id"], name: "index_driver_wallet_entries_on_driver_id"
     t.index ["quotation_id"], name: "index_driver_wallet_entries_on_quotation_id"
+    t.index ["stripe_transfer_id"], name: "index_driver_wallet_entries_on_stripe_transfer_id", unique: true, where: "(stripe_transfer_id IS NOT NULL)"
   end
 
   create_table "material_order_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

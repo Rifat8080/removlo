@@ -48,9 +48,12 @@ class AccountingTransaction < ApplicationRecord
       totals = scope.group(:transaction_type).sum(:amount_cents)
       income_total = totals.slice(*INCOME_TYPES).values.sum
       expense_total = totals.slice(*EXPENSE_TYPES).values.sum
+      driver_cost_total = driver_cost_for(scope)
 
       {
         income_cents: income_total,
+        driver_cost_cents: driver_cost_total,
+        total_revenue_cents: income_total + driver_cost_total,
         expense_cents: expense_total,
         payroll_cents: totals.fetch("salary", 0) + totals.fetch("commission", 0),
         refund_cents: totals.fetch("refund", 0),
@@ -59,6 +62,15 @@ class AccountingTransaction < ApplicationRecord
         net_profit_cents: income_total - expense_total,
         by_type: totals
       }
+    end
+
+    def driver_cost_for(scope = all)
+      scope.income.includes(:quotation_payment).sum do |transaction|
+        payment = transaction.quotation_payment
+        next 0 if payment.blank?
+
+        [payment.amount_cents.to_i - transaction.amount_cents.to_i, 0].max
+      end
     end
   end
 end

@@ -5,11 +5,65 @@
     <h1 class="text-3xl font-black">Driver wallet</h1>
   </div>
 
-  <div class="grid gap-4 sm:grid-cols-3">
+  <div class="grid gap-4 sm:grid-cols-4">
     <div class="rounded-2xl border bg-white p-5"><p class="text-xs uppercase text-slate-400">Total earnings</p><p class="mt-2 text-2xl font-black"><%= money_from_cents(@total_cents) %></p></div>
     <div class="rounded-2xl border bg-white p-5"><p class="text-xs uppercase text-slate-400">Pending</p><p class="mt-2 text-2xl font-black"><%= money_from_cents(@pending_cents) %></p></div>
     <div class="rounded-2xl border bg-white p-5"><p class="text-xs uppercase text-slate-400">Available to withdraw</p><p class="mt-2 text-2xl font-black text-emerald-700"><%= money_from_cents(@available_cents) %></p></div>
+    <div class="rounded-2xl border bg-white p-5"><p class="text-xs uppercase text-slate-400">Requested</p><p class="mt-2 text-2xl font-black text-amber-700"><%= money_from_cents(@requested_withdrawal_cents) %></p></div>
   </div>
+
+  <section class="rounded-2xl border border-indigo-200 bg-indigo-50 p-5 shadow-sm">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <p class="text-xs font-black uppercase tracking-[0.16em] text-indigo-700">Stripe payouts</p>
+        <h2 class="mt-1 text-xl font-black text-slate-950">Connect your payout account</h2>
+        <% if @driver_profile&.stripe_payouts_ready? %>
+          <p class="mt-1 text-sm font-semibold text-emerald-700">Stripe payouts are enabled. You can request withdrawals below.</p>
+        <% elsif @driver_profile&.stripe_account_id.present? %>
+          <p class="mt-1 text-sm font-semibold text-amber-700">Stripe onboarding is incomplete. Finish setup to request withdrawals.</p>
+        <% else %>
+          <p class="mt-1 text-sm font-semibold text-slate-600">Complete Stripe Express onboarding before requesting your first payout.</p>
+        <% end %>
+      </div>
+      <% unless @driver_profile&.stripe_payouts_ready? %>
+        <%= button_to "Connect Stripe", connect_stripe_driver_wallet_path, method: :post, form: { data: { turbo: false } }, class: "inline-flex justify-center rounded-xl bg-indigo-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-indigo-600/20 transition hover:-translate-y-0.5 hover:bg-indigo-700" %>
+      <% end %>
+    </div>
+  </section>
+
+  <section class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="text-xs font-black uppercase tracking-[0.16em] text-emerald-700">Withdraw earnings</p>
+        <h2 class="mt-1 text-xl font-black text-slate-950">Request a payout</h2>
+        <p class="mt-1 text-sm font-semibold text-slate-600">Minimum withdrawal is £50. You can request up to <%= money_from_cents(@available_cents) %>.</p>
+        <% unless @driver_profile&.stripe_payouts_ready? %>
+          <p class="mt-1 text-sm font-semibold text-amber-700">Connect Stripe for Stripe transfers, or choose cash payout below.</p>
+        <% end %>
+      </div>
+    </div>
+    <% stripe_payouts_ready = @driver_profile&.stripe_payouts_ready? %>
+    <%= form_with(url: withdraw_driver_wallet_path, scope: :withdrawal, class: "mt-4 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end") do |form| %>
+      <div>
+        <%= form.label :amount, "Amount (£)", class: "mb-2 block text-sm font-black text-slate-900" %>
+        <%= form.number_field :amount, min: 50, max: (@available_cents / 100.0), step: "0.01", placeholder: "50.00", class: "block w-full rounded-xl border border-emerald-200 bg-white px-3 py-3 text-sm font-bold text-slate-900 focus:border-emerald-500 focus:ring-emerald-500" %>
+        <fieldset class="mt-3">
+          <legend class="mb-2 block text-sm font-black text-slate-900">Payout method</legend>
+          <div class="grid gap-2 sm:grid-cols-2">
+            <label class="flex items-center gap-2 rounded-xl border border-emerald-200 bg-white px-3 py-2 text-sm font-bold text-slate-700">
+              <%= form.radio_button :payout_method, "stripe", checked: stripe_payouts_ready, disabled: !stripe_payouts_ready, class: "text-emerald-600 focus:ring-emerald-500" %>
+              Stripe transfer
+            </label>
+            <label class="flex items-center gap-2 rounded-xl border border-emerald-200 bg-white px-3 py-2 text-sm font-bold text-slate-700">
+              <%= form.radio_button :payout_method, "cash", checked: !stripe_payouts_ready, class: "text-emerald-600 focus:ring-emerald-500" %>
+              Cash payout
+            </label>
+          </div>
+        </fieldset>
+      </div>
+      <%= form.submit "Request withdrawal", disabled: @available_cents < Driver::WalletsController::MIN_WITHDRAWAL_CENTS, class: "inline-flex justify-center rounded-xl bg-emerald-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-emerald-600/20 transition hover:-translate-y-0.5 hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50" %>
+    <% end %>
+  </section>
 
   <div class="rounded-2xl border bg-white p-5 shadow-sm">
     <h2 class="text-lg font-black text-slate-900">Ledger</h2>
@@ -18,7 +72,15 @@
         <div class="flex items-center justify-between rounded-xl bg-slate-50 p-4">
           <div>
             <p class="font-semibold text-slate-900"><%= entry.entry_type.humanize %></p>
-            <p class="text-sm text-slate-500"><%= entry.reference || entry.quotation&.reference %> · <%= entry.status.humanize %></p>
+            <p class="text-sm text-slate-500">
+              <%= entry.reference || entry.quotation&.reference %> · <%= entry.status.humanize %>
+              <% if entry.withdrawal_request? && entry.payout_method.present? %>
+                · <%= entry.payout_method.humanize %>
+              <% end %>
+              <% if entry.stripe_transfer_id.present? %>
+                · Transfer <%= entry.stripe_transfer_status || "pending" %>
+              <% end %>
+            </p>
           </div>
           <p class="font-bold <%= entry.amount_cents.positive? ? 'text-emerald-700' : 'text-rose-700' %>"><%= money_from_cents(entry.amount_cents) %></p>
         </div>

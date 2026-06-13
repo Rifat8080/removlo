@@ -7,15 +7,28 @@
       <div class="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm min-[1025px]:flex-row min-[1025px]:items-center min-[1025px]:justify-between">
         <div>
           <p class="font-bold text-slate-900"><%= entry.driver.email %></p>
-          <p class="text-sm text-slate-500"><%= entry.entry_type.humanize %> · <%= entry.reference || entry.quotation&.reference %> · <%= entry.status.humanize %></p>
+          <p class="text-sm text-slate-500">
+            <%= entry.entry_type.humanize %> · <%= entry.reference || entry.quotation&.reference %> · <%= entry.status.humanize %>
+            <% if entry.withdrawal_request? && entry.payout_method.present? %>
+              · <%= entry.payout_method.humanize %>
+            <% end %>
+            <% if entry.stripe_transfer_id.present? %>
+              · Stripe <%= entry.stripe_transfer_status %>
+            <% elsif entry.stripe_transfer_error.present? %>
+              · Transfer failed
+            <% end %>
+          </p>
+          <% if entry.stripe_transfer_error.present? %>
+            <p class="text-xs text-rose-600"><%= entry.stripe_transfer_error %></p>
+          <% end %>
         </div>
         <div class="flex items-center gap-3">
-          <p class="text-lg font-black text-emerald-700"><%= money_from_cents(entry.amount_cents) %></p>
-          <% if entry.pending? && entry.amount_cents.positive? %>
-            <%= button_to "Approve", approve_admin_wallet_payout_path(entry), method: :patch, class: "rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white" %>
+          <p class="text-lg font-black <%= entry.withdrawal_request? ? 'text-amber-700' : 'text-emerald-700' %>"><%= money_from_cents(entry.amount_cents.abs) %></p>
+          <% if entry.pending? && (entry.amount_cents.positive? || entry.withdrawal_request?) %>
+            <%= button_to(entry.withdrawal_request? ? "Approve request" : "Approve", approve_admin_wallet_payout_path(entry), method: :patch, class: "rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white") %>
           <% end %>
-          <% if entry.available? && entry.amount_cents.positive? %>
-            <%= button_to "Payout", payout_admin_wallet_payout_path(entry), method: :patch, data: { turbo_confirm: "Process payout?" }, class: "rounded-xl bg-emerald-600 px-4 py-2 text-sm font-bold text-white" %>
+          <% if entry.available? && entry.withdrawal_request? %>
+            <%= button_to(entry.cash_payout? ? "Mark cash paid" : "Send Stripe transfer", payout_admin_wallet_payout_path(entry), method: :patch, data: { turbo_confirm: "Process payout?" }, class: "rounded-xl bg-emerald-600 px-4 py-2 text-sm font-bold text-white") %>
           <% end %>
         </div>
       </div>

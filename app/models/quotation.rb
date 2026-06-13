@@ -324,6 +324,20 @@ class Quotation < ApplicationRecord
     )
   end
 
+  def margin_income_cents_for_payment(payment)
+    quoted = quoted_price_cents.to_i
+    margin = admin_margin_cents.to_i
+    return 0 if quoted <= 0 || margin <= 0
+
+    proportional = ((payment.amount_cents.to_f * margin) / quoted).round
+    recognized_scope = AccountingTransaction.income.where(quotation: self)
+    recognized_scope = recognized_scope.where.not(quotation_payment_id: payment.id) if payment.id.present?
+    already_recognized = recognized_scope.sum(:amount_cents)
+    remaining_margin = [margin - already_recognized, 0].max
+
+    [proportional, remaining_margin].min
+  end
+
   def workflow_step_for_customer
     return :track_booking if deposit_protected? || scheduled? || in_progress? || completed?
     return :pay_deposit if accepted?

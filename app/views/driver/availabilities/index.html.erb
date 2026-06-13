@@ -9,7 +9,7 @@
   <%= form_with(model: @availability, url: driver_availabilities_path, class: "rounded-2xl border bg-white p-5 shadow-sm space-y-3") do |form| %>
     <div class="grid gap-3 min-[1025px]:grid-cols-3">
       <%= form.date_field :available_on, class: "rounded-xl border px-3 py-2 text-sm" %>
-      <%= form.select :status, DriverAvailability::STATUSES.keys.map { |s| [s.humanize, s] }, {}, class: "rounded-xl border px-3 py-2 text-sm" %>
+      <%= form.select :status, DriverAvailability.statuses.keys.map { |s| [s.humanize, s] }, {}, class: "rounded-xl border px-3 py-2 text-sm" %>
       <%= form.text_field :notes, placeholder: "Notes", class: "rounded-xl border px-3 py-2 text-sm" %>
     </div>
     <%= form.submit "Save availability", class: "rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white" %>

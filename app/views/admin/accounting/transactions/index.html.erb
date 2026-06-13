@@ -34,7 +34,7 @@
 
 <% if @summary %>
   <div class="mb-6 grid gap-4 sm:grid-cols-2 min-[1025px]:grid-cols-4">
-    <% [["Income", @summary[:income_cents], "text-emerald-700"], ["Expenses", @summary[:expense_cents], "text-rose-700"], ["Net", @summary[:net_profit_cents], "text-indigo-700"]].each do |label, cents, color| %>
+    <% [["Income", @summary[:income_cents], "text-emerald-700"], ["Expenses", @summary[:expense_cents], "text-rose-700"], ["Total revenue", @summary[:total_revenue_cents], "text-indigo-700"]].each do |label, cents, color| %>
       <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
         <p class="text-sm text-slate-500"><%= label %></p>
         <p class="mt-1 text-xl font-extrabold <%= color %>"><%= money_from_cents(cents) %></p>

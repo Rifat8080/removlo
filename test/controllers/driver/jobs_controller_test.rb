@@ -8,6 +8,7 @@ class Driver::JobsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_match "Start move", response.body
+    assert_match "Cancel assignment", response.body
   end
 
   test "assigned driver can start scheduled move" do
@@ -31,6 +32,40 @@ class Driver::JobsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to driver_job_path(job)
     assert_equal "completed", job.reload.status
+  end
+
+  test "assigned driver can cancel assignment and notify operators" do
+    sign_in users(:driver_a)
+    job = quotations(:booked_job)
+    job.update!(awaiting_driver_offers: true)
+    selected_offer = job.driver_offers.create!(driver: users(:driver_a), amount_cents: 45_000, status: :selected, selected_by_admin: true)
+    rejected_offer = job.driver_offers.create!(driver: users(:driver_b), amount_cents: 47_500, status: :rejected)
+    job.update!(selected_driver_offer: selected_offer, awaiting_driver_offers: false)
+
+    assert_difference -> { Notification.where(event_type: "quotation.driver_cancelled", notifiable: job).count }, User.operators.count do
+      patch cancel_assignment_driver_job_path(job)
+    end
+
+    assert_redirected_to driver_jobs_path
+    job.reload
+    assert_nil job.assigned_driver
+    assert_nil job.selected_driver_offer
+    assert job.awaiting_driver_offers?
+    assert_equal "withdrawn", selected_offer.reload.status
+    assert_equal "submitted", rejected_offer.reload.status
+  end
+
+  test "assigned driver cannot cancel after move starts" do
+    sign_in users(:driver_a)
+    job = quotations(:booked_job)
+    job.update!(status: "in_progress")
+
+    assert_no_difference -> { Notification.where(event_type: "quotation.driver_cancelled").count } do
+      patch cancel_assignment_driver_job_path(job)
+    end
+
+    assert_redirected_to driver_job_path(job)
+    assert_equal users(:driver_a), job.reload.assigned_driver
   end
 
   test "in progress job auto starts tracking and hides stop sharing" do

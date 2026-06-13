@@ -1,7 +1,7 @@
 module Driver
   class JobsController < BaseController
-    before_action :set_job, only: %i[show start complete]
-    before_action :require_assigned_driver!, only: %i[start complete]
+    before_action :set_job, only: %i[show start complete cancel_assignment]
+    before_action :require_assigned_driver!, only: %i[start complete cancel_assignment]
 
     def index
       @assigned_jobs = Quotation.for_driver(current_user).recent
@@ -33,6 +33,24 @@ module Driver
       redirect_to driver_job_path(@job), alert: e.message
     end
 
+    def cancel_assignment
+      if @job.in_progress? || @job.completed?
+        redirect_to driver_job_path(@job), alert: "You cannot cancel this job after the move has started."
+        return
+      end
+
+      Quotation.transaction do
+        @job.driver_offers.rejected.update_all(status: DriverOffer.statuses[:submitted], selected_by_admin: false)
+        @job.selected_driver_offer&.update!(status: :withdrawn, selected_by_admin: false)
+        @job.update!(assigned_driver: nil, selected_driver_offer: nil, awaiting_driver_offers: true)
+      end
+
+      notify_operators_driver_cancelled
+      redirect_to driver_jobs_path, notice: "Your assignment was cancelled. Removlo has been notified."
+    rescue ActiveRecord::RecordInvalid => e
+      redirect_to driver_job_path(@job), alert: e.record.errors.full_messages.to_sentence
+    end
+
     private
 
     def set_job
@@ -55,6 +73,18 @@ module Driver
         title: title,
         body: body,
         url: quotation_path(@job),
+        actor: current_user,
+        notifiable: @job
+      )
+    end
+
+    def notify_operators_driver_cancelled
+      ::ActivityNotifier.call(
+        recipients: User.operators,
+        event_type: "quotation.driver_cancelled",
+        title: "Driver cancelled assignment",
+        body: "#{current_user.email} cancelled their assignment for #{@job.reference}. Reassign a driver or wait for new bids.",
+        url: admin_quotation_path(@job),
         actor: current_user,
         notifiable: @job
       )

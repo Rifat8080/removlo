@@ -102,6 +102,7 @@ class StripeWebhooksControllerTest < ActionDispatch::IntegrationTest
       reference: "FULL-REFUND-DUP",
       stripe_payment_intent_id: "pi_refunded_duplicate"
     )
+    Accounting::SyncQuotationPayment.call(payment)
     invoice = CustomerInvoice.find_by!(quotation_payment: payment)
 
     without_webhook_secret do
@@ -115,6 +116,44 @@ class StripeWebhooksControllerTest < ActionDispatch::IntegrationTest
 
     assert payment.reload.refunded?
     assert_equal 1, Notification.where(event_type: "accounting.refund", notifiable: invoice).count
+  end
+
+  test "account updated webhook syncs driver stripe payout status" do
+    profile = driver_profiles(:driver_a_profile)
+    profile.update!(stripe_account_id: "acct_driver_a", stripe_onboarding_status: "pending", stripe_payouts_enabled: false)
+
+    without_webhook_secret do
+      post "/webhooks/stripe", params: account_updated_payload("acct_driver_a", payouts_enabled: true, charges_enabled: true, details_submitted: true).to_json, headers: { "CONTENT_TYPE" => "application/json" }
+    end
+
+    assert_response :success
+    profile.reload
+    assert profile.stripe_payouts_enabled
+    assert profile.stripe_charges_enabled
+    assert_equal "complete", profile.stripe_onboarding_status
+  end
+
+  test "transfer reversed webhook reopens withdrawal request for admin action" do
+    driver = users(:driver_a)
+    entry = driver.driver_wallet_entries.create!(
+      entry_type: :withdrawal_request,
+      status: :withdrawn,
+      amount_cents: -75_00,
+      reference: "WITHDRAW-REVERSED",
+      stripe_transfer_id: "tr_reversed_test",
+      stripe_transfer_status: "paid"
+    )
+
+    without_webhook_secret do
+      assert_difference -> { Notification.where(event_type: "driver_wallet.transfer_failed", notifiable: entry).count }, 1 do
+        post "/webhooks/stripe", params: transfer_payload("transfer.reversed", "tr_reversed_test").to_json, headers: { "CONTENT_TYPE" => "application/json" }
+      end
+    end
+
+    assert_response :success
+    entry.reload
+    assert_equal "available", entry.status
+    assert_equal "reversed", entry.stripe_transfer_status
   end
 
   test "production webhook fails closed when webhook secret is missing" do
@@ -195,6 +234,31 @@ class StripeWebhooksControllerTest < ActionDispatch::IntegrationTest
             quotation_payment_id: payment.id,
             payment_kind: "quotation_acceptance"
           }
+        }
+      }
+    }
+  end
+
+  def account_updated_payload(account_id, payouts_enabled:, charges_enabled:, details_submitted:)
+    {
+      type: "account.updated",
+      data: {
+        object: {
+          id: account_id,
+          payouts_enabled: payouts_enabled,
+          charges_enabled: charges_enabled,
+          details_submitted: details_submitted
+        }
+      }
+    }
+  end
+
+  def transfer_payload(type, transfer_id)
+    {
+      type: type,
+      data: {
+        object: {
+          id: transfer_id
         }
       }
     }

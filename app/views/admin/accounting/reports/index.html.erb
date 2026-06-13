@@ -39,7 +39,7 @@
     ["Expenses", @summary[:expense_cents], "text-rose-700"],
     ["Payroll", @summary[:payroll_cents], "text-indigo-700"],
     ["Refunds", @summary[:refund_cents], "text-amber-700"],
-    ["Net profit / loss", @summary[:net_profit_cents], @summary[:net_profit_cents].to_i >= 0 ? "text-emerald-700" : "text-rose-700"]
+    ["Total revenue", @summary[:total_revenue_cents], "text-emerald-700"]
   ].each do |label, cents, color| %>
     <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
       <p class="text-sm text-slate-500"><%= label %></p>
@@ -57,7 +57,7 @@
           <p class="font-semibold text-slate-900"><%= Date.strptime(month, "%Y-%m").strftime("%b %Y") %></p>
           <p class="text-sm text-emerald-700">Revenue: <%= money_from_cents(data[:income]) %></p>
           <p class="text-sm text-rose-700">Expenses: <%= money_from_cents(data[:expenses]) %></p>
-          <p class="text-sm font-semibold <%= data[:net].to_i >= 0 ? 'text-emerald-700' : 'text-rose-700' %>">Net: <%= money_from_cents(data[:net]) %></p>
+          <p class="text-sm font-semibold text-emerald-700">Total revenue: <%= money_from_cents(data[:total_revenue]) %></p>
         </div>
       <% end %>
     </div>

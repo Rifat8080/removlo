@@ -76,6 +76,7 @@ Rails.application.routes.draw do
     resources :jobs, only: %i[index show] do
       patch :start, on: :member
       patch :complete, on: :member
+      patch :cancel_assignment, on: :member
       resource :location, only: %i[create], controller: "locations"
       resources :offers, only: %i[create update] do
         patch :accept_negotiation, on: :member
@@ -84,6 +85,8 @@ Rails.application.routes.draw do
     resources :availabilities
     resource :wallet, only: :show do
       post :withdraw
+      post :connect_stripe
+      get :stripe_return
     end
   end
 
