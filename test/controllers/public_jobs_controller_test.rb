@@ -1,14 +1,15 @@
 require "test_helper"
 
 class PublicJobsControllerTest < ActionDispatch::IntegrationTest
-  test "anonymous visitor can view full shared job details" do
+  test "anonymous visitor can view shared job without private address details" do
     quotation = quotations(:marketplace_job)
 
     get public_job_path(quotation.public_share_token)
 
     assert_response :success
-    assert_match quotation.pickup_address, response.body
-    assert_match quotation.delivery_address, response.body
+    assert_no_match quotation.pickup_address, response.body
+    assert_no_match quotation.delivery_address, response.body
+    assert_match "Protected job details", response.body
     assert_match "Sign up as a driver", response.body
   end
 

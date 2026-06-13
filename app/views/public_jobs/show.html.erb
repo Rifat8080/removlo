@@ -1,4 +1,5 @@
 <% content_for :title, "#{@job.reference} — Driver job alert" %>
+<% driver_view = user_signed_in? && current_user.driver? %>
 
 <div class="relative overflow-hidden bg-[#f7f9ff] px-4 pb-12 pt-28 sm:px-6 lg:px-10 2xl:px-14">
   <div class="pointer-events-none absolute inset-x-0 top-0 h-[28rem] bg-[radial-gradient(circle_at_18%_16%,rgba(37,99,235,0.14),transparent_28%),radial-gradient(circle_at_80%_10%,rgba(124,58,237,0.12),transparent_30%)]"></div>
@@ -44,34 +45,44 @@
               <p class="text-xs font-black uppercase tracking-[0.16em] text-indigo-600">Route details</p>
               <h2 class="mt-2 text-2xl font-black text-slate-950">Pickup and delivery</h2>
             </div>
-            <p class="text-sm font-semibold text-slate-500">Addresses are shown for bid preparation.</p>
+            <p class="text-sm font-semibold text-slate-500"><%= driver_view ? "Detailed notes are shown after driver sign-in." : "Sign in as a driver to see protected job notes." %></p>
           </div>
 
           <div class="mt-6 grid gap-4 md:grid-cols-2">
             <div class="rounded-3xl border border-slate-100 bg-slate-50 p-5">
               <p class="text-[11px] font-black uppercase tracking-[0.16em] text-slate-400">Pickup</p>
-              <p class="mt-3 whitespace-pre-line break-words text-sm font-bold leading-6 text-slate-950"><%= @job.pickup_address %></p>
+              <p class="mt-3 whitespace-pre-line break-words text-sm font-bold leading-6 text-slate-950"><%= driver_view ? @job.driver_visible_pickup_address : @job.driver_visible_collection_label %></p>
               <% if @job.pickup_postcode.present? %>
                 <span class="mt-3 inline-flex rounded-full bg-white px-3 py-1 text-xs font-black text-slate-600 ring-1 ring-slate-200">Postcode: <%= @job.pickup_postcode %></span>
               <% end %>
             </div>
             <div class="rounded-3xl border border-slate-100 bg-slate-50 p-5">
               <p class="text-[11px] font-black uppercase tracking-[0.16em] text-slate-400">Delivery</p>
-              <p class="mt-3 whitespace-pre-line break-words text-sm font-bold leading-6 text-slate-950"><%= @job.delivery_address %></p>
+              <p class="mt-3 whitespace-pre-line break-words text-sm font-bold leading-6 text-slate-950"><%= driver_view ? @job.driver_visible_delivery_address : @job.driver_visible_delivery_label %></p>
               <% if @job.delivery_postcode.present? %>
                 <span class="mt-3 inline-flex rounded-full bg-white px-3 py-1 text-xs font-black text-slate-600 ring-1 ring-slate-200">Postcode: <%= @job.delivery_postcode %></span>
               <% end %>
             </div>
           </div>
 
-          <div class="mt-6 grid gap-4 md:grid-cols-2">
-            <div class="rounded-2xl border border-slate-100 p-4">
-              <p class="text-sm font-black text-slate-950">Access notes</p>
-              <p class="mt-2 whitespace-pre-line break-words text-sm leading-6 text-slate-600"><%= @job.access_notes.presence || "No access notes recorded." %></p>
-            </div>
-            <div class="rounded-2xl border border-slate-100 p-4">
-              <p class="text-sm font-black text-slate-950">Customer notes</p>
-              <p class="mt-2 whitespace-pre-line break-words text-sm leading-6 text-slate-600"><%= @job.customer_notes.presence || "No customer notes recorded." %></p>
+          <div class="mt-6">
+            <% if driver_view %>
+              <div class="grid gap-4 md:grid-cols-2">
+                <div class="rounded-2xl border border-slate-100 p-4">
+                  <p class="text-sm font-black text-slate-950">Access notes</p>
+                  <p class="mt-2 whitespace-pre-line break-words text-sm leading-6 text-slate-600"><%= @job.access_notes.presence || "No access notes recorded." %></p>
+                </div>
+                <div class="rounded-2xl border border-slate-100 p-4">
+                  <p class="text-sm font-black text-slate-950">Customer notes</p>
+                  <p class="mt-2 whitespace-pre-line break-words text-sm leading-6 text-slate-600"><%= @job.customer_notes.presence || "No customer notes recorded." %></p>
+                </div>
+              </div>
+            <% else %>
+              <div class="rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
+                <p class="text-sm font-black text-slate-950">Protected job details</p>
+                <p class="mt-2 text-sm leading-6 text-slate-600">Access notes and customer notes are available after signing in with a driver account.</p>
+              </div>
+            <% end %>
             </div>
           </div>
         </section>

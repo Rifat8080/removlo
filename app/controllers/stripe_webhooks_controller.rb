@@ -48,8 +48,9 @@ class StripeWebhooksController < ApplicationController
       return unless type == "checkout.session.completed"
 
       order = MaterialOrder.find_by(stripe_checkout_session_id: session_id) ||
-              MaterialOrder.find_by(id: metadata.is_a?(Hash) ? metadata["material_order_id"] : metadata&.material_order_id)
+              MaterialOrder.find_by(id: metadata_value(metadata, "material_order_id"))
       return if order.blank? || order.payment_paid?
+      return unless paid_material_order_session?(session, order)
 
       order.mark_paid!(stripe_payment_intent_id: payment_intent)
       clear_cart_for(order)
@@ -150,6 +151,13 @@ class StripeWebhooksController < ApplicationController
 
     user = User.find_by(email: email)
     order.update!(customer: user) if user&.customer?
+  end
+
+  def paid_material_order_session?(session, order)
+    stripe_value(session, "payment_status") == "paid" &&
+      stripe_value(session, "id") == order.stripe_checkout_session_id &&
+      metadata_value(stripe_value(session, "metadata"), "material_order_id").to_s == order.id.to_s &&
+      stripe_value(session, "amount_total").to_i == order.total_cents.to_i
   end
 
   def stripe_value(stripe_object, key)

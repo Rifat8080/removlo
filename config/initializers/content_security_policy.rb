@@ -15,9 +15,19 @@ Rails.application.configure do
     policy.connect_src :self, :https, "wss:", "https://api.stripe.com", "https://maps.googleapis.com"
     policy.frame_src   :self, "https://js.stripe.com", "https://hooks.stripe.com"
     policy.form_action :self, "https://checkout.stripe.com"
+    policy.frame_ancestors :none
     policy.base_uri    :self
+    policy.upgrade_insecure_requests if Rails.env.production?
   end
 
   # Keep CSP report-only until inline scripts/styles and third-party integrations are fully tuned.
   config.content_security_policy_report_only = ActiveModel::Type::Boolean.new.cast(ENV.fetch("CSP_REPORT_ONLY", "true"))
+
+  config.permissions_policy do |policy|
+    policy.camera      :none
+    policy.microphone  :none
+    policy.payment     :self, "https://checkout.stripe.com"
+    policy.usb         :none
+    policy.fullscreen  :self
+  end
 end

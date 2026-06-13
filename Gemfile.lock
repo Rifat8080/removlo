@@ -83,7 +83,7 @@ GEM
     bindex (0.8.1)
     bootsnap (1.23.0)
       msgpack (~> 1.2)
-    brakeman (8.0.4)
+    brakeman (8.0.5)
       racc
     builder (3.3.0)
     capybara (3.40.0)
@@ -222,6 +222,8 @@ GEM
     raabro (1.4.0)
     racc (1.8.1)
     rack (3.2.5)
+    rack-attack (6.8.0)
+      rack (>= 1.0, < 4)
     rack-session (2.1.1)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)
@@ -395,6 +397,7 @@ DEPENDENCIES
   prawn-table (~> 0.2.2)
   propshaft
   puma (>= 5.0)
+  rack-attack
   rails (~> 8.0.4)
   rubocop-rails-omakase
   selenium-webdriver

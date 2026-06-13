@@ -13,7 +13,13 @@ class WebPushSubscriptionsController < ApplicationController
   def create
     return render json: { ok: false, error: "Web push is not configured." }, status: :service_unavailable unless web_push_configured?
 
-    subscription = WebPushSubscription.find_or_initialize_by(endpoint: subscription_params[:endpoint].to_s.strip)
+    endpoint = subscription_params[:endpoint].to_s.strip
+    subscription = WebPushSubscription.find_by(endpoint: endpoint)
+    if subscription.present? && subscription.user_id != current_user.id
+      return render json: { ok: false, error: "Subscription endpoint belongs to another account." }, status: :conflict
+    end
+
+    subscription ||= current_user.web_push_subscriptions.new(endpoint: endpoint)
     subscription.update!(
       user: current_user,
       p256dh_key: subscription_params.dig(:keys, :p256dh),

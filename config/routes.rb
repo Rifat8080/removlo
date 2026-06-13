@@ -110,6 +110,7 @@ Rails.application.routes.draw do
 
   resources :conversations, only: %i[index show create] do
     resources :messages, only: %i[create]
+    resources :message_attachments, path: "messages/:message_id/attachments", only: :show
   end
 
   resources :notifications, only: :index do

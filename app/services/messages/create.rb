@@ -21,7 +21,10 @@ module Messages
           body: body.to_s.strip,
           internal_only: internal_only
         )
-        message.attachments.attach(attachments) if attachments.present?
+        if attachments.present?
+          message.attachments.attach(attachments)
+          message.validate!
+        end
       end
 
       broadcast_to_participants(message)

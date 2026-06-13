@@ -28,7 +28,7 @@ class WebPushSubscriptionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "auth-key", subscription.auth_key
   end
 
-  test "subscription endpoint is reassigned to current user when browser account changes" do
+  test "subscription endpoint cannot be reassigned to another user" do
     existing = users(:customer).web_push_subscriptions.create!(
       endpoint: "https://push.example/subscription/1",
       p256dh_key: "old-key",
@@ -40,10 +40,10 @@ class WebPushSubscriptionsControllerTest < ActionDispatch::IntegrationTest
       post web_push_subscription_path, params: subscription_payload, as: :json
     end
 
-    assert_response :success
+    assert_response :conflict
     existing.reload
-    assert_equal users(:driver_a), existing.user
-    assert_equal "p256dh-key", existing.p256dh_key
+    assert_equal users(:customer), existing.user
+    assert_equal "old-key", existing.p256dh_key
   end
 
   test "destroy removes only current users subscription" do
