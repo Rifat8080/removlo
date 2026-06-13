@@ -1,7 +1,7 @@
 module Admin
   class QuotationPaymentsController < BaseController
     before_action :set_quotation
-    before_action :set_payment, only: %i[update destroy]
+    before_action :set_payment, only: %i[update destroy approve_cash]
 
     def create
       @quotation.quotation_payments.create!(payment_params)
@@ -23,6 +23,25 @@ module Admin
       @payment.destroy
       notify_customer("Payment removed", "A payment was removed from #{@quotation.reference}.")
       redirect_to admin_quotation_path(@quotation), notice: "Payment removed."
+    end
+
+    def approve_cash
+      unless @payment.pending_cash?
+        redirect_to admin_quotation_path(@quotation), alert: "Only pending cash payment requests can be approved."
+        return
+      end
+
+      @payment.update!(
+        status: :recorded,
+        paid_on: Date.current,
+        notes: [@payment.notes, "Cash payment approved by #{current_user.email}."].compact_blank.join(" ")
+      )
+      @quotation.reload
+      accept_quotation_after_cash_payment! if @payment.cash_acceptance_request?
+      notify_customer("Cash payment approved", "Your cash payment for #{@quotation.reference} was approved.")
+      redirect_to admin_quotation_path(@quotation), notice: "Cash payment approved."
+    rescue ActiveRecord::RecordInvalid, ArgumentError => e
+      redirect_to admin_quotation_path(@quotation), alert: e.message
     end
 
     private
@@ -49,6 +68,22 @@ module Admin
         title: title,
         body: body,
         url: quotation_path(@quotation),
+        actor: current_user,
+        notifiable: @quotation
+      )
+    end
+
+    def accept_quotation_after_cash_payment!
+      return if @quotation.accepted?
+      return unless @quotation.deposit_protected? || @quotation.paid?
+
+      @quotation.transition_to!(:accepted, actor: current_user, note: "Admin approved customer cash payment")
+      ::ActivityNotifier.call(
+        recipients: User.operators.where.not(id: current_user.id),
+        event_type: "quotation.customer_activity",
+        title: "Quote accepted after cash approval",
+        body: "#{@quotation.reference} was accepted after cash payment approval.",
+        url: admin_quotation_path(@quotation),
         actor: current_user,
         notifiable: @quotation
       )

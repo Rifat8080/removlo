@@ -32,7 +32,9 @@ Rails.application.routes.draw do
       patch :reject_negotiated_price, on: :member
       resources :quotation_items, path: :items, only: %i[create update destroy]
       resources :quotation_notes, path: :notes, only: %i[create update destroy]
-      resources :quotation_payments, path: :payments, only: %i[create update destroy]
+      resources :quotation_payments, path: :payments, only: %i[create update destroy] do
+        patch :approve_cash, on: :member
+      end
       resources :quotation_documents, path: :documents, only: %i[create update destroy]
       resources :driver_offers, only: %i[index] do
         patch :select, on: :member
@@ -95,9 +97,11 @@ Rails.application.routes.draw do
     patch :reject, on: :member
     patch :request_changes, on: :member
     post :deposit_checkout, to: "quotation_deposits#create", on: :member
+    post :cash_payment_request, to: "quotation_deposits#cash_payment_request", on: :member
     get :deposit_success, to: "quotation_deposits#success", on: :member
     get :deposit_cancel, to: "quotation_deposits#cancel", on: :member
     post :balance_checkout, to: "quotation_deposits#balance", on: :member
+    post :cash_balance_request, to: "quotation_deposits#cash_balance_request", on: :member
     get :balance_success, to: "quotation_deposits#balance_success", on: :member
     get :balance_cancel, to: "quotation_deposits#balance_cancel", on: :member
   end

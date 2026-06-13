@@ -58,6 +58,49 @@ class QuotationDepositsController < ApplicationController
     )
   end
 
+  def cash_payment_request
+    unless @quotation.quoted? || @quotation.negotiating?
+      redirect_to quotation_path(@quotation), alert: "Cash approval is only available while reviewing the quotation."
+      return
+    end
+
+    if @quotation.paid?
+      redirect_to quotation_path(@quotation), notice: "This quotation is already paid."
+      return
+    end
+
+    unless @quotation.quoted_price_cents.positive?
+      redirect_to quotation_path(@quotation), alert: "Cash payment is not available until a quote price is set."
+      return
+    end
+
+    if pending_cash_request_for?(cash_acceptance_reference_prefix)
+      redirect_to quotation_path(@quotation), alert: "A cash payment request is already waiting for admin approval."
+      return
+    end
+
+    amount_cents = acceptance_payment_amount_cents
+    payment = create_cash_request!(amount_cents: amount_cents, reference_prefix: cash_acceptance_reference_prefix)
+    notify_cash_payment_requested(payment)
+    redirect_to quotation_path(@quotation), notice: "Cash payment request sent. Admin approval is required before the quotation moves forward."
+  end
+
+  def cash_balance_request
+    unless @quotation.accepted? && @quotation.remaining_balance_cents.positive?
+      redirect_to quotation_path(@quotation), alert: "Balance payment is not available for this quotation."
+      return
+    end
+
+    if pending_cash_request_for?("CASH-BAL")
+      redirect_to quotation_path(@quotation), alert: "A cash balance request is already waiting for admin approval."
+      return
+    end
+
+    payment = create_cash_request!(amount_cents: @quotation.remaining_balance_cents, reference_prefix: "CASH-BAL")
+    notify_cash_payment_requested(payment)
+    redirect_to quotation_path(@quotation), notice: "Cash balance request sent. Admin approval is required before the balance is marked paid."
+  end
+
   def success
     @quotation = Quotation.for_customer(current_user).find(params[:id])
     payment = finalize_payment if params[:session_id].present?
@@ -192,6 +235,37 @@ class QuotationDepositsController < ApplicationController
 
     payment.update!(status: :failed, notes: "Stripe checkout was cancelled before completion.")
     Accounting::SyncQuotationPayment.call(payment)
+  end
+
+  def cash_acceptance_reference_prefix
+    @quotation.deposit_cents.positive? ? "CASH-DEP" : "CASH-FULL"
+  end
+
+  def pending_cash_request_for?(reference_prefix)
+    @quotation.quotation_payments.pending.where(payment_method: "cash").where("reference LIKE ?", "#{reference_prefix}-%").exists?
+  end
+
+  def create_cash_request!(amount_cents:, reference_prefix:)
+    @quotation.quotation_payments.create!(
+      amount_cents: amount_cents,
+      payment_method: "cash",
+      status: :pending,
+      paid_on: Date.current,
+      reference: "#{reference_prefix}-#{SecureRandom.hex(3).upcase}",
+      notes: "Customer requested cash payment approval."
+    )
+  end
+
+  def notify_cash_payment_requested(payment)
+    ::ActivityNotifier.call(
+      recipients: User.operators,
+      event_type: "quotation.cash_payment_requested",
+      title: "Cash payment approval requested",
+      body: "#{current_user.email} requested cash payment approval for #{@quotation.reference} (#{helpers.money_from_cents(payment.amount_cents)}).",
+      url: admin_quotation_path(@quotation),
+      actor: current_user,
+      notifiable: payment
+    )
   end
 
   def stripe_session_paid?(session)

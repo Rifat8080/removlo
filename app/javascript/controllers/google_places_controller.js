@@ -7,6 +7,23 @@ export default class extends Controller {
   static targets = ["postcode", "status"]
 
   connect() {
+    this.onPostcodeFocus = this.onPostcodeFocus.bind(this)
+    this.postcodeTargets.forEach((input) => {
+      input.addEventListener("focus", this.onPostcodeFocus, { once: true })
+      input.addEventListener("pointerdown", this.onPostcodeFocus, { once: true, passive: true })
+    })
+    this.setStatus("Start typing a postcode or use current location.", "ready")
+  }
+
+  disconnect() {
+    this.postcodeTargets.forEach((input) => {
+      input.removeEventListener("focus", this.onPostcodeFocus)
+      input.removeEventListener("pointerdown", this.onPostcodeFocus)
+    })
+  }
+
+  onPostcodeFocus() {
+    this.setStatus("Loading postcode search...", "loading")
     this.loadGooglePlaces()
       .then(() => {
         this.setupAutocomplete()

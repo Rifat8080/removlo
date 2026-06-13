@@ -3,7 +3,7 @@
   <head>
     <% seo_title = content_for(:title) || "Removlo — Smart UK Removals, Moving & Relocation Services" %>
     <% seo_description = content_for(:meta_description) || "Book trusted UK removals with Removlo. Get transparent moving quotes, professional home and office removals, packing services, storage, live tracking, and dedicated support." %>
-    <% seo_image = image_url("images/logo.svg") %>
+    <% seo_image = image_url("images/logo-raster.png") %>
     <title><%= seo_title %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="description" content="<%= seo_description %>">
@@ -26,15 +26,16 @@
     <meta name="twitter:image" content="<%= seo_image %>">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <%= favicon_link_tag "images/icon.svg", type: "image/svg+xml" %>
-    <link rel="apple-touch-icon" href="<%= asset_path("images/icon.svg") %>">
+    <%= favicon_link_tag "images/icon-raster.png", type: "image/png" %>
+    <link rel="apple-touch-icon" href="<%= asset_path("images/icon-raster.png") %>">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <% inter_font_href = "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" %>
+    <link rel="preload" as="style" href="<%= inter_font_href %>" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="<%= inter_font_href %>" rel="stylesheet"></noscript>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
     <%= yield :head %>
   </head>
 
@@ -45,7 +46,10 @@
         <div class="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600"></div>
 
         <%= link_to root_path, class: "group flex h-10 w-36 shrink-0 items-center overflow-hidden rounded-xl min-[390px]:w-40 sm:h-14 sm:w-56 sm:border-r sm:border-slate-100 sm:pr-4" do %>
-          <%= image_tag "images/logo.svg", alt: "Removlo - Moving Made Simple", class: "h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.015] group-hover:opacity-95" %>
+          <picture class="contents">
+            <source srcset="<%= asset_path("images/logo.webp") %>" type="image/webp">
+            <%= image_tag "images/logo-raster.png", alt: "Removlo - Moving Made Simple", loading: "eager", fetchpriority: "high", decoding: "async", class: "h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.015] group-hover:opacity-95" %>
+          </picture>
         <% end %>
 
         <div class="hidden items-center rounded-full border border-slate-200 bg-slate-50/90 p-1 shadow-inner shadow-white min-[1280px]:flex" id="landing-navbar">
@@ -118,5 +122,6 @@
       <%= yield %>
     </div>
     <%= render "shared/floating_actions" %>
+    <%= javascript_importmap_tags %>
   </body>
 </html>

@@ -32,6 +32,7 @@
 <% content_for :title, "Removlo — UK Home & Office Removals, Packing, Storage & Live Tracking" %>
 <% content_for :meta_description, "Move smarter with Removlo. Compare transparent UK removals quotes, book professional home or office movers, add packing and storage, and track your move with dedicated support." %>
 <% content_for :head do %>
+  <link rel="preload" as="image" href="<%= asset_path(asset_image.call("van.webp")) %>" type="image/webp" media="(min-width: 1360px)" fetchpriority="high">
   <% structured_data = {
     "@context": "https://schema.org",
     "@graph": [
@@ -106,12 +107,12 @@
     <div class="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(37,99,235,0.055)_1px,transparent_1px),linear-gradient(to_bottom,rgba(37,99,235,0.055)_1px,transparent_1px)] bg-[size:3rem_3rem]"></div>
     <div class="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_45%_24%,rgba(96,165,250,0.16),transparent_34%),radial-gradient(circle_at_78%_22%,rgba(124,58,237,0.10),transparent_34%),linear-gradient(180deg,rgba(255,255,255,0.30),rgba(239,246,255,0.25)_55%,rgba(255,255,255,0.65))]"></div>
     <div class="mx-auto w-full max-w-[1600px]">
-      <div class="reveal relative">
+      <div class="relative">
         <div class="pointer-events-none absolute -inset-x-8 -inset-y-10 bg-[radial-gradient(circle_at_45%_24%,rgba(96,165,250,0.22),transparent_32%),radial-gradient(circle_at_78%_22%,rgba(124,58,237,0.12),transparent_32%),linear-gradient(180deg,rgba(255,255,255,0.45),rgba(239,246,255,0.35)_55%,rgba(255,255,255,0.35))]"></div>
         <div class="absolute -top-12 -bottom-12 left-[18%] right-[17%] hidden min-[1360px]:block" aria-hidden="true">
           <div class="relative h-full w-full">
             <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_48%_54%,rgba(96,165,250,0.16),transparent_48%)]"></div>
-            <%= image_tag asset_image.call("van.png"), alt: "", class: "pointer-events-none absolute inset-0 h-full w-full object-cover object-[center_62%] opacity-90 contrast-105 saturate-105 [mask-image:radial-gradient(ellipse_at_center,black_34%,rgba(0,0,0,0.72)_54%,transparent_76%)]" %>
+            <%= marketing_picture_image "van.png", alt: "", loading: "eager", fetchpriority: "high", decoding: "async", class: "pointer-events-none absolute inset-0 h-full w-full object-cover object-[center_62%] opacity-90 contrast-105 saturate-105 [mask-image:radial-gradient(ellipse_at_center,black_34%,rgba(0,0,0,0.72)_54%,transparent_76%)]" %>
 
             <div class="float-slower pointer-events-auto absolute left-[54%] top-[6%] z-20 flex max-w-[min(15.5rem,36%)] -translate-x-1/2 items-center gap-2 rounded-2xl border border-white/85 bg-white/94 px-3 py-2.5 shadow-xl shadow-blue-950/10 backdrop-blur-xl min-[1536px]:left-[49%] min-[1536px]:top-[6%] min-[1536px]:max-w-[18rem]">
               <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-50">
@@ -143,7 +144,7 @@
 
         <div class="relative grid min-w-0 gap-6 sm:gap-7 min-[1360px]:min-h-[31rem] min-[1360px]:grid-cols-[minmax(21rem,0.95fr)_minmax(31rem,1.1fr)_minmax(22rem,0.92fr)] min-[1360px]:items-center">
           <div class="relative isolate z-20 min-w-0 overflow-hidden pb-4 sm:pb-6 min-[1360px]:overflow-visible min-[1360px]:pb-0">
-            <%= image_tag asset_image.call("van.png"), alt: "", class: "pointer-events-none absolute -right-16 top-12 -z-10 h-52 w-[105%] object-contain object-right-bottom opacity-30 mix-blend-multiply contrast-105 saturate-105 [mask-image:linear-gradient(to_left,black_0%,rgba(0,0,0,0.72)_46%,transparent_100%)] min-[380px]:top-10 min-[380px]:h-60 sm:-right-24 sm:top-0 sm:h-[24rem] sm:w-[82%] sm:opacity-40 md:w-[72%] min-[1360px]:hidden", aria: { hidden: true } %>
+            <%= marketing_picture_image "van.png", alt: "", loading: "lazy", fetchpriority: "low", decoding: "async", class: "pointer-events-none absolute -right-16 top-12 -z-10 h-52 w-[105%] object-contain object-right-bottom opacity-30 mix-blend-multiply contrast-105 saturate-105 [mask-image:linear-gradient(to_left,black_0%,rgba(0,0,0,0.72)_46%,transparent_100%)] min-[380px]:top-10 min-[380px]:h-60 sm:-right-24 sm:top-0 sm:h-[24rem] sm:w-[82%] sm:opacity-40 md:w-[72%] min-[1360px]:hidden", aria: { hidden: true } %>
             <div class="inline-flex max-w-full items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/90 px-2.5 py-1.5 text-[8px] font-black uppercase tracking-[0.13em] text-slate-700 shadow-sm shadow-blue-950/5 backdrop-blur min-[380px]:gap-2 min-[380px]:px-3 min-[380px]:text-[10px]">
               <%= image_tag asset_image.call("route-pin.svg"), alt: "", class: "h-3.5 w-3.5 shrink-0 min-[380px]:h-4 min-[380px]:w-4", aria: { hidden: true } %>
               UK's smartest way to move
@@ -292,7 +293,7 @@
           <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-4">
             <% trust_logos.each do |name, rating, logo| %>
               <div class="rounded-2xl bg-slate-50/70 p-3 text-center ring-1 ring-slate-100 transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md hover:shadow-blue-950/5 min-[1360px]:rounded-none min-[1360px]:bg-transparent min-[1360px]:p-0 min-[1360px]:text-left min-[1360px]:ring-0 min-[1360px]:border-r min-[1360px]:border-slate-100 min-[1360px]:last:border-r-0">
-                <%= image_tag asset_image.call(logo), alt: "#{name} logo", class: "mx-auto h-5 w-auto object-contain sm:h-6 lg:mx-0" %>
+                <%= marketing_picture_image logo, alt: "#{name} logo", loading: "lazy", decoding: "async", class: "mx-auto h-5 w-auto object-contain sm:h-6 lg:mx-0" %>
                 <div class="mt-1.5 flex justify-center text-amber-400 min-[1360px]:justify-start" aria-hidden="true"><% 5.times do %><svg class="h-3 w-3 sm:h-3.5 sm:w-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.05 2.93c.3-.92 1.6-.92 1.9 0l1.07 3.29a1 1 0 00.95.69h3.46c.97 0 1.37 1.24.59 1.81l-2.8 2.03a1 1 0 00-.36 1.12l1.07 3.29c.3.92-.76 1.69-1.54 1.12l-2.8-2.03a1 1 0 00-1.18 0l-2.8 2.03c-.78.57-1.84-.2-1.54-1.12l1.07-3.29a1 1 0 00-.36-1.12l-2.8-2.03c-.78-.57-.38-1.81.59-1.81h3.46a1 1 0 00.95-.69l1.07-3.29z"/></svg><% end %></div>
                 <p class="mt-1 text-[9px] font-bold uppercase tracking-wide text-slate-400 sm:text-[10px]"><%= rating %></p>
               </div>
@@ -344,7 +345,7 @@
                 </div>
               </div>
               <div class="absolute inset-x-0 bottom-0 h-[58%] overflow-hidden bg-slate-100">
-                <%= image_tag asset_image.call(image), alt: "#{title} service", class: "h-full w-full object-cover object-bottom transition duration-700 group-hover:scale-105" %>
+                <%= marketing_picture_image image, alt: "#{title} service", loading: "lazy", decoding: "async", class: "h-full w-full object-cover object-bottom transition duration-700 group-hover:scale-105" %>
               </div>
               <%= link_to service_paths[index], class: "absolute bottom-5 right-5 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white text-blue-700 shadow-lg shadow-blue-950/15 ring-1 ring-slate-200 transition group-hover:-translate-y-0.5 group-hover:bg-blue-600 group-hover:text-white xl:bottom-4 xl:right-4 xl:h-10 xl:w-10", aria: { label: "Learn more about #{title}" } do %>
                 <%= image_tag asset_image.call("arrow-right.svg"), alt: "", class: "h-4 w-4 transition group-hover:brightness-0 group-hover:invert", aria: { hidden: true } %>

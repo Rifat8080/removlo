@@ -4,10 +4,19 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   connect() {
     this.observer = null
-    this.initReveal()
+    this.idleCallback = null
+    this.idleTimer = null
+
+    if ("requestIdleCallback" in window) {
+      this.idleCallback = window.requestIdleCallback(() => this.initReveal(), { timeout: 1200 })
+    } else {
+      this.idleTimer = window.setTimeout(() => this.initReveal(), 500)
+    }
   }
 
   disconnect() {
+    if (this.idleCallback) window.cancelIdleCallback(this.idleCallback)
+    if (this.idleTimer) window.clearTimeout(this.idleTimer)
     this.observer?.disconnect()
   }
 

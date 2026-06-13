@@ -104,6 +104,78 @@ class AdminQuotationsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match "Complete job", response.body
   end
 
+  test "admin can approve cash deposit request and accept quotation" do
+    sign_in users(:admin)
+    quotation = quotations(:marketplace_job)
+    quotation.update!(status: "quoted", deposit_cents: 10_000)
+    payment = quotation.quotation_payments.create!(
+      amount_cents: quotation.deposit_cents,
+      payment_method: "cash",
+      status: :pending,
+      paid_on: Date.current,
+      reference: "CASH-DEP-ADMIN"
+    )
+
+    assert_difference -> { Notification.where(user: quotation.customer, event_type: "quotation.payment").count }, 1 do
+      patch approve_cash_admin_quotation_quotation_payment_path(quotation, payment)
+    end
+
+    assert_redirected_to admin_quotation_path(quotation)
+    assert payment.reload.recorded?
+    quotation.reload
+    assert quotation.deposit_protected?
+    assert quotation.accepted?
+  end
+
+  test "admin can approve full cash payment request and mark quotation paid" do
+    sign_in users(:admin)
+    quotation = quotations(:marketplace_job)
+    quotation.update!(status: "quoted", deposit_cents: 0)
+    payment = quotation.quotation_payments.create!(
+      amount_cents: quotation.quoted_price_cents,
+      payment_method: "cash",
+      status: :pending,
+      paid_on: Date.current,
+      reference: "CASH-FULL-ADMIN"
+    )
+
+    patch approve_cash_admin_quotation_quotation_payment_path(quotation, payment)
+
+    assert_redirected_to admin_quotation_path(quotation)
+    assert payment.reload.recorded?
+    quotation.reload
+    assert quotation.paid?
+    assert quotation.accepted?
+  end
+
+  test "admin can approve cash balance request without changing accepted status" do
+    sign_in users(:admin)
+    quotation = quotations(:accepted_job)
+    quotation.quotation_payments.create!(
+      amount_cents: quotation.deposit_cents,
+      payment_method: "stripe",
+      status: :recorded,
+      paid_on: Date.current,
+      reference: "DEP-ADMIN"
+    )
+    quotation.reload
+    payment = quotation.quotation_payments.create!(
+      amount_cents: quotation.remaining_balance_cents,
+      payment_method: "cash",
+      status: :pending,
+      paid_on: Date.current,
+      reference: "CASH-BAL-ADMIN"
+    )
+
+    patch approve_cash_admin_quotation_quotation_payment_path(quotation, payment)
+
+    assert_redirected_to admin_quotation_path(quotation)
+    assert payment.reload.recorded?
+    quotation.reload
+    assert quotation.accepted?
+    assert quotation.paid?
+  end
+
   test "staff can send quotation through workflow without editing" do
     sign_in users(:staff)
     quotation = quotations(:accepted_job)

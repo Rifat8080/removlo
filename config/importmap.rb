@@ -4,5 +4,5 @@ pin "application", preload: true
 pin "@hotwired/turbo-rails", to: "turbo.min.js", preload: true
 pin "@hotwired/stimulus", to: "stimulus.min.js", preload: true
 pin "@hotwired/stimulus-loading", to: "stimulus-loading.js", preload: true
-pin "flowbite", to: "flowbite.esm.js"
-pin_all_from "app/javascript/controllers", under: "controllers"
+pin "flowbite", to: "flowbite.esm.js", preload: false
+pin_all_from "app/javascript/controllers", under: "controllers", preload: false

@@ -3,6 +3,8 @@
 <div class="mx-auto max-w-7xl">
   <% quote_ready = @quotation.quoted_price_cents.positive? %>
   <% decision_available = quote_ready && (@quotation.quoted? || @quotation.negotiating?) %>
+<% pending_cash_acceptance = @quotation.quotation_payments.pending.where(payment_method: "cash").where("reference LIKE ? OR reference LIKE ?", "CASH-DEP-%", "CASH-FULL-%").exists? %>
+<% pending_cash_balance = @quotation.quotation_payments.pending.where(payment_method: "cash").where("reference LIKE ?", "CASH-BAL-%").exists? %>
   <% next_action_title = @quotation.accepted? ? "Quote accepted" : (quote_ready ? "Review your quote" : "We are preparing your quote") %>
   <% next_action_copy = if @quotation.accepted?
                           "Your quote is accepted and the team is preparing the next move steps."
@@ -89,11 +91,18 @@
               Quote accepted. We will continue with scheduling and driver assignment.
             </div>
           <% elsif decision_available %>
-            <div class="mt-5 grid gap-3 sm:grid-cols-3">
+            <% if pending_cash_acceptance %>
+              <div class="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-bold text-amber-800">
+                Cash payment request sent. Admin approval is required before your quotation moves forward.
+              </div>
+            <% end %>
+            <div class="mt-5 grid gap-3 sm:grid-cols-2 min-[1025px]:grid-cols-4">
               <% if @quotation.deposit_cents.positive? && !@quotation.deposit_protected? %>
                 <%= button_to "Pay deposit to accept", deposit_checkout_quotation_path(@quotation), method: :post, form: { data: { turbo: false } }, class: "inline-flex w-full items-center justify-center rounded-xl bg-emerald-600 px-4 py-3 text-sm font-black text-white shadow-lg shadow-emerald-600/20 transition hover:-translate-y-0.5 hover:bg-emerald-700" %>
+                <%= button_to "Request cash deposit approval", cash_payment_request_quotation_path(@quotation), method: :post, disabled: pending_cash_acceptance, class: "inline-flex w-full items-center justify-center rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-black text-amber-800 transition hover:-translate-y-0.5 hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-50" %>
               <% else %>
                 <%= button_to "Pay full quote to accept", deposit_checkout_quotation_path(@quotation), method: :post, form: { data: { turbo: false } }, class: "inline-flex w-full items-center justify-center rounded-xl bg-emerald-600 px-4 py-3 text-sm font-black text-white shadow-lg shadow-emerald-600/20 transition hover:-translate-y-0.5 hover:bg-emerald-700" %>
+                <%= button_to "Request cash payment approval", cash_payment_request_quotation_path(@quotation), method: :post, disabled: pending_cash_acceptance, class: "inline-flex w-full items-center justify-center rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-black text-amber-800 transition hover:-translate-y-0.5 hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-50" %>
               <% end %>
               <%= button_to "Reject quote", reject_quotation_path(@quotation), method: :patch, class: "inline-flex w-full items-center justify-center rounded-xl bg-rose-600 px-4 py-3 text-sm font-black text-white shadow-lg shadow-rose-600/20 transition hover:-translate-y-0.5 hover:bg-rose-700" %>
               <a href="#negotiate" class="inline-flex w-full items-center justify-center rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-black text-indigo-700 transition hover:-translate-y-0.5 hover:bg-indigo-100">Negotiate</a>
@@ -107,7 +116,13 @@
           <section class="rounded-2xl border border-amber-200 bg-amber-50 p-5 shadow-sm">
             <h2 class="text-lg font-black text-amber-900">Pay deposit</h2>
             <p class="mt-1 text-sm text-amber-800">Secure your booking with a <%= money_from_cents(@quotation.deposit_cents) %> deposit. Your driver is assigned after payment.</p>
-            <%= button_to "Pay deposit", deposit_checkout_quotation_path(@quotation), method: :post, form: { data: { turbo: false } }, class: "mt-4 inline-flex rounded-xl bg-amber-600 px-5 py-3 text-sm font-bold text-white" %>
+            <% if pending_cash_acceptance %>
+              <p class="mt-3 rounded-xl bg-white/70 px-4 py-3 text-sm font-bold text-amber-800 ring-1 ring-amber-200">Cash deposit request is waiting for admin approval.</p>
+            <% end %>
+            <div class="mt-4 flex flex-col gap-2 sm:flex-row">
+              <%= button_to "Pay deposit", deposit_checkout_quotation_path(@quotation), method: :post, form: { data: { turbo: false } }, class: "inline-flex rounded-xl bg-amber-600 px-5 py-3 text-sm font-bold text-white" %>
+              <%= button_to "Request cash deposit approval", cash_payment_request_quotation_path(@quotation), method: :post, disabled: pending_cash_acceptance, class: "inline-flex rounded-xl border border-amber-200 bg-white px-5 py-3 text-sm font-bold text-amber-800 disabled:cursor-not-allowed disabled:opacity-50" %>
+            </div>
           </section>
         <% end %>
 
@@ -115,7 +130,13 @@
           <section class="rounded-2xl border border-blue-200 bg-blue-50 p-5 shadow-sm">
             <h2 class="text-lg font-black text-blue-950">Pay quotation balance</h2>
             <p class="mt-1 text-sm text-blue-800">Outstanding balance: <span class="font-black"><%= money_from_cents(@quotation.remaining_balance_cents) %></span>. Pay securely with Stripe when you are ready.</p>
-            <%= button_to "Pay balance with Stripe", balance_checkout_quotation_path(@quotation), method: :post, form: { data: { turbo: false } }, class: "mt-4 inline-flex rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-700" %>
+            <% if pending_cash_balance %>
+              <p class="mt-3 rounded-xl bg-white/70 px-4 py-3 text-sm font-bold text-blue-800 ring-1 ring-blue-200">Cash balance request is waiting for admin approval.</p>
+            <% end %>
+            <div class="mt-4 flex flex-col gap-2 sm:flex-row">
+              <%= button_to "Pay balance with Stripe", balance_checkout_quotation_path(@quotation), method: :post, form: { data: { turbo: false } }, class: "inline-flex rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-700" %>
+              <%= button_to "Request cash balance approval", cash_balance_request_quotation_path(@quotation), method: :post, disabled: pending_cash_balance, class: "inline-flex rounded-xl border border-blue-200 bg-white px-5 py-3 text-sm font-bold text-blue-800 disabled:cursor-not-allowed disabled:opacity-50" %>
+            </div>
           </section>
         <% end %>
 

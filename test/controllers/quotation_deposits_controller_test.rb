@@ -61,6 +61,83 @@ class QuotationDepositsControllerTest < ActionDispatch::IntegrationTest
     ENV["STRIPE_SECRET_KEY"] = stripe_key if stripe_key
   end
 
+  test "customer can request cash deposit approval without accepting quotation" do
+    sign_in users(:customer)
+    quotation = quotations(:marketplace_job)
+    quotation.update!(status: "quoted", deposit_cents: 10_000)
+
+    assert_difference -> { QuotationPayment.where(payment_method: "cash", status: "pending", quotation: quotation).count }, 1 do
+      assert_difference -> { Notification.where(event_type: "quotation.cash_payment_requested").count }, User.operators.count do
+        post cash_payment_request_quotation_path(quotation)
+      end
+    end
+
+    assert_redirected_to quotation_path(quotation)
+    quotation.reload
+    assert_equal "quoted", quotation.status
+    assert_equal "unpaid", quotation.payment_status
+    payment = quotation.quotation_payments.pending.find_by!(payment_method: "cash")
+    assert_equal quotation.deposit_cents, payment.amount_cents
+    assert payment.reference.start_with?("CASH-DEP-")
+  end
+
+  test "customer can request full cash approval without accepting quotation" do
+    sign_in users(:customer)
+    quotation = quotations(:marketplace_job)
+    quotation.update!(status: "quoted", deposit_cents: 0)
+
+    post cash_payment_request_quotation_path(quotation)
+
+    assert_redirected_to quotation_path(quotation)
+    quotation.reload
+    assert_equal "quoted", quotation.status
+    assert_equal "unpaid", quotation.payment_status
+    payment = quotation.quotation_payments.pending.find_by!(payment_method: "cash")
+    assert_equal quotation.quoted_price_cents, payment.amount_cents
+    assert payment.reference.start_with?("CASH-FULL-")
+  end
+
+  test "customer cannot create duplicate pending cash approval request" do
+    sign_in users(:customer)
+    quotation = quotations(:marketplace_job)
+    quotation.update!(status: "quoted", deposit_cents: 10_000)
+    quotation.quotation_payments.create!(
+      amount_cents: quotation.deposit_cents,
+      payment_method: "cash",
+      status: :pending,
+      paid_on: Date.current,
+      reference: "CASH-DEP-EXISTING"
+    )
+
+    assert_no_difference -> { QuotationPayment.where(payment_method: "cash", status: "pending", quotation: quotation).count } do
+      post cash_payment_request_quotation_path(quotation)
+    end
+
+    assert_redirected_to quotation_path(quotation)
+  end
+
+  test "customer can request cash balance approval without marking balance paid" do
+    sign_in users(:customer)
+    quotation = quotations(:accepted_job)
+    quotation.quotation_payments.create!(
+      amount_cents: quotation.deposit_cents,
+      payment_method: "stripe",
+      status: :recorded,
+      paid_on: Date.current,
+      reference: "DEP-TEST"
+    )
+    quotation.reload
+
+    post cash_balance_request_quotation_path(quotation)
+
+    assert_redirected_to quotation_path(quotation)
+    quotation.reload
+    assert_equal "deposit_paid", quotation.payment_status
+    payment = quotation.quotation_payments.pending.find_by!(payment_method: "cash")
+    assert_equal quotation.remaining_balance_cents, payment.amount_cents
+    assert payment.reference.start_with?("CASH-BAL-")
+  end
+
   test "Stripe success return records payment and accepts quotation" do
     sign_in users(:customer)
     quotation = quotations(:marketplace_job)

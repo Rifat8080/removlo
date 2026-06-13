@@ -253,10 +253,18 @@
           <% @quotation.quotation_payments.order(created_at: :desc).each do |payment| %>
             <div class="flex flex-col gap-3 py-3 min-[1025px]:flex-row min-[1025px]:items-center min-[1025px]:justify-between">
               <div>
-                <p class="font-bold text-slate-900"><%= money_from_cents(payment.amount_cents) %> · <%= payment.payment_method.humanize %></p>
+                <p class="font-bold text-slate-900"><%= money_from_cents(payment.amount_cents) %> · <%= payment.payment_method.humanize %> · <%= payment.status.humanize %></p>
                 <p class="text-sm text-slate-500"><%= payment.reference.presence || "No reference" %> · <%= payment.paid_on&.to_fs(:long) || "No date" %></p>
+                <% if payment.pending_cash? %>
+                  <p class="mt-1 text-xs font-bold text-amber-700">Cash payment needs admin approval before the quotation can move forward.</p>
+                <% end %>
               </div>
-              <%= button_to "Remove", admin_quotation_quotation_payment_path(@quotation, payment), method: :delete, class: "inline-flex items-center justify-center rounded-lg border border-rose-200 px-3 py-2 text-sm font-bold text-rose-600 transition hover:bg-rose-50" %>
+              <div class="flex flex-col gap-2 sm:flex-row">
+                <% if payment.pending_cash? %>
+                  <%= button_to "Approve cash", approve_cash_admin_quotation_quotation_payment_path(@quotation, payment), method: :patch, class: "inline-flex items-center justify-center rounded-lg bg-emerald-600 px-3 py-2 text-sm font-bold text-white transition hover:bg-emerald-700" %>
+                <% end %>
+                <%= button_to "Remove", admin_quotation_quotation_payment_path(@quotation, payment), method: :delete, class: "inline-flex items-center justify-center rounded-lg border border-rose-200 px-3 py-2 text-sm font-bold text-rose-600 transition hover:bg-rose-50" %>
+              </div>
             </div>
           <% end %>
         </div>

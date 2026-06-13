@@ -3,6 +3,19 @@ module MarketingPagesHelper
     "images/#{file}"
   end
 
+  def marketing_picture_image(file, **image_options)
+    return image_tag(marketing_asset_image(file), **image_options) unless file.to_s.end_with?(".png")
+
+    content_tag(:picture, class: "contents") do
+      safe_join(
+        [
+          tag.source(srcset: asset_path(marketing_asset_image(file.sub(/\.png\z/, ".webp"))), type: "image/webp"),
+          image_tag(marketing_asset_image(file), **image_options)
+        ]
+      )
+    end
+  end
+
   def marketing_nav_links
     [
       ["Home", root_path],

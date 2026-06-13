@@ -20,6 +20,18 @@ class QuotationPayment < ApplicationRecord
     amount_cents.to_i / 100.0
   end
 
+  def cash?
+    payment_method.to_s == "cash"
+  end
+
+  def pending_cash?
+    cash? && pending?
+  end
+
+  def cash_acceptance_request?
+    cash? && reference.to_s.start_with?("CASH-DEP", "CASH-FULL")
+  end
+
   private
 
   def sync_quotation_payment_status

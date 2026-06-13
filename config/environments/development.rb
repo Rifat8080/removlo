@@ -23,6 +23,8 @@ Rails.application.configure do
     config.public_file_server.headers = { "cache-control" => "public, max-age=#{2.days.to_i}" }
   else
     config.action_controller.perform_caching = false
+    # Keep local Lighthouse audits representative without changing page design.
+    config.public_file_server.headers = { "cache-control" => "public, max-age=#{1.day.to_i}" }
   end
 
   # Change to :null_store to avoid any caching.
