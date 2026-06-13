@@ -11,6 +11,10 @@ class QuotationsController < ApplicationController
   end
 
   def show
+    if ::Quotations::ReconcileStripePayments.call(quotation: @quotation, actor: current_user)
+      @quotation.reload
+    end
+
     @negotiation_note = @quotation.quotation_notes.new(internal: false)
     @invoices = @quotation.customer_invoices.recent
     @workflow_step = @quotation.workflow_step_for_customer
@@ -71,8 +75,13 @@ class QuotationsController < ApplicationController
       return
     end
 
+    unless @quotation.deposit_cents.positive?
+      redirect_to quotation_path(@quotation), alert: "A deposit amount must be set before you can accept this quote."
+      return
+    end
+
     if @quotation.deposit_cents.positive? && !@quotation.deposit_protected?
-      redirect_to deposit_checkout_quotation_path(@quotation), status: :see_other, notice: "Pay the deposit to accept and secure this quote."
+      redirect_to quotation_path(@quotation), alert: "Please pay the deposit to accept and secure this quote."
       return
     end
 

@@ -8,6 +8,7 @@ class DriverJobsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_no_match users(:customer).email, response.body
     assert_no_match quotations(:marketplace_job).pickup_address, response.body
+    assert_no_match "Vehicle required", response.body
   end
 
   test "driver cannot see other driver offers" do

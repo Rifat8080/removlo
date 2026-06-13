@@ -54,7 +54,11 @@ module Admin
           notify_negotiated_price_request
         end
         notify_quote_participants("Quotation updated", "#{@quotation.reference} was updated by #{current_user.email}.", @quotation) unless proposed_price_cents.present? && attrs.blank?
-        notify_driver_assignment(previous_driver) if @quotation.saved_change_to_assigned_driver_id?
+        if @quotation.saved_change_to_assigned_driver_id?
+          @quotation.update!(awaiting_driver_offers: false) if @quotation.assigned_driver.present?
+          @quotation.auto_schedule_after_driver_assignment!(actor: current_user)
+          notify_driver_assignment(previous_driver)
+        end
         notice = proposed_price_cents.present? ? "Negotiated price sent to admins for approval." : "Quotation was updated successfully."
         redirect_to admin_quotation_path(@quotation), notice: notice
       else
@@ -70,6 +74,11 @@ module Admin
     end
 
     def transition
+      if staff_restricted_transition?(params.require(:status))
+        redirect_to admin_quotation_path(@quotation), alert: "Drivers start and complete assigned jobs. Only admins can perform that action from admin."
+        return
+      end
+
       @quotation.transition_to!(params.require(:status), actor: current_user, note: params[:note])
       if @quotation.completed?
         DriverWallet::RecordJobEarning.call(quotation: @quotation)
@@ -355,6 +364,10 @@ module Admin
       return if current_user&.admin?
 
       redirect_to(@quotation ? admin_quotation_path(@quotation) : admin_quotations_path, alert: "Only admins can edit quotations.")
+    end
+
+    def staff_restricted_transition?(status)
+      current_user.staff? && Quotation::STAFF_RESTRICTED_TRANSITION_STATUSES.include?(status.to_s)
     end
   end
 end

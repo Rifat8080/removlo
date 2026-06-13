@@ -74,13 +74,17 @@ Rails.application.routes.draw do
 
   namespace :driver do
     resources :jobs, only: %i[index show] do
+      patch :start, on: :member
+      patch :complete, on: :member
       resource :location, only: %i[create], controller: "locations"
       resources :offers, only: %i[create update] do
         patch :accept_negotiation, on: :member
       end
     end
     resources :availabilities
-    resource :wallet, only: :show
+    resource :wallet, only: :show do
+      post :withdraw
+    end
   end
 
   resources :quotations, only: %i[index show new create edit update] do
@@ -90,6 +94,9 @@ Rails.application.routes.draw do
     post :deposit_checkout, to: "quotation_deposits#create", on: :member
     get :deposit_success, to: "quotation_deposits#success", on: :member
     get :deposit_cancel, to: "quotation_deposits#cancel", on: :member
+    post :balance_checkout, to: "quotation_deposits#balance", on: :member
+    get :balance_success, to: "quotation_deposits#balance_success", on: :member
+    get :balance_cancel, to: "quotation_deposits#balance_cancel", on: :member
   end
 
   resources :blog_posts, path: "blog", only: %i[index show]
@@ -132,6 +139,7 @@ Rails.application.routes.draw do
   end
 
   post "stripe/webhook", to: "stripe_webhooks#create"
+  post "webhooks/stripe", to: "stripe_webhooks#create"
 
   get "services", to: "pages#services", as: :services
   get "services/home-removals", to: "pages#home_removals", as: :home_removals

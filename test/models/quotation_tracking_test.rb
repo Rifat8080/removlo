@@ -33,4 +33,16 @@ class QuotationTrackingTest < ActiveSupport::TestCase
     assert_includes quotation.google_directions_url, "google.com/maps/dir"
     assert_includes quotation.google_maps_pickup_url, "google.com/maps/search"
   end
+
+  test "google destination query does not force UK suffix" do
+    quotation = quotations(:booked_job)
+    quotation.update!(
+      status: "in_progress",
+      delivery_address: "PF7G+V42, Basher Pool-Dogair Bazar, Dhaka 1361, Bangladesh",
+      delivery_postcode: "1361"
+    )
+
+    assert_includes quotation.tracking_destination_query, "Bangladesh"
+    assert_not_includes quotation.tracking_destination_query, "UK"
+  end
 end

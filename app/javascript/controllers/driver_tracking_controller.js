@@ -4,26 +4,36 @@ export default class extends Controller {
   static targets = ["status", "startButton", "stopButton"]
   static values = {
     url: String,
-    interval: { type: Number, default: 30000 }
+    interval: { type: Number, default: 30000 },
+    autoStart: { type: Boolean, default: false },
+    locked: { type: Boolean, default: false }
   }
 
   connect() {
     this.watchId = null
     this.timerId = null
     this.latestPosition = null
+    this.wakeLock = null
+
+    if (this.autoStartValue) {
+      this.start()
+    }
   }
 
   disconnect() {
-    this.stop()
+    this.stopTracking()
   }
 
   start() {
+    if (this.watchId !== null) return
+
     if (!navigator.geolocation) {
       this.setStatus("Geolocation is not supported in this browser.", "error")
       return
     }
 
     this.setStatus("Requesting location permission...", "loading")
+    this.requestWakeLock()
 
     this.watchId = navigator.geolocation.watchPosition(
       (position) => {
@@ -41,6 +51,15 @@ export default class extends Controller {
   }
 
   stop() {
+    if (this.lockedValue) {
+      this.setStatus("Location sharing stays on while the move is in progress.", "ready")
+      return
+    }
+
+    this.stopTracking()
+  }
+
+  stopTracking() {
     if (this.watchId !== null) {
       navigator.geolocation.clearWatch(this.watchId)
       this.watchId = null
@@ -51,6 +70,7 @@ export default class extends Controller {
       this.timerId = null
     }
 
+    this.releaseWakeLock()
     this.setStatus("Location sharing is off.", "ready")
   }
 
@@ -73,6 +93,8 @@ export default class extends Controller {
         Accept: "application/json"
       },
       body: JSON.stringify(body)
+    }).then((response) => {
+      if (!response.ok) throw new Error("Location update failed")
     }).catch(() => {
       this.setStatus("Could not send location update.", "error")
     })
@@ -95,5 +117,27 @@ export default class extends Controller {
     this.statusTarget.classList.toggle("text-rose-600", state === "error")
     this.statusTarget.classList.toggle("text-indigo-700", state === "loading")
     this.statusTarget.classList.toggle("text-slate-500", state === "ready")
+  }
+
+  async requestWakeLock() {
+    if (!("wakeLock" in navigator)) return
+
+    try {
+      this.wakeLock = await navigator.wakeLock.request("screen")
+    } catch (_) {
+      this.wakeLock = null
+    }
+  }
+
+  async releaseWakeLock() {
+    if (!this.wakeLock) return
+
+    try {
+      await this.wakeLock.release()
+    } catch (_) {
+      // Ignore browser wake lock release errors.
+    } finally {
+      this.wakeLock = null
+    }
   }
 }

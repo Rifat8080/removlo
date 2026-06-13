@@ -1,5 +1,5 @@
 <% location ||= quotation.latest_driver_location %>
-<% recent_locations = quotation.driver_locations.recent.limit(5) %>
+<% eta_text = location ? (location.eta_label || "Unavailable") : "Updating..." %>
 
 <section id="<%= dom_id(quotation, :tracking_panel) %>" class="rounded-2xl border border-emerald-200 bg-emerald-50/70 p-5 shadow-sm">
   <div class="flex flex-col gap-3 min-[1025px]:flex-row min-[1025px]:items-start min-[1025px]:justify-between">
@@ -13,6 +13,36 @@
     <% end %>
   </div>
 
+  <div class="mt-5 overflow-hidden rounded-[1.5rem] border border-emerald-200 bg-slate-950 shadow-lg">
+    <div class="relative min-h-[340px]">
+      <% if location %>
+        <% map_src = "https://www.google.com/maps?q=#{ERB::Util.url_encode("#{location.latitude},#{location.longitude}")}&z=15&output=embed" %>
+        <iframe src="<%= map_src %>" class="absolute inset-0 h-full w-full border-0 opacity-90" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Driver live location map"></iframe>
+      <% else %>
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_24%,rgba(16,185,129,0.42),transparent_28%),radial-gradient(circle_at_78%_66%,rgba(59,130,246,0.35),transparent_26%),linear-gradient(135deg,#064e3b,#172554)]"></div>
+      <% end %>
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/10 to-slate-950/30"></div>
+      <div class="absolute left-5 top-5 rounded-2xl bg-white/95 p-4 shadow-xl ring-1 ring-white/70 backdrop-blur">
+        <p class="text-xs font-black uppercase tracking-wide text-emerald-600">Driver live location</p>
+        <p class="mt-1 text-sm font-black text-slate-950"><%= location ? "On the way to #{location.eta_destination || (quotation.in_progress? ? "delivery" : "pickup")}" : "Waiting for driver GPS" %></p>
+      </div>
+      <div class="absolute bottom-5 left-5 right-5 grid gap-3 sm:grid-cols-3">
+        <div class="rounded-2xl bg-white/95 p-4 shadow-xl ring-1 ring-white/70 backdrop-blur">
+          <p class="text-xs font-black uppercase tracking-wide text-emerald-600">ETA</p>
+          <p class="mt-1 text-2xl font-black text-slate-950"><%= eta_text %></p>
+        </div>
+        <div class="rounded-2xl bg-white/95 p-4 shadow-xl ring-1 ring-white/70 backdrop-blur">
+          <p class="text-xs font-black uppercase tracking-wide text-emerald-600">Destination</p>
+          <p class="mt-1 text-sm font-black text-slate-950"><%= location&.eta_destination || (quotation.in_progress? ? "Delivery" : "Pickup") %></p>
+        </div>
+        <div class="rounded-2xl bg-white/95 p-4 shadow-xl ring-1 ring-white/70 backdrop-blur">
+          <p class="text-xs font-black uppercase tracking-wide text-emerald-600">Last update</p>
+          <p class="mt-1 text-sm font-black text-slate-950"><%= location&.recorded_at&.to_fs(:long) || "Not yet" %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="mt-5 grid gap-3 sm:grid-cols-3">
     <div class="rounded-xl bg-white p-4 ring-1 ring-emerald-100">
       <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Driver status</p>
@@ -20,7 +50,7 @@
     </div>
     <div class="rounded-xl bg-white p-4 ring-1 ring-emerald-100">
       <p class="text-xs font-bold uppercase tracking-wide text-slate-400">ETA to <%= location&.eta_destination || (quotation.in_progress? ? "delivery" : "pickup") %></p>
-      <p class="mt-2 text-xl font-black text-emerald-700"><%= location&.eta_label || "Updating..." %></p>
+      <p class="mt-2 text-xl font-black text-emerald-700"><%= eta_text %></p>
     </div>
     <div class="rounded-xl bg-white p-4 ring-1 ring-emerald-100">
       <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Last update</p>
@@ -33,16 +63,4 @@
     <%= link_to "View driver on map", maps_url, target: "_blank", rel: "noopener", class: "mt-4 inline-flex rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-black text-white" %>
   <% end %>
 
-  <% if recent_locations.any? %>
-    <div class="mt-5">
-      <p class="text-xs font-black uppercase tracking-wide text-slate-500">Recent updates</p>
-      <ul class="mt-3 space-y-2">
-        <% recent_locations.each do |entry| %>
-          <li class="rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-600 ring-1 ring-emerald-100">
-            <%= entry.recorded_at.to_fs(:long) %> · ETA <%= entry.eta_label %> to <%= entry.eta_destination || "destination" %>
-          </li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
 </section>

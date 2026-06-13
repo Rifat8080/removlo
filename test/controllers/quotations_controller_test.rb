@@ -109,4 +109,97 @@ class QuotationsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match users(:driver_a).email, response.body
     assert_match "650", response.body
   end
+
+  test "customer acceptance requires deposit before quote is accepted" do
+    sign_in users(:customer)
+    quotation = quotations(:marketplace_job)
+
+    patch accept_quotation_path(quotation)
+
+    assert_redirected_to quotation_path(quotation)
+    assert_equal "quoted", quotation.reload.status
+  end
+
+  test "customer direct accept is blocked when deposit amount is not set" do
+    sign_in users(:customer)
+    quotation = quotations(:marketplace_job)
+    quotation.update!(deposit_cents: 0)
+
+    patch accept_quotation_path(quotation)
+
+    assert_redirected_to quotation_path(quotation)
+    assert_equal "quoted", quotation.reload.status
+
+    get quotation_path(quotation)
+    assert_response :success
+    assert_no_match "Pay deposit to accept", response.body
+    assert_match "Pay full quote to accept", response.body
+  end
+
+  test "customer quote page reconciles paid Stripe checkout when webhook was missed" do
+    sign_in users(:customer)
+    quotation = quotations(:marketplace_job)
+    quotation.update!(status: "quoted", deposit_cents: 0)
+    payment = quotation.quotation_payments.create!(
+      amount_cents: quotation.quoted_price_cents,
+      payment_method: "stripe",
+      status: :pending,
+      paid_on: Date.current,
+      reference: "FULL-RECON",
+      stripe_checkout_session_id: "cs_paid_reconcile"
+    )
+    stripe_session = Struct.new(:id, :payment_intent, :payment_status, :metadata).new(
+      "cs_paid_reconcile",
+      "pi_paid_reconcile",
+      "paid",
+      {
+        "quotation_payment_id" => payment.id,
+        "payment_kind" => "quotation_acceptance"
+      }
+    )
+    stripe_key = ENV["STRIPE_SECRET_KEY"]
+    ENV["STRIPE_SECRET_KEY"] = "sk_test_reconcile"
+
+    Stripe::Checkout::Session.stub(:retrieve, stripe_session) do
+      get quotation_path(quotation)
+    end
+
+    assert_response :success
+    assert payment.reload.recorded?
+    assert quotation.reload.accepted?
+    assert quotation.paid?
+  ensure
+    stripe_key ? ENV["STRIPE_SECRET_KEY"] = stripe_key : ENV.delete("STRIPE_SECRET_KEY")
+  end
+
+  test "accepted quotation show hides decision buttons" do
+    sign_in users(:customer)
+    quotation = quotations(:accepted_job)
+
+    get quotation_path(quotation)
+
+    assert_response :success
+    assert_no_match "Pay deposit to accept", response.body
+    assert_no_match "Reject quote", response.body
+    assert_match "Quote accepted", response.body
+  end
+
+  test "paid full quotation does not show pending deposit" do
+    sign_in users(:customer)
+    quotation = quotations(:marketplace_job)
+    quotation.update!(status: "accepted", deposit_cents: 0)
+    quotation.quotation_payments.create!(
+      amount_cents: quotation.quoted_price_cents,
+      payment_method: "stripe",
+      status: :recorded,
+      paid_on: Date.current,
+      reference: "FULL-SHOW"
+    )
+
+    get quotation_path(quotation)
+
+    assert_response :success
+    assert_match "Paid in full", response.body
+    assert_no_match "Deposit</p>\n        <p class=\"mt-2 text-2xl font-black\">Pending", response.body
+  end
 end

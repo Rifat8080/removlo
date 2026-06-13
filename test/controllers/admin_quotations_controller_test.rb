@@ -310,6 +310,53 @@ class AdminQuotationsControllerTest < ActionDispatch::IntegrationTest
     assert_match "Workflow actions", response.body
   end
 
+  test "assigning driver automatically schedules accepted job" do
+    sign_in users(:staff)
+    quotation = quotations(:accepted_job)
+    quotation.update!(payment_status: "deposit_paid")
+
+    patch admin_quotation_path(quotation), params: {
+      quotation: {
+        assigned_driver_id: users(:driver_a).id
+      }
+    }
+
+    assert_redirected_to admin_quotation_path(quotation)
+    quotation.reload
+    assert_equal users(:driver_a), quotation.assigned_driver
+    assert_equal "scheduled", quotation.status
+    assert_not quotation.awaiting_driver_offers?
+  end
+
+  test "staff cannot start or complete move from admin workflow" do
+    sign_in users(:staff)
+    quotation = quotations(:booked_job)
+
+    patch transition_admin_quotation_path(quotation), params: { status: "in_progress" }
+
+    assert_redirected_to admin_quotation_path(quotation)
+    assert_equal "scheduled", quotation.reload.status
+  end
+
+  test "staff admin page hides move execution actions" do
+    sign_in users(:staff)
+
+    get admin_quotation_path(quotations(:booked_job))
+
+    assert_response :success
+    assert_no_match "Start move", response.body
+    assert_no_match "Complete job", response.body
+  end
+
+  test "admin keeps move execution actions" do
+    sign_in users(:admin)
+
+    get admin_quotation_path(quotations(:booked_job))
+
+    assert_response :success
+    assert_match "Start move", response.body
+  end
+
   test "accepted job must be deposit protected and assigned before scheduling" do
     sign_in users(:admin)
     quotation = quotations(:accepted_job)

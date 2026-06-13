@@ -17,6 +17,8 @@ module Accounting
         sync_refund
       elsif payment.recorded?
         sync_income
+      elsif payment.failed?
+        sync_failed_invoice
       else
         destroy_linked_records
       end
@@ -78,13 +80,14 @@ module Accounting
 
       invoice = CustomerInvoice.find_by(quotation_payment: payment)
       if invoice.present?
+        should_notify = !invoice.refunded?
         invoice.update!(
           invoice_type: :refund,
           status: :refunded,
           settled_on: Date.current,
-          notes: [invoice.notes, "Refund for #{quotation.reference}"].compact.join(" — ")
+          notes: refund_notes(invoice.notes)
         )
-        notify_refund_invoice(invoice)
+        notify_refund_invoice(invoice) if should_notify
       else
         refund_invoice = CustomerInvoice.create!(
           invoice_type: :refund,
@@ -101,6 +104,26 @@ module Accounting
       end
 
       transaction
+    end
+
+    def sync_failed_invoice
+      AccountingTransaction.where(quotation_payment: payment).destroy_all
+
+      invoice = CustomerInvoice.find_or_initialize_by(quotation_payment: payment)
+      invoice.assign_attributes(
+        invoice_type: :standard,
+        customer: quotation.customer,
+        quotation: quotation,
+        amount_cents: payment.amount_cents,
+        status: :failed,
+        issued_on: Date.current,
+        settled_on: nil,
+        notes: [payment.notes, "Stripe payment failed or was cancelled for #{quotation.reference}"].compact.join(" — ")
+      )
+      was_new = invoice.new_record?
+      invoice.save!
+      notify_failed_invoice(invoice) if was_new
+      invoice
     end
 
     def destroy_linked_records
@@ -142,8 +165,27 @@ module Accounting
       )
     end
 
+    def notify_failed_invoice(invoice)
+      ::ActivityNotifier.call(
+        recipients: invoice.customer,
+        event_type: "accounting.invoice_failed",
+        title: "Payment attempt invoice #{invoice.invoice_number}",
+        body: "A payment attempt for #{money(invoice.amount_cents)} was not completed. You can try again from your quotation.",
+        url: Rails.application.routes.url_helpers.customer_invoice_path(invoice),
+        actor: actor,
+        notifiable: invoice
+      )
+    end
+
     def money(cents)
       format("£%.2f", cents.to_i / 100.0)
+    end
+
+    def refund_notes(existing_notes)
+      refund_note = "Refund for #{quotation.reference}"
+      notes = existing_notes.to_s.split(" — ").reject(&:blank?)
+      notes << refund_note unless notes.include?(refund_note)
+      notes.join(" — ")
     end
   end
 end

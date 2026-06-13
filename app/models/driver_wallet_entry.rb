@@ -1,6 +1,7 @@
 class DriverWalletEntry < ApplicationRecord
   ENTRY_TYPES = {
     job_earning: "job_earning",
+    withdrawal_request: "withdrawal_request",
     payout: "payout",
     adjustment: "adjustment"
   }.freeze
@@ -21,6 +22,7 @@ class DriverWalletEntry < ApplicationRecord
 
   validates :amount_cents, numericality: { other_than: 0 }
   validate :driver_must_be_driver
+  validate :withdrawal_request_must_be_debit
 
   scope :recent, -> { order(created_at: :desc) }
   scope :credits, -> { where("amount_cents > 0") }
@@ -32,7 +34,7 @@ class DriverWalletEntry < ApplicationRecord
 
   def approve!(actor:)
     unless approvable?
-      errors.add(:base, "Only pending credit entries can be approved")
+      errors.add(:base, "Only pending earnings or withdrawal requests can be approved")
       raise ActiveRecord::RecordInvalid, self
     end
 
@@ -41,7 +43,7 @@ class DriverWalletEntry < ApplicationRecord
 
   def mark_withdrawn!
     unless payable?
-      errors.add(:base, "Only available credit entries can be paid out")
+      errors.add(:base, "Only available earnings or approved withdrawal requests can be paid out")
       raise ActiveRecord::RecordInvalid, self
     end
 
@@ -49,11 +51,11 @@ class DriverWalletEntry < ApplicationRecord
   end
 
   def approvable?
-    pending? && amount_cents.positive?
+    pending? && (amount_cents.positive? || withdrawal_request?)
   end
 
   def payable?
-    available? && amount_cents.positive?
+    available? && (amount_cents.positive? || withdrawal_request?)
   end
 
   private
@@ -62,5 +64,12 @@ class DriverWalletEntry < ApplicationRecord
     return if driver.blank? || driver.driver?
 
     errors.add(:driver, "must have the driver role")
+  end
+
+  def withdrawal_request_must_be_debit
+    return unless withdrawal_request?
+    return if amount_cents.negative?
+
+    errors.add(:amount_cents, "must be negative for withdrawal requests")
   end
 end

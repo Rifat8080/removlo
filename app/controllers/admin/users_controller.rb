@@ -63,11 +63,23 @@ module Admin
     end
 
     def create_user_params
-      params.require(:user).permit(:email, :role, :password, :password_confirmation)
+      attrs = params.require(:user).permit(:email, :password, :password_confirmation)
+      attrs[:role] = safe_role_param if safe_role_param.present?
+      attrs
     end
 
     def update_user_params
-      params.require(:user).permit(:email, :role, :password, :password_confirmation)
+      attrs = params.require(:user).permit(:email, :password, :password_confirmation)
+      attrs[:role] = safe_role_param if safe_role_param.present?
+      attrs
+    end
+
+    def safe_role_param
+      role = params.dig(:user, :role).to_s
+      return if role.blank?
+      return role if User.roles.key?(role)
+
+      nil
     end
 
     def require_admin!

@@ -1,5 +1,5 @@
 <% location ||= quotation.latest_driver_location %>
-<% recent_locations = quotation.driver_locations.recent.limit(5) %>
+<% eta_text = location ? (location.eta_label || "Unavailable") : "Updating..." %>
 
 <section id="<%= dom_id(quotation, :driver_tracking_panel) %>" class="rounded-2xl border border-indigo-200 bg-indigo-50/70 p-5 shadow-sm">
   <div class="flex flex-col gap-3 min-[1025px]:flex-row min-[1025px]:items-start min-[1025px]:justify-between">
@@ -21,16 +21,50 @@
     </div>
   </div>
 
-  <div class="mt-4 flex flex-wrap gap-2">
-    <button type="button" data-driver-tracking-target="startButton" data-action="driver-tracking#start" class="rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-black text-white">Start sharing</button>
-    <button type="button" data-driver-tracking-target="stopButton" data-action="driver-tracking#stop" class="rounded-xl border border-indigo-200 bg-white px-4 py-2.5 text-sm font-black text-indigo-700">Stop sharing</button>
+  <div class="mt-5 overflow-hidden rounded-[1.5rem] border border-indigo-200 bg-slate-950 shadow-lg">
+    <div class="relative min-h-[320px]">
+      <% if location %>
+        <% map_src = "https://www.google.com/maps?q=#{ERB::Util.url_encode("#{location.latitude},#{location.longitude}")}&z=15&output=embed" %>
+        <iframe src="<%= map_src %>" class="absolute inset-0 h-full w-full border-0 opacity-90" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Driver live location map"></iframe>
+      <% else %>
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_25%_30%,rgba(99,102,241,0.45),transparent_28%),radial-gradient(circle_at_78%_64%,rgba(16,185,129,0.35),transparent_26%),linear-gradient(135deg,#0f172a,#312e81)]"></div>
+      <% end %>
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/10 to-slate-950/30"></div>
+      <div class="absolute left-5 top-5 rounded-2xl bg-white/95 p-4 shadow-xl ring-1 ring-white/70 backdrop-blur">
+        <p class="text-xs font-black uppercase tracking-wide text-slate-400">Driver live position</p>
+        <p class="mt-1 text-sm font-black text-slate-950"><%= location ? "#{location.latitude.round(5)}, #{location.longitude.round(5)}" : "Waiting for first GPS update" %></p>
+      </div>
+      <div class="absolute bottom-5 left-5 right-5 grid gap-3 sm:grid-cols-3">
+        <div class="rounded-2xl bg-white/95 p-4 shadow-xl ring-1 ring-white/70 backdrop-blur">
+          <p class="text-xs font-black uppercase tracking-wide text-indigo-600">ETA</p>
+          <p class="mt-1 text-2xl font-black text-slate-950"><%= eta_text %></p>
+        </div>
+        <div class="rounded-2xl bg-white/95 p-4 shadow-xl ring-1 ring-white/70 backdrop-blur">
+          <p class="text-xs font-black uppercase tracking-wide text-indigo-600">Heading to</p>
+          <p class="mt-1 text-sm font-black text-slate-950"><%= location&.eta_destination || (quotation.in_progress? ? "Delivery" : "Pickup") %></p>
+        </div>
+        <div class="rounded-2xl bg-white/95 p-4 shadow-xl ring-1 ring-white/70 backdrop-blur">
+          <p class="text-xs font-black uppercase tracking-wide text-indigo-600">Last ping</p>
+          <p class="mt-1 text-sm font-black text-slate-950"><%= location&.recorded_at&.to_fs(:long) || "Not yet" %></p>
+        </div>
+      </div>
+    </div>
   </div>
-  <p data-driver-tracking-target="status" class="mt-3 text-xs font-bold text-slate-500">Location sharing is off.</p>
+
+  <div class="mt-4 flex flex-wrap gap-2">
+    <% if quotation.in_progress? %>
+      <span class="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-black text-white">Auto-sharing while move is active</span>
+    <% else %>
+      <button type="button" data-driver-tracking-target="startButton" data-action="driver-tracking#start" class="rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-black text-white">Start sharing</button>
+      <button type="button" data-driver-tracking-target="stopButton" data-action="driver-tracking#stop" class="rounded-xl border border-indigo-200 bg-white px-4 py-2.5 text-sm font-black text-indigo-700">Stop sharing</button>
+    <% end %>
+  </div>
+  <p data-driver-tracking-target="status" class="mt-3 text-xs font-bold text-slate-500"><%= quotation.in_progress? ? "Location sharing starts automatically and stays on while this move is in progress." : "Location sharing is off." %></p>
 
   <div class="mt-5 grid gap-3 sm:grid-cols-3">
     <div class="rounded-xl bg-white p-4 ring-1 ring-indigo-100">
       <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Current ETA</p>
-      <p class="mt-2 text-xl font-black text-indigo-700"><%= location&.eta_label || "—" %></p>
+      <p class="mt-2 text-xl font-black text-indigo-700"><%= eta_text %></p>
     </div>
     <div class="rounded-xl bg-white p-4 ring-1 ring-indigo-100">
       <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Destination</p>
@@ -42,16 +76,4 @@
     </div>
   </div>
 
-  <% if recent_locations.any? %>
-    <div class="mt-5">
-      <p class="text-xs font-black uppercase tracking-wide text-slate-500">Tracking feed</p>
-      <ul class="mt-3 space-y-2">
-        <% recent_locations.each do |entry| %>
-          <li class="rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-600 ring-1 ring-indigo-100">
-            <%= entry.recorded_at.to_fs(:long) %> · <%= entry.latitude.round(5) %>, <%= entry.longitude.round(5) %> · ETA <%= entry.eta_label %>
-          </li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
 </section>

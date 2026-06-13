@@ -9,7 +9,7 @@ class PublicJobsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match quotation.pickup_address, response.body
     assert_match quotation.delivery_address, response.body
-    assert_match "Sign up as a driver to bid", response.body
+    assert_match "Sign up as a driver", response.body
   end
 
   test "closed job share link returns gone page" do

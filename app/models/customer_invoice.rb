@@ -8,6 +8,7 @@ class CustomerInvoice < ApplicationRecord
     draft: "draft",
     issued: "issued",
     paid: "paid",
+    failed: "failed",
     refunded: "refunded",
     cancelled: "cancelled"
   }.freeze

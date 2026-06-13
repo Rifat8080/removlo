@@ -2,8 +2,17 @@
 
 <div class="mx-auto max-w-7xl">
   <% quote_ready = @quotation.quoted_price_cents.positive? %>
-  <% next_action_title = quote_ready ? "Review your quote" : "We are preparing your quote" %>
-  <% next_action_copy = quote_ready ? "Your price is ready. Accept, reject, or ask the team to adjust the details." : "Your request is with the Removlo team. You can add notes while we prepare the price." %>
+  <% decision_available = quote_ready && (@quotation.quoted? || @quotation.negotiating?) %>
+  <% next_action_title = @quotation.accepted? ? "Quote accepted" : (quote_ready ? "Review your quote" : "We are preparing your quote") %>
+  <% next_action_copy = if @quotation.accepted?
+                          "Your quote is accepted and the team is preparing the next move steps."
+                        elsif quote_ready && @quotation.deposit_cents.positive?
+                          "Pay the deposit to accept and secure this quote. Acceptance completes after payment."
+                        elsif quote_ready
+                          "Your price is ready. Pay the full quotation amount securely with Stripe to accept and confirm this booking."
+                        else
+                          "Your request is with the Removlo team. You can add notes while we prepare the price."
+                        end %>
 
   <div class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-950 via-indigo-950 to-blue-900 p-5 text-white shadow-[0_28px_90px_rgba(30,41,59,0.28)] ring-1 ring-slate-950/5 sm:p-7 min-[1025px]:p-8">
     <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_18%,rgba(96,165,250,0.25),transparent_28%),radial-gradient(circle_at_82%_22%,rgba(168,85,247,0.22),transparent_30%)]"></div>
@@ -36,7 +45,15 @@
       </div>
       <div class="rounded-2xl border border-white/10 bg-white/12 p-4 shadow-lg shadow-slate-950/10 backdrop-blur">
         <p class="text-xs font-semibold uppercase tracking-wide text-indigo-200">Deposit</p>
-        <p class="mt-2 text-2xl font-black"><%= @quotation.deposit_cents.positive? ? money_from_cents(@quotation.deposit_cents) : "Pending" %></p>
+        <p class="mt-2 text-2xl font-black">
+          <% if @quotation.deposit_cents.positive? %>
+            <%= money_from_cents(@quotation.deposit_cents) %>
+          <% elsif @quotation.paid? %>
+            Paid in full
+          <% else %>
+            Not required
+          <% end %>
+        </p>
       </div>
       <div class="rounded-2xl border border-white/10 bg-white/12 p-4 shadow-lg shadow-slate-950/10 backdrop-blur">
         <p class="text-xs font-semibold uppercase tracking-wide text-indigo-200">Move date</p>
@@ -67,19 +84,44 @@
               </div>
             </div>
           </div>
-          <div class="mt-5 grid gap-3 sm:grid-cols-3">
-            <%= button_to "Accept quote", accept_quotation_path(@quotation), method: :patch, disabled: !quote_ready, class: "inline-flex w-full items-center justify-center rounded-xl bg-emerald-600 px-4 py-3 text-sm font-black text-white shadow-lg shadow-emerald-600/20 transition hover:-translate-y-0.5 hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none" %>
-            <%= button_to "Reject quote", reject_quotation_path(@quotation), method: :patch, disabled: !quote_ready, class: "inline-flex w-full items-center justify-center rounded-xl bg-rose-600 px-4 py-3 text-sm font-black text-white shadow-lg shadow-rose-600/20 transition hover:-translate-y-0.5 hover:bg-rose-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none" %>
-            <a href="#negotiate" class="inline-flex w-full items-center justify-center rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-black text-indigo-700 transition hover:-translate-y-0.5 hover:bg-indigo-100">Negotiate</a>
-          </div>
+          <% if @quotation.accepted? %>
+            <div class="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-bold text-emerald-800">
+              Quote accepted. We will continue with scheduling and driver assignment.
+            </div>
+          <% elsif decision_available %>
+            <div class="mt-5 grid gap-3 sm:grid-cols-3">
+              <% if @quotation.deposit_cents.positive? && !@quotation.deposit_protected? %>
+                <%= button_to "Pay deposit to accept", deposit_checkout_quotation_path(@quotation), method: :post, form: { data: { turbo: false } }, class: "inline-flex w-full items-center justify-center rounded-xl bg-emerald-600 px-4 py-3 text-sm font-black text-white shadow-lg shadow-emerald-600/20 transition hover:-translate-y-0.5 hover:bg-emerald-700" %>
+              <% else %>
+                <%= button_to "Pay full quote to accept", deposit_checkout_quotation_path(@quotation), method: :post, form: { data: { turbo: false } }, class: "inline-flex w-full items-center justify-center rounded-xl bg-emerald-600 px-4 py-3 text-sm font-black text-white shadow-lg shadow-emerald-600/20 transition hover:-translate-y-0.5 hover:bg-emerald-700" %>
+              <% end %>
+              <%= button_to "Reject quote", reject_quotation_path(@quotation), method: :patch, class: "inline-flex w-full items-center justify-center rounded-xl bg-rose-600 px-4 py-3 text-sm font-black text-white shadow-lg shadow-rose-600/20 transition hover:-translate-y-0.5 hover:bg-rose-700" %>
+              <a href="#negotiate" class="inline-flex w-full items-center justify-center rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-black text-indigo-700 transition hover:-translate-y-0.5 hover:bg-indigo-100">Negotiate</a>
+            </div>
+          <% else %>
+            <p class="mt-5 rounded-2xl bg-slate-50 p-4 text-sm font-semibold text-slate-500 ring-1 ring-slate-100">Quote decision actions will appear once the team sends your price.</p>
+          <% end %>
         </section>
 
-        <% if @quotation.accepted? && @quotation.deposit_cents.positive? && !@quotation.deposit_protected? %>
+        <% if quote_ready && !@quotation.accepted? && @quotation.deposit_cents.positive? && !@quotation.deposit_protected? %>
           <section class="rounded-2xl border border-amber-200 bg-amber-50 p-5 shadow-sm">
             <h2 class="text-lg font-black text-amber-900">Pay deposit</h2>
             <p class="mt-1 text-sm text-amber-800">Secure your booking with a <%= money_from_cents(@quotation.deposit_cents) %> deposit. Your driver is assigned after payment.</p>
-            <%= button_to "Pay deposit", deposit_checkout_quotation_path(@quotation), method: :post, class: "mt-4 inline-flex rounded-xl bg-amber-600 px-5 py-3 text-sm font-bold text-white" %>
+            <%= button_to "Pay deposit", deposit_checkout_quotation_path(@quotation), method: :post, form: { data: { turbo: false } }, class: "mt-4 inline-flex rounded-xl bg-amber-600 px-5 py-3 text-sm font-bold text-white" %>
           </section>
+        <% end %>
+
+        <% if @quotation.accepted? && @quotation.remaining_balance_cents.positive? %>
+          <section class="rounded-2xl border border-blue-200 bg-blue-50 p-5 shadow-sm">
+            <h2 class="text-lg font-black text-blue-950">Pay quotation balance</h2>
+            <p class="mt-1 text-sm text-blue-800">Outstanding balance: <span class="font-black"><%= money_from_cents(@quotation.remaining_balance_cents) %></span>. Pay securely with Stripe when you are ready.</p>
+            <%= button_to "Pay balance with Stripe", balance_checkout_quotation_path(@quotation), method: :post, form: { data: { turbo: false } }, class: "mt-4 inline-flex rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-700" %>
+          </section>
+        <% end %>
+
+        <% if @quotation.tracking_visible_to_customer? %>
+          <%= turbo_stream_from @quotation, :tracking %>
+          <%= render "quotations/tracking_panel", quotation: @quotation, location: @quotation.latest_driver_location %>
         <% end %>
 
         <% if @job_chat_available %>
@@ -92,11 +134,6 @@
               <%= button_to "Open job chat", conversations_path(quotation_id: @quotation.id), method: :post, class: "mt-4 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white" %>
             </section>
           <% end %>
-        <% end %>
-
-        <% if @quotation.tracking_visible_to_customer? %>
-          <%= turbo_stream_from @quotation, :tracking %>
-          <%= render "quotations/tracking_panel", quotation: @quotation, location: @quotation.latest_driver_location %>
         <% end %>
 
         <%= render "quotations/route_estimate", quotation: @quotation %>

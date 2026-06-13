@@ -22,13 +22,18 @@ module GoogleMaps
         "distancematrix/json",
         origins: "#{latitude},#{longitude}",
         destinations: destination,
-        mode: "driving",
-        region: "gb"
+        mode: "driving"
       )
-      return nil unless payload["status"] == "OK"
+      unless payload["status"] == "OK"
+        Rails.logger.warn("[GoogleMaps::EtaCalculator] Distance Matrix #{payload["status"]}: #{payload["error_message"]}")
+        return nil
+      end
 
       element = payload.dig("rows", 0, "elements", 0)
-      return nil unless element && element["status"] == "OK"
+      unless element && element["status"] == "OK"
+        Rails.logger.warn("[GoogleMaps::EtaCalculator] Distance Matrix element #{element&.dig("status") || "missing"}")
+        return nil
+      end
 
       Result.new(
         eta_seconds: element.dig("duration", "value"),

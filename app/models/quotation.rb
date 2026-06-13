@@ -34,6 +34,7 @@ class Quotation < ApplicationRecord
     "rejected" => "Reject quote",
     "cancelled" => "Cancel"
   }.freeze
+  STAFF_RESTRICTED_TRANSITION_STATUSES = %w[scheduled in_progress completed].freeze
 
   belongs_to :customer, class_name: "User"
   belongs_to :created_by, class_name: "User", optional: true
@@ -113,6 +114,13 @@ class Quotation < ApplicationRecord
     quotation_status_events.create!(from_status: previous_status, to_status: next_status, user: actor, note: note)
   end
 
+  def auto_schedule_after_driver_assignment!(actor:)
+    return unless accepted?
+    return unless ready_to_schedule?
+
+    transition_to!(:scheduled, actor: actor, note: "Driver assigned; job scheduled automatically")
+  end
+
   def sync_payment_status!
     total_paid = quotation_payments.recorded.sum(:amount_cents)
 
@@ -129,6 +137,14 @@ class Quotation < ApplicationRecord
 
     update_column(:payment_status, next_status)
     assign_selected_driver_if_releasable!
+  end
+
+  def paid_amount_cents
+    quotation_payments.recorded.sum(:amount_cents)
+  end
+
+  def remaining_balance_cents
+    [quoted_price_cents.to_i - paid_amount_cents, 0].max
   end
 
   def confirmed_for_driver_assignment?
@@ -174,6 +190,14 @@ class Quotation < ApplicationRecord
         label: ADMIN_TRANSITION_LABELS.fetch(next_status),
         note: "Changed to #{next_status.humanize}"
       }
+    end
+  end
+
+  def transition_options_for(user)
+    return admin_transition_options if user&.admin?
+
+    admin_transition_options.reject do |option|
+      STAFF_RESTRICTED_TRANSITION_STATUSES.include?(option[:status])
     end
   end
 
@@ -258,7 +282,7 @@ class Quotation < ApplicationRecord
   end
 
   def workflow_blocker_message
-    return "Select a driver and collect the deposit before scheduling this job." if accepted? && !ready_to_schedule?
+    return "Assign a driver and collect payment before this job is scheduled automatically." if accepted? && !ready_to_schedule?
     return "Assign a driver before starting this scheduled job." if scheduled? && !ready_to_start?
     return "Assign a driver before completing this job." if in_progress? && !ready_to_complete?
     return "This quotation is already complete." if completed?
@@ -368,11 +392,11 @@ class Quotation < ApplicationRecord
   private
 
   def pickup_query
-    [pickup_address, pickup_postcode, "UK"].compact_blank.join(", ")
+    [pickup_address, pickup_postcode].compact_blank.join(", ")
   end
 
   def delivery_query
-    [delivery_address, delivery_postcode, "UK"].compact_blank.join(", ")
+    [delivery_address, delivery_postcode].compact_blank.join(", ")
   end
 
   def should_estimate_route?
@@ -392,6 +416,7 @@ class Quotation < ApplicationRecord
     return unless confirmed_for_driver_assignment? && customer_details_releasable?
 
     update!(assigned_driver: selected_driver_offer.driver, awaiting_driver_offers: false)
+    auto_schedule_after_driver_assignment!(actor: customer)
   end
 
   def extract_city_or_postcode(postcode, address, fallback)

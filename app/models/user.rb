@@ -57,15 +57,21 @@ class User < ApplicationRecord
   end
 
   def wallet_balance_cents
-    driver_wallet_entries.where(status: %w[pending available withdrawn]).sum(:amount_cents)
+    driver_wallet_entries.job_earning.where(status: %w[pending available withdrawn]).sum(:amount_cents)
   end
 
   def wallet_pending_cents
-    driver_wallet_entries.where(status: "pending").where("amount_cents > 0").sum(:amount_cents)
+    driver_wallet_entries.job_earning.where(status: "pending").sum(:amount_cents)
   end
 
   def wallet_available_cents
-    driver_wallet_entries.where(status: "available").where("amount_cents > 0").sum(:amount_cents)
+    available_earnings = driver_wallet_entries.job_earning.where(status: "available").sum(:amount_cents)
+    reserved_withdrawals = driver_wallet_entries.withdrawal_request.where(status: %w[pending available]).sum(:amount_cents).abs
+    [available_earnings - reserved_withdrawals, 0].max
+  end
+
+  def wallet_requested_withdrawal_cents
+    driver_wallet_entries.withdrawal_request.where(status: %w[pending available]).sum(:amount_cents).abs
   end
 
   private
