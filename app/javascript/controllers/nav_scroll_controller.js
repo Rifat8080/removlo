@@ -15,10 +15,7 @@ export default class extends Controller {
   onScroll() {
     const scrolled = window.scrollY > 8
 
-    this.element.classList.toggle("bg-white/95", scrolled)
-    this.element.classList.toggle("bg-white/90", !scrolled)
-    this.element.classList.toggle("shadow-lg", scrolled)
-    this.element.classList.toggle("shadow-slate-900/5", scrolled)
-    this.element.classList.toggle("border-slate-200/80", scrolled)
+    this.element.classList.toggle("shadow-md", scrolled)
+    this.element.classList.toggle("shadow-sm", !scrolled)
   }
 }
