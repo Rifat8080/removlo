@@ -74,9 +74,6 @@
                   <li><%= link_to "Availability", driver_availabilities_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
                   <li><%= link_to "Wallet", driver_wallet_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
                 <% end %>
-                <% if current_user.admin? || current_user.staff? || current_user.driver? %>
-                  <li><%= link_to "My payslips", payslips_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
-                <% end %>
                 <% if current_user.operator? %>
                   <li><%= link_to "Control panel", admin_root_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
                   <li><%= link_to "Quotations", admin_quotations_path, class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %></li>
@@ -118,7 +115,6 @@
         <% work_links << ["My jobs", driver_jobs_path, "truck", controller_path == "driver/jobs"] if current_user.driver? %>
         <% work_links << ["Availability", driver_availabilities_path, "calendar", controller_path == "driver/availabilities"] if current_user.driver? %>
         <% work_links << ["Wallet", driver_wallet_path, "invoice", controller_path == "driver/wallets"] if current_user.driver? %>
-        <% work_links << ["My payslips", payslips_path, "invoice", controller_path == "payslips"] if current_user.admin? || current_user.staff? || current_user.driver? %>
         <% work_links << ["Control panel", admin_root_path, "grid", controller_path == "admin/dashboard"] if current_user.operator? %>
         <% work_links << ["Quotations", admin_quotations_path, "doc", controller_path.start_with?("admin/quotation")] if current_user.operator? %>
         <% work_links << ["Driver performance", admin_driver_performances_path, "users", controller_path == "admin/driver_performances"] if current_user.operator? %>

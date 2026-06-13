@@ -9,7 +9,6 @@ module Admin
         )
         @recent_transactions = AccountingTransaction.includes(:accounting_category, :user).recent.limit(8)
         @unpaid_invoices = CustomerInvoice.unpaid.includes(:customer, :quotation).limit(6)
-        @recent_payslips = Payslip.includes(:employee, :payroll_run).recent.limit(6)
       end
     end
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_13_140000) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_13_141000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -39,6 +39,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_13_140000) do
     t.string "reference"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "salary_payment_status"
     t.index ["accounting_category_id"], name: "index_accounting_transactions_on_accounting_category_id"
     t.index ["quotation_id"], name: "index_accounting_transactions_on_quotation_id"
     t.index ["quotation_payment_id"], name: "index_accounting_transactions_on_quotation_payment_id"

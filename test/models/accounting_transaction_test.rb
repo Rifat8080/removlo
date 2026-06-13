@@ -35,4 +35,52 @@ class AccountingTransactionTest < ActiveSupport::TestCase
     assert_equal 0, summary[:driver_cost_cents]
     assert_equal 12_345, summary[:total_revenue_cents]
   end
+
+  test "paid salary transaction notifies linked beneficiary" do
+    beneficiary = users(:staff)
+
+    assert_difference -> { Notification.where(user: beneficiary, event_type: "accounting.salary_paid").count }, 1 do
+      AccountingTransaction.create!(
+        transaction_type: :salary,
+        salary_payment_status: :paid,
+        user: beneficiary,
+        amount_cents: 125_00,
+        transaction_date: Date.current,
+        description: "June salary"
+      )
+    end
+  end
+
+  test "pending salary transaction notifies beneficiary when marked paid" do
+    beneficiary = users(:staff)
+    transaction = AccountingTransaction.create!(
+      transaction_type: :salary,
+      salary_payment_status: :pending,
+      user: beneficiary,
+      amount_cents: 125_00,
+      transaction_date: Date.current,
+      description: "June salary"
+    )
+
+    assert_no_difference -> { Notification.where(user: beneficiary, event_type: "accounting.salary_paid").count } do
+      transaction.update!(description: "June salary pending")
+    end
+
+    assert_difference -> { Notification.where(user: beneficiary, event_type: "accounting.salary_paid").count }, 1 do
+      transaction.update!(salary_payment_status: :paid)
+    end
+  end
+
+  test "salary transaction requires linked beneficiary and payment status" do
+    transaction = AccountingTransaction.new(
+      transaction_type: :salary,
+      amount_cents: 125_00,
+      transaction_date: Date.current,
+      description: "Salary without beneficiary"
+    )
+
+    assert_not transaction.valid?
+    assert_includes transaction.errors[:user], "must be selected for salary payments"
+    assert_includes transaction.errors[:salary_payment_status], "must be selected for salary payments"
+  end
 end

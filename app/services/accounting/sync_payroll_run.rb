@@ -50,6 +50,7 @@ module Accounting
       transaction = AccountingTransaction.find_or_initialize_by(reference: reference)
       transaction.assign_attributes(
         transaction_type: transaction_type,
+        salary_payment_status: transaction_type.to_s == "salary" ? :paid : nil,
         amount_cents: amount_cents,
         transaction_date: payslip.payment_date || payroll_run.period_end,
         description: description,

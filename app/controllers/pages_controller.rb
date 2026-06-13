@@ -81,7 +81,7 @@ class PagesController < ApplicationController
 
   def load_driver_dashboard
     @dashboard_title = "Driver workspace"
-    @dashboard_subtitle = "See assigned jobs, upcoming work, and payroll in one place."
+    @dashboard_subtitle = "See assigned jobs, upcoming work, and payouts in one place."
     @primary_action = ["View my jobs", driver_jobs_path]
 
     @driver_jobs = Quotation.for_driver(current_user).includes(:customer).limit(6)
@@ -91,7 +91,7 @@ class PagesController < ApplicationController
     @dashboard_stats = [
       ["Active jobs", active_jobs.count, "Accepted or in progress", "truck", "from-indigo-500 to-blue-500"],
       ["Completed jobs", completed_jobs.count, "Finished moves", "check", "from-emerald-500 to-teal-500"],
-      ["Payslips", current_user.payslips.count, "Payroll records", "invoice", "from-blue-500 to-cyan-500"],
+      ["Wallet balance", helpers.money_from_cents(current_user.wallet_balance_cents), "Earnings recorded", "invoice", "from-blue-500 to-cyan-500"],
       ["Unread alerts", current_user.unread_notifications_count, "Latest activity", "bell", "from-violet-500 to-fuchsia-500"]
     ]
 
@@ -99,7 +99,7 @@ class PagesController < ApplicationController
       ["Open my jobs", driver_jobs_path, "Assigned moves"],
       ["Availability", driver_availabilities_path, "Set when you can work"],
       ["Wallet", driver_wallet_path, "Earnings and payouts"],
-      ["View payslips", payslips_path, "Salary and commission records"]
+      ["Notifications", notifications_path, "Salary payment alerts and job updates"]
     ]
   end
 
@@ -131,7 +131,7 @@ class PagesController < ApplicationController
       ["Manage quotations", admin_quotations_path, "Requests, negotiations, jobs"],
       ["Driver performance", admin_driver_performances_path, "Ratings and revenue"]
     ]
-    @quick_actions.insert(2, ["Accounting dashboard", admin_accounting_root_path, "Profit, invoices, payroll"]) if current_user.admin?
+    @quick_actions.insert(2, ["Accounting dashboard", admin_accounting_root_path, "Income, expenses, salaries, and invoices"]) if current_user.admin?
   end
 
   def pages_layout

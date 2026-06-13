@@ -4,7 +4,7 @@
   <div>
     <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">Admin</p>
     <h1 class="mt-1 text-2xl font-extrabold tracking-tight text-slate-900">Accounting</h1>
-    <p class="mt-1 text-sm text-slate-500">Track income, expenses, payroll, invoices, and profit.</p>
+    <p class="mt-1 text-sm text-slate-500">Track income, expenses, salaries, invoices, and profit.</p>
   </div>
   <div class="flex flex-wrap gap-2">
     <%= link_to "New transaction", new_admin_accounting_transaction_path, class: "inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 transition hover:-translate-y-0.5" %>
@@ -16,7 +16,7 @@
   <% [
     ["Total income", @summary[:income_cents], "text-emerald-700"],
     ["Total expenses", @summary[:expense_cents], "text-rose-700"],
-    ["Payroll", @summary[:payroll_cents], "text-indigo-700"],
+    ["Salaries paid", @summary[:payroll_cents], "text-indigo-700"],
     ["Total revenue", @summary[:total_revenue_cents], "text-emerald-700"]
   ].each do |label, cents, color| %>
     <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
@@ -43,7 +43,6 @@
   <%= link_to "Transactions", admin_accounting_transactions_path, class: "rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50" %>
   <%= link_to "Categories", admin_accounting_categories_path, class: "rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50" %>
   <%= link_to "Invoices", admin_accounting_customer_invoices_path, class: "rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50" %>
-  <%= link_to "Payroll", admin_accounting_payroll_runs_path, class: "rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50" %>
 </div>
 
 <div class="grid gap-6 min-[1025px]:grid-cols-2">
@@ -95,22 +94,11 @@
 
     <div class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
       <div class="border-b border-slate-100 px-5 py-4 flex items-center justify-between">
-        <h2 class="text-lg font-bold text-slate-900">Recent payslips</h2>
-        <%= link_to "Payroll runs", admin_accounting_payroll_runs_path, class: "text-sm font-semibold text-indigo-600 hover:text-indigo-700" %>
+        <h2 class="text-lg font-bold text-slate-900">Salary transactions</h2>
+        <%= link_to "Record salary", new_admin_accounting_transaction_path, class: "text-sm font-semibold text-indigo-600 hover:text-indigo-700" %>
       </div>
-      <div class="divide-y divide-slate-100">
-        <% @recent_payslips.each do |payslip| %>
-          <div class="flex items-center justify-between gap-4 px-5 py-4">
-            <div>
-              <p class="font-semibold text-slate-900"><%= payslip.employee.email %></p>
-              <p class="text-xs text-slate-400"><%= payslip.payroll_run.period_label %></p>
-            </div>
-            <span class="font-semibold text-indigo-700"><%= money_from_cents(payslip.net_pay_cents) %></span>
-          </div>
-        <% end %>
-        <% if @recent_payslips.empty? %>
-          <div class="px-5 py-10 text-center text-sm text-slate-500">No payslips yet.</div>
-        <% end %>
+      <div class="px-5 py-6 text-sm text-slate-500">
+        Use transactions with type <span class="font-semibold text-slate-900">Salary</span> to track salary payment status and notify the beneficiary.
       </div>
     </div>
   </div>

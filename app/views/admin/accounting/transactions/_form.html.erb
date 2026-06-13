@@ -8,7 +8,7 @@
     <div class="grid gap-5 min-[1025px]:grid-cols-2">
       <div>
         <%= f.label :transaction_type, class: "mb-2 block text-sm font-medium text-slate-900" %>
-        <%= f.select :transaction_type, AccountingTransaction.transaction_types.keys.map { |k| [k.humanize, k] }, {}, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
+        <%= f.select :transaction_type, %w[income expense salary refund adjustment].map { |k| [k.humanize, k] }, {}, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
       </div>
       <div>
         <%= f.label :amount, "Amount (£)", class: "mb-2 block text-sm font-medium text-slate-900" %>
@@ -23,12 +23,17 @@
         <%= f.collection_select :accounting_category_id, AccountingCategory.ordered, :id, :name, { include_blank: "Select category" }, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
       </div>
       <div>
-        <%= f.label :user_id, "Linked user", class: "mb-2 block text-sm font-medium text-slate-900" %>
-        <%= f.collection_select :user_id, User.order(:email), :id, :email, { include_blank: "Optional" }, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
+        <%= f.label :user_id, "Beneficiary / linked user", class: "mb-2 block text-sm font-medium text-slate-900" %>
+        <%= f.collection_select :user_id, User.order(:email), :id, :email, { include_blank: "Optional for non-salary transactions" }, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
       </div>
       <div>
         <%= f.label :payment_method, class: "mb-2 block text-sm font-medium text-slate-900" %>
         <%= f.text_field :payment_method, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
+      </div>
+      <div>
+        <%= f.label :salary_payment_status, "Salary payment status", class: "mb-2 block text-sm font-medium text-slate-900" %>
+        <%= f.select :salary_payment_status, AccountingTransaction.salary_payment_statuses.keys.map { |k| [k.humanize, k] }, { include_blank: "Only for salary transactions" }, class: "block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm" %>
+        <p class="mt-1 text-xs text-slate-500">Paid salary transactions notify the selected beneficiary.</p>
       </div>
     </div>
 

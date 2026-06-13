@@ -21,6 +21,9 @@
       <div><dt class="text-slate-500">Date</dt><dd class="mt-1 font-semibold text-slate-900"><%= @transaction.transaction_date.strftime("%d %b %Y") %></dd></div>
       <div><dt class="text-slate-500">Category</dt><dd class="mt-1 font-semibold text-slate-900"><%= @transaction.accounting_category&.name || "—" %></dd></div>
       <div><dt class="text-slate-500">Payment method</dt><dd class="mt-1 font-semibold text-slate-900"><%= @transaction.payment_method.presence || "—" %></dd></div>
+      <% if @transaction.salary? %>
+        <div><dt class="text-slate-500">Salary payment status</dt><dd class="mt-1 font-semibold text-slate-900"><%= @transaction.salary_payment_status&.humanize || "—" %></dd></div>
+      <% end %>
       <div><dt class="text-slate-500">Vendor / payee</dt><dd class="mt-1 font-semibold text-slate-900"><%= @transaction.vendor_payee.presence || "—" %></dd></div>
       <div><dt class="text-slate-500">Reference</dt><dd class="mt-1 font-semibold text-slate-900"><%= @transaction.reference.presence || "—" %></dd></div>
       <% if @transaction.quotation.present? %>

@@ -23,7 +23,7 @@ module Admin
       end
 
       def new
-        @transaction = AccountingTransaction.new(transaction_date: Date.current)
+        @transaction = AccountingTransaction.new(transaction_date: Date.current, salary_payment_status: :paid)
       end
 
       def edit
@@ -65,7 +65,8 @@ module Admin
       def transaction_params
         attrs = params.require(:accounting_transaction).permit(
           :accounting_category_id, :user_id, :quotation_id, :transaction_type,
-          :transaction_date, :description, :vendor_payee, :payment_method, :reference, :amount
+          :transaction_date, :description, :vendor_payee, :payment_method, :reference, :amount,
+          :salary_payment_status
         )
         parse_amount_param(attrs)
       end

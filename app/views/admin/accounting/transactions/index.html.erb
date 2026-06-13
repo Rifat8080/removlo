@@ -50,6 +50,9 @@
         <div>
           <div class="flex flex-wrap items-center gap-2">
             <%= accounting_transaction_badge(transaction.transaction_type) %>
+            <% if transaction.salary? && transaction.salary_payment_status.present? %>
+              <span class="rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-bold text-indigo-700"><%= transaction.salary_payment_status.humanize %></span>
+            <% end %>
             <p class="font-semibold text-slate-900"><%= transaction.description.presence || "Transaction" %></p>
           </div>
           <p class="mt-1 text-xs text-slate-400"><%= transaction.transaction_date.strftime("%d %b %Y") %> · <%= transaction.accounting_category&.name %></p>
