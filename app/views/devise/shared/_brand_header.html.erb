@@ -1,0 +1,8 @@
+<% tagline = local_assigns.fetch(:tagline, "Moving made simple") %>
+
+<div class="mb-6 flex flex-col items-center text-center sm:mb-8">
+  <%= link_to root_path, class: "group inline-flex max-w-[min(78vw,16rem)] items-center justify-center rounded-2xl bg-white/90 px-3 py-2 shadow-sm ring-1 ring-slate-100 transition hover:-translate-y-0.5 hover:shadow-md sm:max-w-[18rem] sm:px-4" do %>
+    <%= image_tag "images/logo.svg", alt: "Removlo - Moving Made Simple", class: "h-auto w-36 object-contain transition duration-300 group-hover:scale-[1.02] min-[380px]:w-40 sm:w-48 md:w-52" %>
+  <% end %>
+  <p class="mt-3 text-xs font-bold uppercase tracking-[0.18em] text-slate-400 sm:text-[13px]"><%= tagline %></p>
+</div>

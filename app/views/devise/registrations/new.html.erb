@@ -18,6 +18,8 @@
 <% content_for(:title, "#{selected_role == "driver" ? "Driver sign up" : "Customer sign up"} — Removlo") %>
 
 <div data-controller="signup-role">
+<%= render "devise/shared/brand_header", tagline: "Create your Removlo account" %>
+
 <div class="mb-8">
   <span class="mb-4 inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">Free · Role-based dashboard</span>
   <h1 class="text-3xl font-extrabold tracking-tight text-slate-900" data-signup-role-target="title"><%= selected_role == "driver" ? "Join Removlo as a driver" : "Create your customer account" %></h1>
