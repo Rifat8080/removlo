@@ -1,5 +1,6 @@
 module Admin
   class QuotationPaymentsController < BaseController
+    before_action :require_admin!
     before_action :set_quotation
     before_action :set_payment, only: %i[update destroy approve_cash]
 

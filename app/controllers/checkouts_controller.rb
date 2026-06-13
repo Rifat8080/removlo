@@ -53,10 +53,19 @@ class CheckoutsController < ApplicationController
 
     if ENV["STRIPE_SECRET_KEY"].present? && params[:session_id].present?
       session = Stripe::Checkout::Session.retrieve(params[:session_id])
-      order.mark_paid!(stripe_payment_intent_id: session.payment_intent) if session.payment_status == "paid"
+      order.mark_paid!(stripe_payment_intent_id: session.payment_intent) if paid_session_for_order?(session, order)
     end
   rescue Stripe::StripeError
     nil
+  end
+
+  def paid_session_for_order?(session, order)
+    metadata = session.metadata.respond_to?(:to_h) ? session.metadata.to_h : (session.metadata || {})
+
+    session.payment_status == "paid" &&
+      session.id == order.stripe_checkout_session_id &&
+      metadata["material_order_id"].to_s == order.id.to_s &&
+      session.amount_total.to_i == order.total_cents.to_i
   end
 
   def start_stripe_checkout(order)

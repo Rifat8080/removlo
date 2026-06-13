@@ -1,0 +1,13 @@
+<h1><%= @notification.title %></h1>
+
+<% if @notification.body.present? %>
+  <p><%= @notification.body %></p>
+<% end %>
+
+<p>
+  <%= link_to "Open this notification", notification_destination_url %>
+</p>
+
+<p>
+  You are receiving this because there is a new Removlo portal notification for your account.
+</p>

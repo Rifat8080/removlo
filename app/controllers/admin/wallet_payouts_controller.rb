@@ -1,5 +1,6 @@
 module Admin
   class WalletPayoutsController < BaseController
+    before_action :require_admin!, except: :index
     before_action :set_entry, only: %i[approve payout]
 
     def index

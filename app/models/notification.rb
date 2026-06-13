@@ -8,6 +8,7 @@ class Notification < ApplicationRecord
   scope :recent, -> { order(created_at: :desc) }
   scope :unread, -> { where(read_at: nil) }
 
+  after_commit :deliver_email, on: :create
   after_commit :deliver_web_push, on: :create
   after_commit :broadcast_creation, on: :create
   after_commit :broadcast_updates, on: :update
@@ -21,6 +22,10 @@ class Notification < ApplicationRecord
   end
 
   private
+
+  def deliver_email
+    NotificationEmailJob.perform_later(id)
+  end
 
   def deliver_web_push
     if immediate_web_push?

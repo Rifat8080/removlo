@@ -1,7 +1,6 @@
 class WebPushSubscriptionsController < ApplicationController
   before_action :authenticate_user!
   before_action :require_json_request!, only: %i[create destroy]
-  protect_from_forgery except: %i[create destroy]
 
   def configuration
     response.set_header("Cache-Control", "no-store")

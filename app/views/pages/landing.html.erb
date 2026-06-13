@@ -1,5 +1,5 @@
 <% service_cards = [
-  ["Home Removals", "From flats to family homes, we move it all.", "home_removals_icon.svg", "home_removals_image.png"],
+  ["Home Removals", "House removals, home moves, and man and van help.", "home_removals_icon.svg", "home_removals_image.png"],
   ["Office Removals", "Minimise downtime with our efficient service.", "office_removals_icon.svg", "office_removals_image.png"],
   ["Packing Services", "Professional packing for a stress-free move.", "packing_services_icon.svg", "packing_services_image.png"],
   ["Storage Solutions", "Secure short or long-term storage options.", "storage_solutions_icon.svg", "storage_solutions_image.png"]
@@ -22,15 +22,18 @@
   ["Amina K.", "Packing and storage", "The packing team labelled everything beautifully and kept fragile items safe from start to finish."]
 ] %>
 <% faqs = [
-  ["How much does a home move cost?", "The price depends on distance, property size, access, packing, and storage needs. The quote form gives us what we need to prepare a clear estimate."],
-  ["How far in advance should I book?", "Two to six weeks is ideal for most moves, but we can often help with shorter notice depending on crew availability."],
+  ["How much does a home move cost?", "The price depends on distance, property size, access, packing, and storage needs. If you are comparing affordable removals near me or cheap removals near me, our quote form gives us what we need to prepare a clear estimate."],
+  ["How far in advance should I book?", "Two to six weeks is ideal for most moves, but we can often help with same day removals and last minute removals depending on crew availability."],
+  ["Can Removlo help with local removals near me?", "Yes. If you are searching for a removal company near me, removals near me, house removals near me, moving company near me, or local movers near me, Removlo supports local and UK-wide moves through one clear booking process."],
+  ["Do you offer man and van services?", "For smaller moves, we can help customers looking for man and van near me or man with a van near me, alongside larger house removal company and home removals company services."],
+  ["Can I book and get a quote online?", "Yes. Use Removlo to request a removal quote online, get removal quote details from our team, and book removal company online once the plan is confirmed."],
   ["What is included in the quote?", "Your quote itemises crew time, loading, transport, unloading, and any selected extras such as packing or storage."],
   ["Do you offer packing services?", "Yes. You can book full packing, fragile-only packing, materials, labelling, and inventory support."],
   ["Are my items insured?", "We explain protection options before booking so you can choose the level that fits your move."]
 ] %>
 <% asset_image = ->(file) { "images/#{file}" } %>
-<% content_for :title, "Removlo — UK Home & Office Removals, Packing, Storage & Live Tracking" %>
-<% content_for :meta_description, "Move smarter with Removlo. Compare transparent UK removals quotes, book professional home or office movers, add packing and storage, and track your move with dedicated support." %>
+<% content_for :title, "Removlo — Removal Company Near Me | UK House Removals" %>
+<% content_for :meta_description, "Find a local removal company for house removals, man and van help, local movers, same day removals, and last minute removals. Get a removal quote online with Removlo." %>
 <% content_for :head do %>
   <link rel="preload" as="image" href="<%= asset_path(asset_image.call("van.webp")) %>" type="image/webp" media="(min-width: 1360px)" fetchpriority="high">
   <% structured_data = {
@@ -57,7 +60,7 @@
           "name": "United Kingdom"
         },
         "priceRange": "££",
-        "description": "UK removals company offering home removals, office removals, packing services, storage solutions, transparent quotes, and live move tracking.",
+        "description": "UK removal company near me for local removals, house removals, home removals, man and van moves, affordable removals, transparent online removal quotes, and live move tracking.",
         "makesOffer": service_cards.map do |title, description, _icon, _image|
           {
             "@type": "Offer",
