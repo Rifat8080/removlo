@@ -78,3 +78,5 @@ gem "prawn-table", "~> 0.2.2"
 gem "stripe", "~> 19.2"
 
 gem "dotenv-rails", "~> 3.2", groups: [:development, :test]
+
+gem "matrix", "~> 0.4.3"
