@@ -14,4 +14,3 @@ workers ENV.fetch("WEB_CONCURRENCY") { 1 }
 preload_app!
 
 plugin :tmp_restart
-EOF
