@@ -27,10 +27,13 @@ Rails.application.configure do
   # Store uploaded files locally.
   config.active_storage.service = :local
 
-  # IMPORTANT:
-  # You do not have SSL/domain yet, so keep these false for IP access.
-  config.force_ssl = false
-  config.assume_ssl = false
+  # SSL.
+  # Before Certbot succeeds, keep FORCE_SSL=false in /etc/removlo.env.
+  # After SSL succeeds, set FORCE_SSL=true.
+  force_ssl = ENV.fetch("FORCE_SSL", "false").to_s.downcase.in?(["true", "1", "yes"])
+
+  config.force_ssl = force_ssl
+  config.assume_ssl = force_ssl
 
   # Logging.
   config.log_tags = [:request_id]
@@ -43,14 +46,29 @@ Rails.application.configure do
   # Do not log deprecations.
   config.active_support.report_deprecations = false
 
+  # Host authorization.
+  # This fixes the 403 forbidden issue for removlo.co.uk.
+  config.hosts = ENV.fetch(
+    "APP_HOSTS",
+    "removlo.co.uk,www.removlo.co.uk,34.45.166.78,127.0.0.1,localhost"
+  ).split(",").map(&:strip)
+
+  # Keep /up accessible for health checks.
+  config.host_authorization = {
+    exclude: ->(request) { request.path == "/up" }
+  }
+
   # Mailer host.
-  # For now this uses your VM IP. Later replace APP_HOST with your real domain.
-  app_host = ENV.fetch("APP_HOST", "34.45.166.78")
-  app_protocol = ENV.fetch("APP_PROTOCOL", "http")
+  app_host = ENV.fetch("APP_HOST", "removlo.co.uk")
+  app_protocol = ENV.fetch("APP_PROTOCOL", force_ssl ? "https" : "http")
 
   config.action_mailer.default_url_options = {
     host: app_host,
     protocol: app_protocol
+  }
+
+  config.action_mailer.default_options = {
+    from: ENV.fetch("DEFAULT_FROM_EMAIL", "Removlo <noreply@removlo.co.uk>")
   }
 
   smtp_starttls = ENV.fetch("SMTP_ENABLE_STARTTLS_AUTO", "true").to_s.downcase.in?(["true", "1", "yes"])
@@ -60,11 +78,11 @@ Rails.application.configure do
     address: ENV.fetch("SMTP_ADDRESS", "smtp-relay.brevo.com"),
     port: ENV.fetch("SMTP_PORT", 587).to_i,
     domain: ENV.fetch("SMTP_DOMAIN", app_host),
-    user_name: ENV.fetch("SMTP_USERNAME", "aea73c001@smtp-brevo.com"),
-    password: ENV["SMTP_PASSWORD"],
+    user_name: ENV.fetch("SMTP_USERNAME"),
+    password: ENV.fetch("SMTP_PASSWORD"),
     authentication: ENV.fetch("SMTP_AUTHENTICATION", "plain").to_sym,
     enable_starttls_auto: smtp_starttls
-  }.compact
+  }
 
   # Locale fallbacks.
   config.i18n.fallbacks = true
@@ -74,19 +92,4 @@ Rails.application.configure do
 
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [:id]
-
-  # Host authorization.
-  # This fixes your current 403 Blocked hosts issue.
-  #
-  # You can control it from /etc/removlo.env:
-  # APP_HOSTS=34.45.166.78,127.0.0.1,localhost
-  config.hosts = ENV.fetch(
-    "APP_HOSTS",
-    "34.45.166.78,127.0.0.1,localhost"
-  ).split(",").map(&:strip)
-
-  # Keep /up accessible for health checks.
-  config.host_authorization = {
-    exclude: ->(request) { request.path == "/up" }
-  }
 end
