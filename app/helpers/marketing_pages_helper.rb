@@ -96,8 +96,8 @@ module MarketingPagesHelper
         ["Blog", blog_posts_path]
       ]],
       ["Contact", [
-        ["020 7946 0958", "tel:02079460958"],
-        ["hello@removlo.com", "mailto:hello@removlo.com"],
+        ["+44 7950 202441", "tel:+447950202441"],
+        ["info.removlo@gmail.com", "mailto:info.removlo@gmail.com"],
         ["UK-wide coverage", services_path],
         ["Mon-Fri, 8am-8pm", contact_path]
       ]]
