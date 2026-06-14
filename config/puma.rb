@@ -40,3 +40,13 @@ plugin :solid_queue if solid_queue_enabled
 # Specify the PID file. Defaults to tmp/pids/server.pid in development.
 # In other environments, only set the PID file if requested.
 pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
+
+workers ENV.fetch("WEB_CONCURRENCY") { 1 }
+threads_count = ENV.fetch("RAILS_MAX_THREADS") { 5 }
+threads threads_count, threads_count
+
+environment ENV.fetch("RAILS_ENV") { "production" }
+
+bind "tcp://127.0.0.1:3000"
+
+plugin :tmp_restart
