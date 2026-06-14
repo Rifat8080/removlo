@@ -1,17 +1,12 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
-  # Temporary VM/IP access before domain setup
-  config.hosts << "34.45.166.78"
-  config.hosts << "127.0.0.1"
-  config.hosts << "localhost"
-  config.force_ssl = false
-  # Settings specified here will take precedence over those in config/application.rb.
+  # Settings specified here will take precedence over config/application.rb.
 
   # Code is not reloaded between requests.
   config.enable_reloading = false
 
-  # Eager load code on boot for better performance and memory savings (ignored by Rake tasks).
+  # Eager load code on boot for better performance and memory savings.
   config.eager_load = true
 
   # Full error reports are disabled.
@@ -20,52 +15,47 @@ Rails.application.configure do
   # Turn on fragment caching in view templates.
   config.action_controller.perform_caching = true
 
-  # Cache assets for far-future expiry since they are all digest stamped.
-  config.public_file_server.headers = { "cache-control" => "public, max-age=#{1.year.to_i}" }
+  # Serve static files from /public, needed behind Nginx.
+  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
+  config.public_file_server.headers = {
+    "cache-control" => "public, max-age=#{1.year.to_i}"
+  }
+
+  # Compress responses.
   config.middleware.insert_before ActionDispatch::Static, Rack::Deflater
 
-  # Enable serving of images, stylesheets, and JavaScripts from an asset server.
-  # config.asset_host = "http://assets.example.com"
-
-  # Store uploaded files on the local file system (see config/storage.yml for options).
+  # Store uploaded files locally.
   config.active_storage.service = :local
 
-  # Assume all access to the app is happening through a SSL-terminating reverse proxy.
-  config.assume_ssl = true
+  # IMPORTANT:
+  # You do not have SSL/domain yet, so keep these false for IP access.
+  config.force_ssl = false
+  config.assume_ssl = false
 
-  # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  
-
-  # Skip http-to-https redirect for the default health check endpoint.
-  # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
-
-  # Log to STDOUT with the current request id as a default log tag.
-  config.log_tags = [ :request_id ]
-  config.logger   = ActiveSupport::TaggedLogging.logger(STDOUT)
-
-  # Change to "debug" to log everything (including potentially personally-identifiable information!)
+  # Logging.
+  config.log_tags = [:request_id]
+  config.logger = ActiveSupport::TaggedLogging.logger(STDOUT)
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
 
-  # Prevent health checks from clogging up the logs.
+  # Prevent health checks from clogging logs.
   config.silence_healthcheck_path = "/up"
 
-  # Don't log any deprecations.
+  # Do not log deprecations.
   config.active_support.report_deprecations = false
 
-  # Replace the default in-process memory cache store with a durable alternative.
-  # config.cache_store = :mem_cache_store
+  # Mailer host.
+  # For now this uses your VM IP. Later replace APP_HOST with your real domain.
+  app_host = ENV.fetch("APP_HOST", "34.45.166.78")
+  app_protocol = ENV.fetch("APP_PROTOCOL", "http")
 
-  # Replace the default in-process and non-durable queuing backend for Active Job.
-  # config.active_job.queue_adapter = :resque
-
-  # Raise delivery errors in production so email failures are visible in monitoring.
-  config.action_mailer.raise_delivery_errors = true
-
-  # Set host to be used by links generated in mailer templates.
-  app_host = ENV.fetch("APP_HOST", "removlo.com")
-  config.action_mailer.default_url_options = { host: app_host, protocol: "https" }
+  config.action_mailer.default_url_options = {
+    host: app_host,
+    protocol: app_protocol
+  }
 
   if ENV["SMTP_ADDRESS"].present?
+    smtp_starttls = ENV.fetch("SMTP_ENABLE_STARTTLS_AUTO", "true").to_s.downcase.in?(["true", "1", "yes"])
+
     config.action_mailer.delivery_method = :smtp
     config.action_mailer.smtp_settings = {
       address: ENV.fetch("SMTP_ADDRESS"),
@@ -74,23 +64,31 @@ Rails.application.configure do
       user_name: ENV["SMTP_USERNAME"],
       password: ENV["SMTP_PASSWORD"],
       authentication: ENV.fetch("SMTP_AUTHENTICATION", "plain").to_sym,
-      enable_starttls_auto: ActiveModel::Type::Boolean.new.cast(ENV.fetch("SMTP_ENABLE_STARTTLS_AUTO", "true"))
+      enable_starttls_auto: smtp_starttls
     }.compact
   end
 
-  # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
-  # the I18n.default_locale when a translation cannot be found).
+  # Locale fallbacks.
   config.i18n.fallbacks = true
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
   # Only use :id for inspections in production.
-  config.active_record.attributes_for_inspect = [ :id ]
+  config.active_record.attributes_for_inspect = [:id]
 
-  # Enable DNS rebinding protection and other `Host` header attacks.
-  config.hosts = ENV.fetch("APP_HOSTS", "#{app_host},www.#{app_host}").split(",").map(&:strip)
+  # Host authorization.
+  # This fixes your current 403 Blocked hosts issue.
+  #
+  # You can control it from /etc/removlo.env:
+  # APP_HOSTS=34.45.166.78,127.0.0.1,localhost
+  config.hosts = ENV.fetch(
+    "APP_HOSTS",
+    "34.45.166.78,127.0.0.1,localhost"
+  ).split(",").map(&:strip)
 
-  # Skip DNS rebinding protection for the default health check endpoint.
-  config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  # Keep /up accessible for health checks.
+  config.host_authorization = {
+    exclude: ->(request) { request.path == "/up" }
+  }
 end
