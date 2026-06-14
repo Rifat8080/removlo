@@ -2,7 +2,9 @@ require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
   # Temporary VM/IP access before domain setup
-  config.hosts.clear
+  config.hosts << "34.45.166.78"
+  config.hosts << "127.0.0.1"
+  config.hosts << "localhost"
   config.force_ssl = false
   # Settings specified here will take precedence over those in config/application.rb.
 
