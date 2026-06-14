@@ -5,6 +5,8 @@ module Admin
     def create
       @message_form_url = admin_support_conversation_messages_path(@conversation)
       @internal_only_option = true
+      draft_message = @conversation.messages.new(sender: current_user, internal_only: params.dig(:message, :internal_only) == "1")
+      authorize! draft_message.internal_only? ? :create_internal : :create, draft_message
       @message = Messages::Create.call(
         conversation: @conversation,
         sender: current_user,

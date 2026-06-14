@@ -1,6 +1,7 @@
 module Driver
   class AvailabilitiesController < BaseController
     def index
+      authorize! :manage, DriverAvailability
       @month = parse_month
       @availabilities = current_user.driver_availabilities.for_month(@month).order(:available_on)
       @availability = current_user.driver_availabilities.new(available_on: @month.beginning_of_month)
@@ -8,6 +9,7 @@ module Driver
 
     def create
       @availability = current_user.driver_availabilities.new(availability_params)
+      authorize! :create, @availability
 
       if @availability.save
         redirect_to driver_availabilities_path(month: @availability.available_on.strftime("%Y-%m")), notice: "Availability saved."
@@ -20,6 +22,7 @@ module Driver
 
     def update
       @availability = current_user.driver_availabilities.find(params[:id])
+      authorize! :update, @availability
 
       if @availability.update(availability_params)
         redirect_to driver_availabilities_path(month: @availability.available_on.strftime("%Y-%m")), notice: "Availability updated."
@@ -30,6 +33,7 @@ module Driver
 
     def destroy
       @availability = current_user.driver_availabilities.find(params[:id])
+      authorize! :destroy, @availability
       month = @availability.available_on.strftime("%Y-%m")
       @availability.destroy
       redirect_to driver_availabilities_path(month: month), notice: "Availability removed."

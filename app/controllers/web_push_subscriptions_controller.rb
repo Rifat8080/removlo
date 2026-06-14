@@ -20,6 +20,7 @@ class WebPushSubscriptionsController < ApplicationController
     end
 
     subscription ||= current_user.web_push_subscriptions.new(endpoint: endpoint)
+    authorize! :manage, subscription
     subscription.update!(
       user: current_user,
       p256dh_key: subscription_params.dig(:keys, :p256dh),
@@ -37,6 +38,7 @@ class WebPushSubscriptionsController < ApplicationController
   end
 
   def destroy
+    authorize! :manage, WebPushSubscription
     current_user.web_push_subscriptions.where(endpoint: params[:endpoint]).destroy_all if params[:endpoint].present?
     render json: { ok: true, subscribed: false }
   end

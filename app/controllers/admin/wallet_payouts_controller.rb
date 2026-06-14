@@ -4,6 +4,7 @@ module Admin
     before_action :set_entry, only: %i[approve payout]
 
     def index
+      authorize! :read, DriverWalletEntry
       @pending_entries = DriverWalletEntry
                          .where("(entry_type = :earning AND status = :pending_status) OR (entry_type = :withdrawal AND status IN (:withdrawal_statuses))",
                                 earning: DriverWalletEntry.entry_types[:job_earning],
@@ -15,6 +16,7 @@ module Admin
     end
 
     def approve
+      authorize! :approve, @entry
       @entry.approve!(actor: current_user)
       redirect_to admin_wallet_payouts_path, notice: "Wallet entry approved and available for payout."
     rescue ActiveRecord::RecordInvalid => e
@@ -22,6 +24,7 @@ module Admin
     end
 
     def payout
+      authorize! :payout, @entry
       unless @entry.withdrawal_request?
         redirect_to admin_wallet_payouts_path, alert: "Approve job earnings into the driver's wallet. Drivers must request cash or Stripe withdrawals before payout."
         return

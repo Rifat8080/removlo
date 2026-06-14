@@ -6,6 +6,8 @@ class QuotationDepositsController < ApplicationController
   layout "dashboard"
 
   def create
+    authorize! :deposit_checkout, @quotation
+
     if @quotation.paid?
       redirect_to quotation_path(@quotation), notice: "This quotation is already paid."
       return
@@ -37,6 +39,8 @@ class QuotationDepositsController < ApplicationController
   end
 
   def balance
+    authorize! :balance_checkout, @quotation
+
     unless @quotation.accepted? && @quotation.remaining_balance_cents.positive?
       redirect_to quotation_path(@quotation), alert: "Balance payment is not available for this quotation."
       return
@@ -59,6 +63,8 @@ class QuotationDepositsController < ApplicationController
   end
 
   def cash_payment_request
+    authorize! :cash_payment_request, @quotation
+
     unless @quotation.quoted? || @quotation.negotiating?
       redirect_to quotation_path(@quotation), alert: "Cash approval is only available while reviewing the quotation."
       return
@@ -86,6 +92,8 @@ class QuotationDepositsController < ApplicationController
   end
 
   def cash_balance_request
+    authorize! :cash_balance_request, @quotation
+
     unless @quotation.accepted? && @quotation.remaining_balance_cents.positive?
       redirect_to quotation_path(@quotation), alert: "Balance payment is not available for this quotation."
       return
@@ -103,6 +111,7 @@ class QuotationDepositsController < ApplicationController
 
   def success
     @quotation = Quotation.for_customer(current_user).find(params[:id])
+    authorize! :deposit_checkout, @quotation
     payment = finalize_payment if params[:session_id].present?
 
     if payment&.recorded?
@@ -117,12 +126,14 @@ class QuotationDepositsController < ApplicationController
 
   def cancel
     @quotation = Quotation.for_customer(current_user).find(params[:id])
+    authorize! :deposit_checkout, @quotation
     mark_payment_failed(params[:payment_id])
     redirect_to quotation_path(@quotation), alert: "Deposit payment was cancelled."
   end
 
   def balance_success
     @quotation = Quotation.for_customer(current_user).find(params[:id])
+    authorize! :balance_checkout, @quotation
     payment = finalize_payment if params[:session_id].present?
 
     if payment&.recorded?
@@ -136,6 +147,7 @@ class QuotationDepositsController < ApplicationController
 
   def balance_cancel
     @quotation = Quotation.for_customer(current_user).find(params[:id])
+    authorize! :balance_checkout, @quotation
     mark_payment_failed(params[:payment_id])
     redirect_to quotation_path(@quotation), alert: "Balance payment was cancelled."
   end

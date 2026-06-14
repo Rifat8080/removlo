@@ -7,6 +7,7 @@ class QuotationsController < ApplicationController
   layout "dashboard"
 
   def index
+    authorize! :read, Quotation
     @quotations = Quotation.for_customer(current_user)
   end
 
@@ -24,10 +25,12 @@ class QuotationsController < ApplicationController
   end
 
   def edit
+    authorize! :edit, @quotation
     build_blank_item
   end
 
   def new
+    authorize! :create, Quotation
     @quotation = current_user.customer_quotations.new(
       status: :requested,
       move_size: "studio",
@@ -42,6 +45,7 @@ class QuotationsController < ApplicationController
 
     @quotation = customer.customer_quotations.new(quotation_request_params)
     @quotation.status = :requested
+    authorize! :create, @quotation
 
     if @quotation.save
       @quotation.quotation_status_events.create!(to_status: @quotation.status, user: current_user || customer, note: "Customer requested a quotation")
@@ -57,6 +61,7 @@ class QuotationsController < ApplicationController
   end
 
   def update
+    authorize! :update, @quotation
     previous_status = @quotation.status
 
     if @quotation.update(quotation_request_params)
@@ -70,6 +75,7 @@ class QuotationsController < ApplicationController
   end
 
   def accept
+    authorize! :accept, @quotation
     unless @quotation.quoted_price_cents.positive?
       redirect_to quotation_path(@quotation), alert: "A quote price must be set before acceptance."
       return
@@ -90,12 +96,14 @@ class QuotationsController < ApplicationController
   end
 
   def reject
+    authorize! :reject, @quotation
     @quotation.transition_to!(:rejected, actor: current_user, note: "Customer rejected the quote")
     notify_operators("Quote rejected", "#{current_user.email} rejected #{@quotation.reference}.", @quotation)
     redirect_to quotation_path(@quotation), notice: "Quote rejected."
   end
 
   def request_changes
+    authorize! :request_changes, @quotation
     note = params.dig(:quotation_note, :content).to_s.strip
 
     if note.blank?
@@ -122,6 +130,7 @@ class QuotationsController < ApplicationController
 
   def set_quotation
     @quotation = Quotation.for_customer(current_user).find(params[:id])
+    authorize! :read, @quotation
   end
 
   def quotation_request_params

@@ -2,6 +2,7 @@ class PublicJobsController < ApplicationController
   layout "landing"
 
   def show
+    authorize! :read, :public_job
     @job = Quotation.find_by_share_token!(params[:token])
 
     unless @job.awaiting_driver_offers?

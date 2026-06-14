@@ -3,10 +3,12 @@ class CartsController < ApplicationController
 
   def show
     @cart = current_cart
+    authorize! :read, @cart
     @cart_items = @cart.cart_items.includes(product: { image_attachment: :blob })
   end
 
   def add
+    authorize! :manage, current_cart
     product = Product.active.find(params[:product_id])
     quantity = params.fetch(:quantity, 1).to_i.clamp(1, 99)
     add_product_to_cart(product, quantity)
@@ -16,6 +18,7 @@ class CartsController < ApplicationController
   end
 
   def update
+    authorize! :manage, current_cart
     item = current_cart.cart_items.find(params[:id])
     if params[:quantity].to_i <= 0
       item.destroy
@@ -28,6 +31,7 @@ class CartsController < ApplicationController
   end
 
   def remove
+    authorize! :manage, current_cart
     current_cart.cart_items.find(params[:id]).destroy
     redirect_to cart_path, notice: "Item removed."
   end

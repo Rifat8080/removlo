@@ -5,15 +5,16 @@ class MaterialOrdersController < ApplicationController
   layout "dashboard"
 
   def index
+    authorize! :read, MaterialOrder
     @orders = current_user.material_orders.recent.includes(:material_order_items)
   end
 
   def show
-    authorize_order!
+    authorize! :read, @order
   end
 
   def pdf
-    authorize_order!
+    authorize! :pdf, @order
     send_data(
       Pdf::MaterialOrderPdf.new(@order).render,
       filename: "#{@order.order_number.parameterize}.pdf",
@@ -26,11 +27,5 @@ class MaterialOrdersController < ApplicationController
 
   def set_order
     @order = MaterialOrder.includes(:material_order_items).find(params[:id])
-  end
-
-  def authorize_order!
-    return if @order.customer_id == current_user.id
-
-    redirect_to material_orders_path, alert: "You are not authorized to view this order."
   end
 end

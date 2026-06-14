@@ -6,15 +6,16 @@ class PayslipsController < ApplicationController
   layout "dashboard"
 
   def index
+    authorize! :read, Payslip
     @payslips = current_user.payslips.includes(:payroll_run)
   end
 
   def show
-    authorize_payslip!
+    authorize! :read, @payslip
   end
 
   def pdf
-    authorize_payslip!
+    authorize! :pdf, @payslip
     send_data(
       Pdf::PayslipPdf.new(@payslip).render,
       filename: "payslip-#{@payslip.payroll_run.period_end.strftime('%Y-%m')}.pdf",
@@ -33,11 +34,5 @@ class PayslipsController < ApplicationController
 
   def set_payslip
     @payslip = Payslip.find(params[:id])
-  end
-
-  def authorize_payslip!
-    return if @payslip.employee_id == current_user.id
-
-    redirect_to payslips_path, alert: "You are not authorized to view this payslip."
   end
 end

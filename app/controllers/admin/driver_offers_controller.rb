@@ -4,10 +4,12 @@ module Admin
     before_action :set_offer, only: %i[select]
 
     def index
+      authorize! :index, DriverOffer
       @comparison = DriverOffers::Score.call(offers: @quotation.driver_offers.active.for_comparison)
     end
 
     def select
+      authorize! :select, @offer
       if @offer.pending_renegotiation?
         redirect_to admin_quotation_path(@quotation), alert: "This driver must accept the negotiated price before their bid can be selected."
         return

@@ -6,6 +6,7 @@ module Driver
     def create
       @offer = @job.driver_offers.find_or_initialize_by(driver: current_user)
       @offer.assign_attributes(offer_params.merge(status: :submitted))
+      authorize! :create, @offer
 
       if @offer.save
         auto_request_negotiation_for(@offer)
@@ -17,6 +18,7 @@ module Driver
     end
 
     def update
+      authorize! :update, @offer
       if @offer.update(offer_params.merge(status: :submitted))
         auto_request_negotiation_for(@offer)
         notice = negotiation_notice_for(@offer) || "Your offer was updated."
@@ -27,6 +29,7 @@ module Driver
     end
 
     def accept_negotiation
+      authorize! :accept_negotiation, @offer
       @offer.accept_renegotiation!
       notify_operators_negotiated_bid_accepted
       redirect_to driver_job_path(@job), notice: "Negotiated price accepted. Your bid is now #{helpers.money_from_cents(@offer.amount_cents)}."

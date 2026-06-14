@@ -8,7 +8,8 @@ module Driver
     private
 
     def require_driver!
-      return if current_user&.driver?
+      authorize! :access, :driver_workspace
+    rescue CanCan::AccessDenied
 
       redirect_to dashboard_path, alert: "You are not authorized to access driver jobs."
     end

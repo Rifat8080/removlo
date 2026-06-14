@@ -4,12 +4,14 @@ module Driver
     before_action :require_assigned_driver!, only: %i[start complete cancel_assignment]
 
     def index
+      authorize! :read, Quotation
       @assigned_jobs = Quotation.for_driver(current_user).recent
       @open_jobs = Quotation.awaiting_driver.recent
       @my_offers = current_user.driver_offers.includes(:quotation).recent
     end
 
     def show
+      authorize! :read, @job
       @offer = @job.driver_offers.find_by(driver: current_user) || @job.driver_offers.new
       @job_chat_available = @job.assigned_driver == current_user && @job.customer_details_releasable?
       @job_conversation = @job.job_conversation if @job_chat_available
@@ -17,6 +19,7 @@ module Driver
     end
 
     def start
+      authorize! :start, @job
       @job.transition_to!(:in_progress, actor: current_user, note: "Driver started the move")
       notify_customer("Move started", "Your Removlo driver has started #{@job.reference}.")
       redirect_to driver_job_path(@job), notice: "Move started."
@@ -25,6 +28,7 @@ module Driver
     end
 
     def complete
+      authorize! :complete, @job
       @job.transition_to!(:completed, actor: current_user, note: "Driver completed the move")
       DriverWallet::RecordJobEarning.call(quotation: @job)
       notify_customer("Move completed", "Your Removlo move #{@job.reference} has been completed.")
@@ -34,6 +38,7 @@ module Driver
     end
 
     def cancel_assignment
+      authorize! :cancel_assignment, @job
       if @job.in_progress? || @job.completed?
         redirect_to driver_job_path(@job), alert: "You cannot cancel this job after the move has started."
         return

@@ -5,11 +5,13 @@ class ConversationsController < ApplicationController
   layout "dashboard"
 
   def index
+    authorize! :read, Conversation
     @conversations = Conversation.for_user(current_user).includes(:participants, :messages).recent
     @support_conversation = @conversations.find { |c| c.support? && c.open? }
   end
 
   def show
+    authorize! :read, @conversation
     @conversation.mark_read_for!(current_user)
     @messages = @conversation.messages.visible_to_participants.chronological.includes(:sender)
     @message = @conversation.messages.new
@@ -19,8 +21,10 @@ class ConversationsController < ApplicationController
     if params[:quotation_id].present?
       quotation = accessible_quotation
       @conversation = Conversations::FindOrCreateJob.call(quotation: quotation, actor: current_user)
+      authorize! :create, @conversation
       notice = "Job conversation opened."
     else
+      authorize! :create, Conversation
       @conversation = Conversations::FindOrCreateSupport.call(
         user: current_user,
         subject: params.dig(:conversation, :subject)

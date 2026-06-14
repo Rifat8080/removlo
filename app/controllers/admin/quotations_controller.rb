@@ -5,11 +5,13 @@ module Admin
     before_action :require_admin!, only: %i[approve_negotiated_price reject_negotiated_price]
 
     def index
+      authorize! :read, Quotation
       @quotations = Quotation.includes(:customer, :assigned_staff, :assigned_driver).recent
       @status_counts = Quotation.group(:status).count
     end
 
     def show
+      authorize! :read, @quotation
       @item = @quotation.quotation_items.new
       @note = @quotation.quotation_notes.new(internal: true)
       @payment = @quotation.quotation_payments.new(paid_on: Date.current)
@@ -19,14 +21,17 @@ module Admin
 
     def new
       @quotation = Quotation.new(defaults)
+      authorize! :create, @quotation
     end
 
     def edit
+      authorize! :edit, @quotation
     end
 
     def create
       @quotation = Quotation.new(quotation_params)
       @quotation.created_by = current_user
+      authorize! :create, @quotation
 
       if @quotation.save
         @quotation.quotation_status_events.create!(to_status: @quotation.status, user: current_user, note: "Quotation created")
@@ -39,6 +44,7 @@ module Admin
     end
 
     def update
+      authorize! :update, @quotation
       previous_driver = @quotation.assigned_driver
       attrs = current_user.admin? ? quotation_params : staff_operational_quotation_params
       proposed_price_cents = staff_negotiated_price_cents unless current_user.admin?
@@ -69,11 +75,13 @@ module Admin
     end
 
     def destroy
+      authorize! :destroy, @quotation
       @quotation.destroy
       redirect_to admin_quotations_path, notice: "Quotation was deleted successfully."
     end
 
     def transition
+      authorize! :transition, @quotation
       if staff_restricted_transition?(params.require(:status))
         redirect_to admin_quotation_path(@quotation), alert: "Drivers start and complete assigned jobs. Only admins can perform that action from admin."
         return
@@ -91,6 +99,7 @@ module Admin
     end
 
     def approve_negotiated_price
+      authorize! :approve_negotiated_price, @quotation
       @quotation.approve_negotiated_price!(actor: current_user)
       @quotation.request_driver_offer_renegotiation!
       notify_negotiated_price_approved
@@ -101,6 +110,7 @@ module Admin
     end
 
     def reject_negotiated_price
+      authorize! :reject_negotiated_price, @quotation
       @quotation.reject_negotiated_price!(actor: current_user)
       notify_negotiated_price_rejected
       redirect_to admin_quotation_path(@quotation), notice: "Negotiated price was marked as not approved."

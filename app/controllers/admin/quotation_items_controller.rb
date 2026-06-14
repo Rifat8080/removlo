@@ -4,7 +4,9 @@ module Admin
     before_action :set_item, only: %i[update destroy]
 
     def create
-      @quotation.quotation_items.create!(item_params)
+      item = @quotation.quotation_items.new(item_params)
+      authorize! :create, item
+      item.save!
       notify_customer("Inventory updated", "An item was added to #{@quotation.reference}.")
       redirect_to admin_quotation_path(@quotation), notice: "Inventory item added."
     rescue ActiveRecord::RecordInvalid => e
@@ -12,6 +14,7 @@ module Admin
     end
 
     def update
+      authorize! :update, @item
       @item.update!(item_params)
       notify_customer("Inventory updated", "An item was updated on #{@quotation.reference}.")
       redirect_to admin_quotation_path(@quotation), notice: "Inventory item updated."
@@ -20,6 +23,7 @@ module Admin
     end
 
     def destroy
+      authorize! :destroy, @item
       @item.destroy
       notify_customer("Inventory updated", "An item was removed from #{@quotation.reference}.")
       redirect_to admin_quotation_path(@quotation), notice: "Inventory item removed."

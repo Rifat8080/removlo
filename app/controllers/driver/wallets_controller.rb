@@ -3,11 +3,13 @@ module Driver
     MIN_WITHDRAWAL_CENTS = 5_000
 
     def show
+      authorize! :read, DriverWalletEntry
       load_wallet
       @driver_profile = current_user.driver_profile
     end
 
     def connect_stripe
+      authorize! :connect_stripe, DriverWalletEntry
       if ENV["STRIPE_SECRET_KEY"].blank?
         redirect_to driver_wallet_path, alert: "Stripe payouts are not configured yet. Contact support."
         return
@@ -35,6 +37,7 @@ module Driver
     end
 
     def withdraw
+      authorize! :withdraw, DriverWalletEntry
       payout_method = withdrawal_payout_method
       profile = current_user.driver_profile || DriverProfile.ensure_for!(current_user)
       if payout_method == "stripe" && !profile.stripe_payouts_ready?

@@ -3,6 +3,9 @@ class MessagesController < ApplicationController
   before_action :set_conversation
 
   def create
+    draft_message = @conversation.messages.new(sender: current_user, internal_only: internal_only?)
+    authorize! internal_only? ? :create_internal : :create, draft_message
+
     @message = Messages::Create.call(
       conversation: @conversation,
       sender: current_user,

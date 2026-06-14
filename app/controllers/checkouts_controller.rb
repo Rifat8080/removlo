@@ -3,6 +3,7 @@ class CheckoutsController < ApplicationController
 
   def show
     @cart = current_cart
+    authorize! :read, @cart
     redirect_to cart_path, alert: "Your cart is empty." if @cart.empty?
     @cart_items = @cart.cart_items.includes(:product)
     @order = MaterialOrder.new(fulfillment_type: :delivery, customer_email: current_user&.email)
@@ -10,6 +11,8 @@ class CheckoutsController < ApplicationController
 
   def create
     @cart = current_cart
+    authorize! :read, @cart
+    authorize! :create, MaterialOrder
     redirect_to cart_path, alert: "Your cart is empty." and return if @cart.empty?
 
     @order = Shop::BuildOrderFromCart.call(
@@ -27,6 +30,7 @@ class CheckoutsController < ApplicationController
 
   def success
     @order = MaterialOrder.find_by!(order_number: params[:order_number])
+    authorize! :read, @order if @order.customer_id.present?
     finalize_paid_order(@order)
     @order.update!(customer: current_user) if user_signed_in? && @order.customer_id.blank?
     current_cart.cart_items.destroy_all if current_cart.present?
@@ -34,6 +38,7 @@ class CheckoutsController < ApplicationController
 
   def cancel
     @order = MaterialOrder.find_by(order_number: params[:order_number])
+    authorize! :read, @order if @order&.customer_id.present?
   end
 
   private

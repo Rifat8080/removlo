@@ -3,6 +3,8 @@ module Driver
     before_action :set_job
 
     def create
+      authorize! :create, DriverLocation.new(quotation: @job, driver: current_user)
+
       unless @job.tracking_active? && @job.assigned_driver_id == current_user.id
         render json: { error: "Tracking is not available for this job." }, status: :forbidden
         return

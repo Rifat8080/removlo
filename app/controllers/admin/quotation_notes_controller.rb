@@ -4,7 +4,9 @@ module Admin
     before_action :set_note, only: %i[update destroy]
 
     def create
-      note = @quotation.quotation_notes.create!(note_params.merge(user: current_user))
+      note = @quotation.quotation_notes.new(note_params.merge(user: current_user))
+      authorize! :create, note
+      note.save!
       notify_note_recipients(note)
       redirect_to admin_quotation_path(@quotation), notice: "Note added."
     rescue ActiveRecord::RecordInvalid => e
@@ -12,6 +14,7 @@ module Admin
     end
 
     def update
+      authorize! :update, @note
       @note.update!(note_params)
       notify_note_recipients(@note)
       redirect_to admin_quotation_path(@quotation), notice: "Note updated."
@@ -20,6 +23,7 @@ module Admin
     end
 
     def destroy
+      authorize! :destroy, @note
       @note.destroy
       redirect_to admin_quotation_path(@quotation), notice: "Note deleted."
     end
