@@ -1,5 +1,10 @@
 <% content_for :title, "Removal Quote Online - Get Removal Quote | Removlo" %>
 <% content_for :meta_description, "Get removal quote support online for home removals, office moves, packing, and storage. Share your details and book removal company online with Removlo." %>
+<% if ENV["GOOGLE_MAPS_BROWSER_KEY"].present? %>
+  <% content_for :head do %>
+    <meta name="google-maps-browser-key" content="<%= ENV.fetch("GOOGLE_MAPS_BROWSER_KEY") %>">
+  <% end %>
+<% end %>
 
 <main data-controller="reveal" class="relative flex-1 overflow-hidden bg-[#f7f9ff] text-slate-800">
   <div class="pointer-events-none absolute inset-x-0 top-0 z-0 h-[52rem] bg-[radial-gradient(circle_at_18%_20%,rgba(37,99,235,0.16),transparent_28%),radial-gradient(circle_at_84%_18%,rgba(124,58,237,0.14),transparent_30%),linear-gradient(180deg,#fbfdff_0%,#eef5ff_58%,#ffffff_100%)]"></div>

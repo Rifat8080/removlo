@@ -27,10 +27,6 @@ class Rack::Attack
     request.ip if request.post? && request.path == "/quotations"
   end
 
-  throttle("google_places/ip", limit: 60, period: 1.minute) do |request|
-    request.ip if request.get? && request.path.start_with?("/google_places/")
-  end
-
   throttle("checkout_and_cart/ip", limit: 30, period: 1.minute) do |request|
     request.ip if request.post? && request.path.in?(%w[/cart/add /checkout])
   end

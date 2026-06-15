@@ -1,133 +1,63 @@
 import { Controller } from "@hotwired/stimulus"
 
-const AUTOCOMPLETE_ENDPOINT = "/google_places/autocomplete"
-const DETAILS_ENDPOINT = "/google_places/details"
-const REVERSE_GEOCODE_ENDPOINT = "/google_places/reverse_geocode"
-const MIN_QUERY_LENGTH = 2
-const DEBOUNCE_MS = 250
+const SCRIPT_ID = "google-places-api"
+let googlePlacesPromise
 
 export default class extends Controller {
   static targets = ["postcode", "status"]
 
   connect() {
-    this.activeInput = null
-    this.abortController = null
-    this.debounceTimer = null
-    this.onInput = this.onInput.bind(this)
-    this.onFocus = this.onFocus.bind(this)
-    this.onDocumentClick = this.onDocumentClick.bind(this)
-
+    this.onPostcodeFocus = this.onPostcodeFocus.bind(this)
     this.postcodeTargets.forEach((input) => {
-      input.addEventListener("input", this.onInput)
-      input.addEventListener("focus", this.onFocus)
-      input.setAttribute("autocomplete", "off")
+      input.addEventListener("focus", this.onPostcodeFocus, { once: true })
+      input.addEventListener("pointerdown", this.onPostcodeFocus, { once: true, passive: true })
     })
-
-    document.addEventListener("click", this.onDocumentClick)
     this.setStatus("Start typing a postcode or use current location.", "ready")
   }
 
   disconnect() {
-    document.removeEventListener("click", this.onDocumentClick)
-    window.clearTimeout(this.debounceTimer)
-    this.abortController?.abort()
-    this.removeSuggestions()
-
     this.postcodeTargets.forEach((input) => {
-      input.removeEventListener("input", this.onInput)
-      input.removeEventListener("focus", this.onFocus)
+      input.removeEventListener("focus", this.onPostcodeFocus)
+      input.removeEventListener("pointerdown", this.onPostcodeFocus)
     })
   }
 
-  onFocus(event) {
-    this.activeInput = event.currentTarget
-    this.setStatus("Type at least 2 characters to search UK addresses.", "ready")
-  }
-
-  onInput(event) {
-    const input = event.currentTarget
-    const query = input.value.trim()
-    this.activeInput = input
-    window.clearTimeout(this.debounceTimer)
-
-    if (query.length < MIN_QUERY_LENGTH) {
-      this.removeSuggestions()
-      this.setStatus("Type at least 2 characters to search UK addresses.", "ready")
-      return
-    }
-
-    this.debounceTimer = window.setTimeout(() => this.fetchSuggestions(input, query), DEBOUNCE_MS)
-  }
-
-  onDocumentClick(event) {
-    if (!this.suggestionsList?.contains(event.target) && !this.postcodeTargets.includes(event.target)) {
-      this.removeSuggestions()
-    }
-  }
-
-  fetchSuggestions(input, query) {
-    this.abortController?.abort()
-    this.abortController = new AbortController()
-    this.setStatus("Searching UK addresses...", "loading")
-
-    fetch(`${AUTOCOMPLETE_ENDPOINT}?input=${encodeURIComponent(query)}`, {
-      headers: { Accept: "application/json" },
-      signal: this.abortController.signal
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error("Postcode search is temporarily unavailable")
-        return response.json()
-      })
-      .then((data) => this.renderSuggestions(input, data.suggestions || []))
-      .catch((error) => {
-        if (error.name !== "AbortError") this.disableEnhancement(error)
-      })
-  }
-
-  renderSuggestions(input, suggestions) {
-    this.removeSuggestions()
-    if (suggestions.length === 0) {
-      this.setStatus("No matching UK addresses found. You can still type the postcode manually.", "ready")
-      return
-    }
-
-    const list = document.createElement("div")
-    list.className = "absolute z-[9999] mt-1 max-h-64 w-full overflow-y-auto rounded-xl border border-slate-200 bg-white text-sm shadow-xl shadow-slate-950/10"
-    list.setAttribute("role", "listbox")
-
-    suggestions.forEach((suggestion) => {
-      const button = document.createElement("button")
-      button.type = "button"
-      button.className = "block w-full px-3 py-2 text-left font-semibold text-slate-700 transition hover:bg-blue-50 hover:text-blue-800 focus:bg-blue-50 focus:outline-none"
-      button.textContent = suggestion.description
-      button.addEventListener("click", () => this.selectSuggestion(input, suggestion))
-      list.appendChild(button)
-    })
-
-    const wrapper = input.parentElement
-    wrapper.classList.add("relative")
-    wrapper.appendChild(list)
-    this.suggestionsList = list
-    this.setStatus("Choose an address suggestion, or keep typing manually.", "ready")
-  }
-
-  selectSuggestion(input, suggestion) {
-    this.setStatus("Filling address...", "loading")
-
-    fetch(`${DETAILS_ENDPOINT}?place_id=${encodeURIComponent(suggestion.place_id)}`, {
-      headers: { Accept: "application/json" }
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error("Address details could not be loaded")
-        return response.json()
-      })
-      .then((place) => {
-        this.fillPostcode(input, place)
-        this.fillAddress(input, place)
-        this.removeSuggestions()
-        this.setStatus("Address filled from postcode search.", "ready")
+  onPostcodeFocus() {
+    this.setStatus("Loading postcode search...", "loading")
+    this.loadGooglePlaces()
+      .then(() => {
+        this.setupAutocomplete()
+        this.setStatus("Start typing a postcode or address to search with Google Maps.", "ready")
       })
       .catch((error) => this.disableEnhancement(error))
+  }
+
+  loadGooglePlaces() {
+    if (window.google?.maps?.places) return Promise.resolve()
+    if (googlePlacesPromise) return googlePlacesPromise
+
+    const apiKey = document.querySelector("meta[name='google-maps-browser-key']")?.content
+    if (!apiKey) return Promise.reject(new Error("Missing GOOGLE_MAPS_BROWSER_KEY"))
+
+    googlePlacesPromise = new Promise((resolve, reject) => {
+      const existingScript = document.getElementById(SCRIPT_ID)
+      if (existingScript) {
+        existingScript.addEventListener("load", resolve, { once: true })
+        existingScript.addEventListener("error", reject, { once: true })
+        return
+      }
+
+      const script = document.createElement("script")
+      script.id = SCRIPT_ID
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&libraries=places&v=weekly&loading=async`
+      script.async = true
+      script.defer = true
+      script.addEventListener("load", resolve, { once: true })
+      script.addEventListener("error", reject, { once: true })
+      document.head.appendChild(script)
+    })
+
+    return googlePlacesPromise
   }
 
   useCurrentLocation(event) {
@@ -142,15 +72,40 @@ export default class extends Controller {
 
     this.setStatus("Finding your current postcode...", "loading")
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => this.reverseGeocodeCurrentPosition(input, position),
-      () => this.setStatus("Location permission was denied or unavailable.", "error"),
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
-    )
+    this.loadGooglePlaces()
+      .then(() => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => this.geocodeCurrentPosition(input, position),
+          () => this.setStatus("Location permission was denied or unavailable.", "error"),
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+        )
+      })
+      .catch((error) => this.disableEnhancement(error))
+  }
+
+  setupAutocomplete() {
+    this.postcodeTargets.forEach((input) => {
+      if (input.dataset.googlePlacesReady === "true") return
+
+      const autocomplete = new window.google.maps.places.Autocomplete(input, {
+        componentRestrictions: { country: "gb" },
+        fields: ["address_components", "formatted_address", "name"],
+        types: ["geocode"]
+      })
+
+      autocomplete.addListener("place_changed", () => {
+        const place = autocomplete.getPlace()
+        this.fillPostcode(input, place)
+        this.fillAddress(input, place)
+      })
+
+      input.dataset.googlePlacesReady = "true"
+      input.setAttribute("autocomplete", "off")
+    })
   }
 
   fillPostcode(input, place) {
-    const postcode = place?.postcode
+    const postcode = this.componentValue(place, "postal_code")
     if (postcode) input.value = postcode.toUpperCase()
   }
 
@@ -162,24 +117,29 @@ export default class extends Controller {
     if (addressField) addressField.value = place.formatted_address
   }
 
-  reverseGeocodeCurrentPosition(input, position) {
-    const params = new URLSearchParams({
+  componentValue(place, type) {
+    const component = place?.address_components?.find((addressComponent) => addressComponent.types.includes(type))
+    return component?.long_name || ""
+  }
+
+  geocodeCurrentPosition(input, position) {
+    const geocoder = new window.google.maps.Geocoder()
+    const location = {
       lat: position.coords.latitude,
       lng: position.coords.longitude
-    })
+    }
 
-    fetch(`${REVERSE_GEOCODE_ENDPOINT}?${params}`, { headers: { Accept: "application/json" } })
-      .then((response) => {
-        if (!response.ok) throw new Error("Current location lookup is temporarily unavailable")
-        return response.json()
-      })
-      .then((place) => {
-        if (!place.postcode) throw new Error("No postcode was found for your current location")
-        this.fillPostcode(input, place)
-        this.fillAddress(input, place)
-        this.setStatus("Postcode filled from your current location.", "ready")
-      })
-      .catch((error) => this.disableEnhancement(error))
+    geocoder.geocode({ location }, (results, status) => {
+      if (status !== "OK" || !results?.length) {
+        this.setStatus("Google Maps could not find a postcode for this location.", "error")
+        return
+      }
+
+      const result = results.find((item) => this.componentValue(item, "postal_code")) || results[0]
+      this.fillPostcode(input, result)
+      this.fillAddress(input, result)
+      this.setStatus("Postcode filled from your current location.", "ready")
+    })
   }
 
   setStatus(message, state = "ready") {
@@ -192,14 +152,11 @@ export default class extends Controller {
   }
 
   disableEnhancement(error) {
-    this.removeSuggestions()
+    this.postcodeTargets.forEach((input) => {
+      input.removeAttribute("data-google-places-target")
+    })
 
-    const message = error?.message || "Postcode search could not be loaded"
-    this.setStatus(`${message}. You can still enter the postcode manually.`, "error")
-  }
-
-  removeSuggestions() {
-    this.suggestionsList?.remove()
-    this.suggestionsList = null
+    const message = error?.message || "Google Maps could not be loaded"
+    this.setStatus(`${message}. Check GOOGLE_MAPS_BROWSER_KEY and enable Maps JavaScript API + Places API.`, "error")
   }
 }
