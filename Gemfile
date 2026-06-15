@@ -80,3 +80,5 @@ gem "stripe", "~> 19.2"
 gem "dotenv-rails", "~> 3.2", groups: [:development, :test]
 
 gem "matrix", "~> 0.4.3"
+
+gem "redis", "~> 5.4"

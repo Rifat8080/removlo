@@ -175,7 +175,6 @@ GEM
     mcp (0.8.0)
       json-schema (>= 4.1)
     mini_mime (1.1.5)
-    mini_portile2 (2.8.9)
     minitest (5.27.0)
     msgpack (1.8.0)
     net-imap (0.6.3)
@@ -193,9 +192,6 @@ GEM
       net-protocol
     net-ssh (7.3.0)
     nio4r (2.7.5)
-    nokogiri (1.19.1)
-      mini_portile2 (~> 2.8.2)
-      racc (~> 1.4)
     nokogiri (1.19.1-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.19.1-x86_64-linux-gnu)
@@ -207,7 +203,6 @@ GEM
       ast (~> 2.4.1)
       racc
     pdf-core (0.9.0)
-    pg (1.6.3)
     pg (1.6.3-arm64-darwin)
     pg (1.6.3-x86_64-linux)
     pp (0.6.3)
@@ -277,6 +272,10 @@ GEM
       erb
       psych (>= 4.0.0)
       tsort
+    redis (5.4.1)
+      redis-client (>= 0.22.0)
+    redis-client (0.30.0)
+      connection_pool
     regexp_parser (2.11.3)
     reline (0.6.3)
       io-console (~> 0.5)
@@ -354,11 +353,9 @@ GEM
     tailwindcss-rails (4.4.0)
       railties (>= 7.0.0)
       tailwindcss-ruby (~> 4.0)
-    tailwindcss-ruby (4.1.18)
     tailwindcss-ruby (4.1.18-arm64-darwin)
     tailwindcss-ruby (4.1.18-x86_64-linux-gnu)
     thor (1.5.0)
-    thruster (0.1.18)
     thruster (0.1.18-arm64-darwin)
     thruster (0.1.18-x86_64-linux)
     timeout (0.6.0)
@@ -394,7 +391,6 @@ GEM
 
 PLATFORMS
   arm64-darwin
-  ruby
   x86_64-linux
 
 DEPENDENCIES
@@ -417,6 +413,7 @@ DEPENDENCIES
   puma (>= 5.0)
   rack-attack
   rails (~> 8.0.4)
+  redis (~> 5.4)
   rubocop-rails-omakase
   selenium-webdriver
   solid_cable
