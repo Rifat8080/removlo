@@ -21,8 +21,10 @@ Rails.application.configure do
     "cache-control" => "public, max-age=#{1.year.to_i}"
   }
 
-  # Compress responses.
-  config.middleware.insert_before ActionDispatch::Static, Rack::Deflater
+  # Compress responses when Rails serves static files (e.g. behind a reverse proxy without gzip).
+  if ENV["RAILS_SERVE_STATIC_FILES"].present?
+    config.middleware.insert_before ActionDispatch::Static, Rack::Deflater
+  end
 
   # Store uploaded files locally.
   config.active_storage.service = :local
