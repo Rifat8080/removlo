@@ -5,6 +5,8 @@
 # https://guides.rubyonrails.org/security.html#content-security-policy-header
 
 Rails.application.configure do
+  csp_report_only = ActiveModel::Type::Boolean.new.cast(ENV.fetch("CSP_REPORT_ONLY", "true"))
+
   config.content_security_policy do |policy|
     policy.default_src :self, :https
     policy.font_src    :self, :https, :data
@@ -17,11 +19,11 @@ Rails.application.configure do
     policy.form_action :self, "https://checkout.stripe.com"
     policy.frame_ancestors :none
     policy.base_uri    :self
-    policy.upgrade_insecure_requests if Rails.env.production?
+    policy.upgrade_insecure_requests if Rails.env.production? && !csp_report_only
   end
 
   # Keep CSP report-only until inline scripts/styles and third-party integrations are fully tuned.
-  config.content_security_policy_report_only = ActiveModel::Type::Boolean.new.cast(ENV.fetch("CSP_REPORT_ONLY", "true"))
+  config.content_security_policy_report_only = csp_report_only
 
   config.permissions_policy do |policy|
     policy.camera      :none
