@@ -119,6 +119,9 @@ Rails.application.routes.draw do
   end
   resource :web_push_subscription, only: %i[create destroy]
   get "web_push/config", to: "web_push_subscriptions#configuration", as: :web_push_config
+  get "google_places/autocomplete", to: "google_places#autocomplete"
+  get "google_places/details", to: "google_places#details"
+  get "google_places/reverse_geocode", to: "google_places#reverse_geocode"
 
   resources :customer_invoices, path: "invoices", only: %i[index show] do
     get :pdf, on: :member

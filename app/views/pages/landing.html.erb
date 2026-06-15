@@ -4,11 +4,6 @@
   ["Packing Services", "Professional packing for a stress-free move.", "packing_services_icon.svg", "packing_services_image.png"],
   ["Storage Solutions", "Secure short or long-term storage options.", "storage_solutions_icon.svg", "storage_solutions_image.png"]
 ] %>
-<% if ENV["GOOGLE_MAPS_BROWSER_KEY"].present? %>
-  <% content_for :head do %>
-    <meta name="google-maps-browser-key" content="<%= ENV.fetch("GOOGLE_MAPS_BROWSER_KEY") %>">
-  <% end %>
-<% end %>
 <% trust_logos = [
   ["Google", "Excellent 4.9", "google_logo_transparent.png"],
   ["Trustpilot", "5-star service", "trustpilot_logo_transparent.png"],
