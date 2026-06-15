@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 const SCRIPT_ID = "google-places-api"
+const CALLBACK_NAME = "__removloGoogleMapsLoaded"
 let googlePlacesPromise
 
 export default class extends Controller {
@@ -92,34 +93,78 @@ export default class extends Controller {
   }
 
   loadGooglePlaces() {
+    if (googlePlacesPromise) return googlePlacesPromise
+
     if (window.google?.maps?.importLibrary) {
-      googlePlacesPromise ||= window.google.maps.importLibrary("places")
+      googlePlacesPromise = window.google.maps.importLibrary("places").then((places) => this.ensurePlacesApi(places))
       return googlePlacesPromise
     }
-    if (googlePlacesPromise) return googlePlacesPromise
 
     const apiKey = document.querySelector("meta[name='google-maps-browser-key']")?.content
     if (!apiKey) return Promise.reject(new Error("Missing GOOGLE_MAPS_BROWSER_KEY"))
 
-    googlePlacesPromise = new Promise((resolve, reject) => {
-      const existingScript = document.getElementById(SCRIPT_ID)
-      if (existingScript) {
-        existingScript.addEventListener("load", resolve, { once: true })
-        existingScript.addEventListener("error", reject, { once: true })
-        return
-      }
-
-      const script = document.createElement("script")
-      script.id = SCRIPT_ID
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&libraries=places&v=weekly&loading=async`
-      script.async = true
-      script.defer = true
-      script.addEventListener("load", resolve, { once: true })
-      script.addEventListener("error", reject, { once: true })
-      document.head.appendChild(script)
-    }).then(() => window.google.maps.importLibrary("places"))
+    this.installGoogleMapsLoader(apiKey)
+    googlePlacesPromise = window.google.maps.importLibrary("places").then((places) => this.ensurePlacesApi(places))
 
     return googlePlacesPromise
+  }
+
+  installGoogleMapsLoader(apiKey) {
+    const google = window.google ||= {}
+    const maps = google.maps ||= {}
+    if (maps.importLibrary) return
+
+    const requestedLibraries = new Set()
+    let loaderPromise
+
+    maps.importLibrary = (library) => {
+      requestedLibraries.add(library)
+
+      loaderPromise ||= new Promise((resolve, reject) => {
+        const existingScript = document.getElementById(SCRIPT_ID)
+        if (existingScript) {
+          existingScript.addEventListener("load", resolve, { once: true })
+          existingScript.addEventListener("error", reject, { once: true })
+          return
+        }
+
+        const script = document.createElement("script")
+        const params = new URLSearchParams({
+          key: apiKey,
+          v: "weekly",
+          loading: "async",
+          callback: CALLBACK_NAME,
+          libraries: Array.from(requestedLibraries).join(",")
+        })
+
+        window[CALLBACK_NAME] = () => {
+          delete window[CALLBACK_NAME]
+          resolve()
+        }
+
+        script.id = SCRIPT_ID
+        script.src = `https://maps.googleapis.com/maps/api/js?${params}`
+        script.async = true
+        script.defer = true
+        script.addEventListener("error", () => {
+          delete window[CALLBACK_NAME]
+          reject(new Error("Google Maps JavaScript API could not be loaded"))
+        }, { once: true })
+        document.head.appendChild(script)
+      })
+
+      return loaderPromise.then(() => {
+        const loadedLibrary = window.google?.maps?.[library]
+        if (!loadedLibrary) throw new Error(`Google Maps ${library} library did not load`)
+        return loadedLibrary
+      })
+    }
+  }
+
+  ensurePlacesApi(places) {
+    if (places?.AutocompleteSuggestion && places?.AutocompleteSessionToken) return places
+
+    throw new Error("Google Places API (New) is not available for this browser key")
   }
 
   useCurrentLocation(event) {
