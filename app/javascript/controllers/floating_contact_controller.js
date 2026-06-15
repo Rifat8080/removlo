@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static values = {
-    storageKey: { type: String, default: "removlo:floating-contact-dismissed" }
+    storageKey: { type: String, default: "removlo:floating-contact-dismissed-session" }
   }
 
   connect() {
@@ -10,11 +10,11 @@ export default class extends Controller {
   }
 
   close() {
-    localStorage.setItem(this.storageKeyValue, "true")
+    sessionStorage.setItem(this.storageKeyValue, "true")
     this.element.remove()
   }
 
   get dismissed() {
-    return localStorage.getItem(this.storageKeyValue) === "true"
+    return sessionStorage.getItem(this.storageKeyValue) === "true"
   }
 }
