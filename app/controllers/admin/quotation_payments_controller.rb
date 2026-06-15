@@ -5,7 +5,10 @@ module Admin
     before_action :set_payment, only: %i[update destroy approve_cash]
 
     def create
-      @quotation.quotation_payments.create!(payment_params)
+      payment = @quotation.quotation_payments.new(payment_params)
+      authorize! :create, payment
+
+      payment.save!
       notify_customer("Payment recorded", "A payment was recorded on #{@quotation.reference}.")
       redirect_to admin_quotation_path(@quotation), notice: "Payment recorded."
     rescue ActiveRecord::RecordInvalid => e
@@ -13,6 +16,8 @@ module Admin
     end
 
     def update
+      authorize! :update, @payment
+
       @payment.update!(payment_params)
       notify_customer("Payment updated", "A payment was updated on #{@quotation.reference}.")
       redirect_to admin_quotation_path(@quotation), notice: "Payment updated."
@@ -21,12 +26,16 @@ module Admin
     end
 
     def destroy
+      authorize! :destroy, @payment
+
       @payment.destroy
       notify_customer("Payment removed", "A payment was removed from #{@quotation.reference}.")
       redirect_to admin_quotation_path(@quotation), notice: "Payment removed."
     end
 
     def approve_cash
+      authorize! :approve_cash, @payment
+
       unless @payment.pending_cash?
         redirect_to admin_quotation_path(@quotation), alert: "Only pending cash payment requests can be approved."
         return

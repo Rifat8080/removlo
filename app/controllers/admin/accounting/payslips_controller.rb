@@ -6,15 +6,19 @@ module Admin
 
       def new
         @payslip = @payroll_run.payslips.new(payment_date: @payroll_run.period_end)
+        authorize! :create, @payslip
         @employees = User.payroll_eligible
       end
 
       def edit
+        authorize! :update, @payslip
         @employees = User.payroll_eligible
       end
 
       def create
         @payslip = @payroll_run.payslips.new(payslip_params)
+        authorize! :create, @payslip
+
         if @payslip.save
           redirect_to admin_accounting_payroll_run_path(@payroll_run), notice: "Payslip added."
         else
@@ -24,6 +28,8 @@ module Admin
       end
 
       def update
+        authorize! :update, @payslip
+
         if @payslip.update(payslip_params)
           redirect_to admin_accounting_payroll_run_path(@payroll_run), notice: "Payslip updated."
         else
@@ -33,6 +39,8 @@ module Admin
       end
 
       def destroy
+        authorize! :destroy, @payslip
+
         if @payroll_run.paid?
           redirect_to admin_accounting_payroll_run_path(@payroll_run), alert: "Cannot remove payslips from a paid run."
           return
@@ -43,6 +51,8 @@ module Admin
       end
 
       def pdf
+        authorize! :pdf, @payslip
+
         send_data(
           Pdf::PayslipPdf.new(@payslip).render,
           filename: "payslip-#{@payslip.employee.email.parameterize}-#{@payroll_run.period_end.strftime('%Y-%m')}.pdf",

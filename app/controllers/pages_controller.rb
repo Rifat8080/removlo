@@ -41,6 +41,8 @@ class PagesController < ApplicationController
   end
 
   def dashboard
+    authorize! :read, :dashboard
+
     @recent_notifications = current_user.notifications.recent.limit(5)
 
     if current_user.customer?

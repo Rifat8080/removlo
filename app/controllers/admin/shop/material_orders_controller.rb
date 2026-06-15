@@ -4,6 +4,7 @@ module Admin
       before_action :set_order, only: %i[show update transition pdf]
 
       def index
+        authorize! :read, MaterialOrder
         @orders = MaterialOrder.includes(:customer, :material_order_items).recent
         @orders = @orders.where(status: params[:status]) if params[:status].present?
         @orders = @orders.where(payment_status: params[:payment_status]) if params[:payment_status].present?
@@ -11,9 +12,12 @@ module Admin
       end
 
       def show
+        authorize! :read, @order
       end
 
       def update
+        authorize! :update, @order
+
         if @order.update(order_params)
           Shop::NotifyOrderStatus.call(@order, previous_status: @order.status_before_last_save) if @order.saved_change_to_status?
           redirect_to admin_shop_material_order_path(@order), notice: "Order updated."
@@ -23,6 +27,8 @@ module Admin
       end
 
       def transition
+        authorize! :update, @order
+
         next_status = params[:status]
         if MaterialOrder::STATUSES.key?(next_status.to_sym)
           previous = @order.status
@@ -35,6 +41,8 @@ module Admin
       end
 
       def pdf
+        authorize! :pdf, @order
+
         send_data(
           Pdf::MaterialOrderPdf.new(@order).render,
           filename: "#{@order.order_number.parameterize}.pdf",

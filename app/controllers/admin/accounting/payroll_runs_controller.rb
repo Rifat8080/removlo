@@ -4,10 +4,12 @@ module Admin
       before_action :set_payroll_run, only: %i[show edit update destroy finalize mark_paid]
 
       def index
+        authorize! :read, PayrollRun
         @payroll_runs = PayrollRun.includes(:created_by, :payslips).recent
       end
 
       def show
+        authorize! :read, @payroll_run
         @payslips = @payroll_run.payslips.includes(:employee)
       end
 
@@ -16,13 +18,17 @@ module Admin
           period_start: Date.current.beginning_of_month,
           period_end: Date.current.end_of_month
         )
+        authorize! :create, @payroll_run
       end
 
       def edit
+        authorize! :update, @payroll_run
       end
 
       def create
         @payroll_run = PayrollRun.new(payroll_run_params.merge(created_by: current_user))
+        authorize! :create, @payroll_run
+
         if @payroll_run.save
           redirect_to admin_accounting_payroll_run_path(@payroll_run), notice: "Payroll run created."
         else
@@ -31,6 +37,8 @@ module Admin
       end
 
       def update
+        authorize! :update, @payroll_run
+
         if @payroll_run.update(payroll_run_params)
           redirect_to admin_accounting_payroll_run_path(@payroll_run), notice: "Payroll run updated."
         else
@@ -39,6 +47,8 @@ module Admin
       end
 
       def destroy
+        authorize! :destroy, @payroll_run
+
         if @payroll_run.paid?
           redirect_to admin_accounting_payroll_runs_path, alert: "Paid payroll runs cannot be deleted."
           return
@@ -49,11 +59,15 @@ module Admin
       end
 
       def finalize
+        authorize! :update, @payroll_run
+
         @payroll_run.update!(status: :finalized)
         redirect_to admin_accounting_payroll_run_path(@payroll_run), notice: "Payroll run finalized."
       end
 
       def mark_paid
+        authorize! :update, @payroll_run
+
         @payroll_run.update!(status: :paid)
         redirect_to admin_accounting_payroll_run_path(@payroll_run), notice: "Payroll marked as paid. Payslips and expenses recorded."
       end

@@ -2,6 +2,8 @@ module Admin
   module Accounting
     class ReportsController < BaseController
       def index
+        authorize! :read, AccountingTransaction
+
         @start_date = parse_date(params[:start_date]) || Date.current.beginning_of_month
         @end_date = parse_date(params[:end_date]) || Date.current.end_of_month
         @transactions = AccountingTransaction.includes(:accounting_category, :user, :quotation)

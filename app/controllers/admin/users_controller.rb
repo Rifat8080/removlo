@@ -4,22 +4,27 @@ module Admin
     before_action :set_user, only: %i[show edit update destroy]
 
     def index
+      authorize! :read, User
       @users = User.order(created_at: :desc)
       @role_counts = User.group(:role).count
     end
 
     def show
+      authorize! :read, @user
     end
 
     def new
       @user = User.new(role: :customer)
+      authorize! :create, @user
     end
 
     def edit
+      authorize! :update, @user
     end
 
     def create
       @user = User.new(create_user_params)
+      authorize! :create, @user
 
       if @user.save
         notify_user(@user, "Account created", "Your Removlo account was created by #{current_user.email}.")
@@ -30,6 +35,8 @@ module Admin
     end
 
     def update
+      authorize! :update, @user
+
       attrs = update_user_params
       attrs.delete(:password) if attrs[:password].blank?
       attrs.delete(:password_confirmation) if attrs[:password_confirmation].blank?
@@ -44,6 +51,8 @@ module Admin
     end
 
     def destroy
+      authorize! :destroy, @user
+
       if @user == current_user
         redirect_to admin_users_path, alert: "You cannot delete your own account."
         return
@@ -83,8 +92,8 @@ module Admin
     end
 
     def require_admin!
-      return if current_user&.admin?
-
+      authorize! :manage, :all
+    rescue CanCan::AccessDenied
       redirect_to dashboard_path, alert: "You are not authorized to manage users."
     end
 

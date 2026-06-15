@@ -4,18 +4,23 @@ module Admin
       before_action :set_category, only: %i[edit update destroy]
 
       def index
+        authorize! :read, ProductCategory
         @categories = ProductCategory.ordered.includes(:products)
       end
 
       def new
         @category = ProductCategory.new
+        authorize! :create, @category
       end
 
       def edit
+        authorize! :update, @category
       end
 
       def create
         @category = ProductCategory.new(category_params)
+        authorize! :create, @category
+
         if @category.save
           redirect_to admin_shop_product_categories_path, notice: "Category created."
         else
@@ -24,6 +29,8 @@ module Admin
       end
 
       def update
+        authorize! :update, @category
+
         if @category.update(category_params)
           redirect_to admin_shop_product_categories_path, notice: "Category updated."
         else
@@ -32,6 +39,8 @@ module Admin
       end
 
       def destroy
+        authorize! :destroy, @category
+
         @category.destroy
         redirect_to admin_shop_product_categories_path, notice: "Category deleted."
       rescue ActiveRecord::DeleteRestrictionError

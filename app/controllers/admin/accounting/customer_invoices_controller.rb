@@ -4,15 +4,19 @@ module Admin
       before_action :set_invoice, only: %i[show edit update destroy pdf]
 
       def index
+        authorize! :read, CustomerInvoice
         @invoices = CustomerInvoice.includes(:customer, :quotation).recent
         @invoices = @invoices.where(invoice_type: params[:type]) if params[:type].present?
         @invoices = @invoices.where(status: params[:status]) if params[:status].present?
       end
 
       def show
+        authorize! :read, @invoice
       end
 
       def pdf
+        authorize! :pdf, @invoice
+
         send_data(
           Pdf::CustomerInvoicePdf.new(@invoice).render,
           filename: "#{@invoice.invoice_number.parameterize}.pdf",
@@ -23,13 +27,17 @@ module Admin
 
       def new
         @invoice = CustomerInvoice.new(issued_on: Date.current, status: :issued)
+        authorize! :create, @invoice
       end
 
       def edit
+        authorize! :update, @invoice
       end
 
       def create
         @invoice = CustomerInvoice.new(invoice_params)
+        authorize! :create, @invoice
+
         if @invoice.save
           notify_invoice(@invoice)
           redirect_to admin_accounting_customer_invoice_path(@invoice), notice: "Invoice created."
@@ -39,6 +47,8 @@ module Admin
       end
 
       def update
+        authorize! :update, @invoice
+
         if @invoice.update(invoice_params)
           redirect_to admin_accounting_customer_invoice_path(@invoice), notice: "Invoice updated."
         else
@@ -47,6 +57,8 @@ module Admin
       end
 
       def destroy
+        authorize! :destroy, @invoice
+
         if @invoice.quotation_payment_id.present?
           redirect_to admin_accounting_customer_invoices_path, alert: "Payment-linked invoices cannot be deleted manually."
           return

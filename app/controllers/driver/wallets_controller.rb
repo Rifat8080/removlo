@@ -9,7 +9,7 @@ module Driver
     end
 
     def connect_stripe
-      authorize! :connect_stripe, DriverWalletEntry
+      authorize! :connect_stripe, wallet_authorization_subject
       if ENV["STRIPE_SECRET_KEY"].blank?
         redirect_to driver_wallet_path, alert: "Stripe payouts are not configured yet. Contact support."
         return
@@ -26,6 +26,8 @@ module Driver
     end
 
     def stripe_return
+      authorize! :connect_stripe, wallet_authorization_subject
+
       profile = current_user.driver_profile
       ::Stripe::SyncDriverAccount.call(profile) if profile.present?
 
@@ -37,7 +39,7 @@ module Driver
     end
 
     def withdraw
-      authorize! :withdraw, DriverWalletEntry
+      authorize! :withdraw, wallet_authorization_subject
       payout_method = withdrawal_payout_method
       profile = current_user.driver_profile || DriverProfile.ensure_for!(current_user)
       if payout_method == "stripe" && !profile.stripe_payouts_ready?
@@ -112,6 +114,10 @@ module Driver
         actor: current_user,
         notifiable: entry
       )
+    end
+
+    def wallet_authorization_subject
+      DriverWalletEntry.new(driver: current_user)
     end
   end
 end

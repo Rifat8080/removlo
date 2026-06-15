@@ -30,7 +30,7 @@ class CheckoutsController < ApplicationController
 
   def success
     @order = MaterialOrder.find_by!(order_number: params[:order_number])
-    authorize! :read, @order if @order.customer_id.present?
+    authorize_checkout_order!(@order)
     finalize_paid_order(@order)
     @order.update!(customer: current_user) if user_signed_in? && @order.customer_id.blank?
     current_cart.cart_items.destroy_all if current_cart.present?
@@ -38,7 +38,9 @@ class CheckoutsController < ApplicationController
 
   def cancel
     @order = MaterialOrder.find_by(order_number: params[:order_number])
-    authorize! :read, @order if @order&.customer_id.present?
+    return head :not_found unless @order
+
+    authorize_checkout_order!(@order)
   end
 
   private
@@ -71,6 +73,19 @@ class CheckoutsController < ApplicationController
       session.id == order.stripe_checkout_session_id &&
       metadata["material_order_id"].to_s == order.id.to_s &&
       session.amount_total.to_i == order.total_cents.to_i
+  end
+
+  def authorize_checkout_order!(order)
+    return if can?(:read, order)
+    return if guest_checkout_proof?(order)
+
+    authorize! :read, order
+  end
+
+  def guest_checkout_proof?(order)
+    params[:session_id].present? &&
+      order.stripe_checkout_session_id.present? &&
+      params[:session_id] == order.stripe_checkout_session_id
   end
 
   def start_stripe_checkout(order)

@@ -8,8 +8,8 @@ module Admin
       private
 
       def require_admin!
-        return if current_user&.admin?
-
+        authorize! :manage, :all
+      rescue CanCan::AccessDenied
         redirect_to dashboard_path, alert: "You are not authorized to access accounting."
       end
 

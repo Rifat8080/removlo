@@ -2,6 +2,8 @@ module Admin
   module Accounting
     class DashboardController < BaseController
       def index
+        authorize! :read, AccountingTransaction
+
         @summary = AccountingTransaction.summary_for
         @month_summary = AccountingTransaction.summary_for(
           start_date: Date.current.beginning_of_month,

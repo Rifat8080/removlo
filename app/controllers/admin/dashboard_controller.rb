@@ -1,6 +1,8 @@
 module Admin
   class DashboardController < BaseController
     def index
+      authorize! :access, :operations
+
       @lead_counts = {
         new_leads: Quotation.new_leads.count,
         pending_quotes: Quotation.pending_quotes.count,

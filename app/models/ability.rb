@@ -19,7 +19,6 @@ class Ability
     can :read, Conversation do |conversation|
       conversation.participant_for(user).present?
     end
-    can :create, Conversation
     can :create, Message do |message|
       message.conversation&.participant_for(user).present?
     end
@@ -49,6 +48,9 @@ class Ability
   def guest_rules(cart_session_token)
     can :read, :public_job
     can :manage, Cart, session_token: cart_session_token if cart_session_token.present?
+    can :read, MaterialOrder do |order|
+      cart_session_token.present? && order.cart&.session_token == cart_session_token
+    end
   end
 
   def admin_rules(user)
@@ -63,6 +65,7 @@ class Ability
       AccountingTransaction,
       BlogPost,
       DriverOffer,
+      DriverProfile,
       DriverWalletEntry,
       PayrollRun,
       Product,
@@ -84,7 +87,6 @@ class Ability
     can [:index, :select], DriverOffer
     can [:read, :create, :update], Conversation
     can [:create, :create_internal], Message
-    can :read, Payslip
     cannot [:approve_negotiated_price, :reject_negotiated_price], Quotation
     cannot [:approve_cash, :create, :update, :destroy], QuotationPayment
     cannot [:approve, :payout], DriverWalletEntry
@@ -102,7 +104,7 @@ class Ability
     can :read, DriverProfile, user_id: user.id
     can :manage, DriverAvailability, driver_id: user.id
     can :read, DriverWalletEntry, driver_id: user.id
-    can [:connect_stripe, :withdraw], DriverWalletEntry
+    can [:connect_stripe, :withdraw], DriverWalletEntry, driver_id: user.id
     can :read, Payslip, employee_id: user.id
     can :read, Quotation do |quotation|
       quotation.awaiting_driver_offers? || quotation.assigned_driver_id == user.id

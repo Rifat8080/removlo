@@ -371,8 +371,8 @@ module Admin
     end
 
     def require_admin_for_quotation_mutation!
-      return if current_user&.admin?
-
+      authorize! :manage, :all
+    rescue CanCan::AccessDenied
       redirect_to(@quotation ? admin_quotation_path(@quotation) : admin_quotations_path, alert: "Only admins can edit quotations.")
     end
 
