@@ -10,7 +10,7 @@ module GoogleMaps
     class MissingApiKeyError < Error; end
 
     def self.api_key
-      ENV["GOOGLE_MAPS_SERVER_KEY"].presence || ENV["GOOGLE_MAPS_API_KEY"].presence
+      ENV["GOOGLE_MAPS_SERVER_KEY"].presence
     end
 
     def self.configured?

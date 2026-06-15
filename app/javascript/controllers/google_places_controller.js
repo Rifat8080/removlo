@@ -49,7 +49,7 @@ export default class extends Controller {
 
       const script = document.createElement("script")
       script.id = SCRIPT_ID
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&libraries=places&v=weekly`
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&libraries=places&v=weekly&loading=async`
       script.async = true
       script.defer = true
       script.addEventListener("load", resolve, { once: true })

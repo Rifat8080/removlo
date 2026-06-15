@@ -9,10 +9,6 @@
     <meta name="description" content="<%= seo_description %>">
     <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
     <meta name="theme-color" content="#2563eb">
-    <% google_maps_browser_key = ENV["GOOGLE_MAPS_BROWSER_KEY"].presence %>
-    <% if google_maps_browser_key.present? %>
-      <meta name="google-maps-browser-key" content="<%= google_maps_browser_key %>">
-    <% end %>
     <link rel="canonical" href="<%= request.original_url.split('?').first %>">
     <meta property="og:site_name" content="Removlo">
     <meta property="og:type" content="website">

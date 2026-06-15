@@ -29,11 +29,18 @@ Rails.application.configure do
 
   # SSL.
   # Before Certbot succeeds, keep FORCE_SSL=false in /etc/removlo.env.
-  # After SSL succeeds, set FORCE_SSL=true.
-  force_ssl = ENV.fetch("FORCE_SSL", "false").to_s.downcase.in?(["true", "1", "yes"])
+  # After SSL succeeds, remove that override or set FORCE_SSL=true.
+  force_ssl = ENV.fetch("FORCE_SSL", "true").to_s.downcase.in?(["true", "1", "yes"])
 
   config.force_ssl = force_ssl
   config.assume_ssl = force_ssl
+
+  config.action_dispatch.default_headers = {
+    "X-Frame-Options" => "DENY",
+    "X-Content-Type-Options" => "nosniff",
+    "Referrer-Policy" => "strict-origin-when-cross-origin",
+    "X-Permitted-Cross-Domain-Policies" => "none"
+  }
 
   # Logging.
   config.log_tags = [:request_id]
@@ -68,7 +75,7 @@ Rails.application.configure do
   }
 
   config.action_mailer.default_options = {
-    from: ENV.fetch("DEFAULT_FROM_EMAIL", "Removlo <noreply@removlo.co.uk>")
+    from: ENV.fetch("DEFAULT_FROM_EMAIL", "Removlo <info.removlo@gmail.com>")
   }
 
   smtp_starttls = ENV.fetch("SMTP_ENABLE_STARTTLS_AUTO", "true").to_s.downcase.in?(["true", "1", "yes"])
