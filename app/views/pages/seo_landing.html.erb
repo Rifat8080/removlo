@@ -1,0 +1,8 @@
+<%= render "pages/landing_content",
+  landing_title: @seo_page.title,
+  landing_meta_description: @seo_page.meta_description,
+  landing_hero_lead: @seo_page.hero_lead,
+  landing_hero_highlight: @seo_page.hero_highlight,
+  landing_hero_subtitle: @seo_page.hero_subtitle,
+  landing_structured_description: @seo_page.structured_description,
+  landing_schema_url: seo_landing_url(@seo_page.slug) %>

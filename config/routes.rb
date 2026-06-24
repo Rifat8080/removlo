@@ -161,6 +161,10 @@ Rails.application.routes.draw do
   get "contact", to: "pages#contact", as: :contact
   get "get-a-quotation", to: "pages#get_quotation", as: :get_quotation
 
+  get "uk/:slug", to: "pages#seo_landing", as: :seo_landing, constraints: ->(request) {
+    SeoLandingPage.valid_slug?(request.params[:slug])
+  }
+
   get "dashboard", to: "pages#dashboard", as: :dashboard
   get "jobs/:token", to: "public_jobs#show", as: :public_job
   root to: "pages#landing"

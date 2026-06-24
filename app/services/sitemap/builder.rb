@@ -5,7 +5,7 @@ module Sitemap
     Entry = Data.define(:loc, :lastmod, :changefreq, :priority)
 
     def entries
-      static_entries + blog_entries + product_entries
+      static_entries + seo_landing_entries + blog_entries + product_entries
     end
 
     def default_url_options
@@ -33,6 +33,16 @@ module Sitemap
         entry(blog_posts_url, changefreq: "weekly", priority: "0.8"),
         entry(shop_products_url, changefreq: "weekly", priority: "0.8")
       ]
+    end
+
+    def seo_landing_entries
+      SeoLandingPage.all.map do |page|
+        entry(
+          seo_landing_url(page.slug),
+          changefreq: "weekly",
+          priority: "0.8"
+        )
+      end
     end
 
     def blog_entries

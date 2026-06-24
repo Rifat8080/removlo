@@ -1,0 +1,698 @@
+<% service_cards = [
+  ["Home Removals", "House removals, home moves, and man and van help.", "home_removals_icon.svg", "home_removals_image.png"],
+  ["Office Removals", "Minimise downtime with our efficient service.", "office_removals_icon.svg", "office_removals_image.png"],
+  ["Packing Services", "Professional packing for a stress-free move.", "packing_services_icon.svg", "packing_services_image.png"],
+  ["Storage Solutions", "Secure short or long-term storage options.", "storage_solutions_icon.svg", "storage_solutions_image.png"]
+] %>
+<% if ENV["GOOGLE_MAPS_BROWSER_KEY"].present? %>
+  <% content_for :head do %>
+    <meta name="google-maps-browser-key" content="<%= ENV.fetch("GOOGLE_MAPS_BROWSER_KEY") %>">
+  <% end %>
+<% end %>
+<% trust_logos = [
+  ["Google", "Excellent 4.9", "google_logo_transparent.png"],
+  ["Trustpilot", "5-star service", "trustpilot_logo_transparent.png"],
+  ["feefo", "Verified reviews", "feefo_logo_transparent.png"],
+  ["Which?", "Trusted mover", "which_logo_transparent.png"]
+] %>
+<% benefits = [
+  ["Real-time tracking", "Know your route, ETA, and crew status.", "route-tracking.svg"],
+  ["Dedicated support", "One friendly coordinator from quote to keys.", "headset-support.svg"],
+  ["Care & protection", "Careful crews, insurance options, and item notes.", "shield-protection.svg"],
+  ["Transparent pricing", "No surprises, no pressure, no hidden extras.", "price-receipt.svg"]
+] %>
+<% reviews = [
+  ["Sarah T.", "London to Manchester", "Removlo made our move go from stressful to simple. The team was professional, careful, and friendly."],
+  ["James R.", "Office relocation", "Clear quote, punctual crew, and great communication. We were working again the next morning."],
+  ["Amina K.", "Packing and storage", "The packing team labelled everything beautifully and kept fragile items safe from start to finish."]
+] %>
+<% faqs = [
+  ["How much does a home move cost?", "The price depends on distance, property size, access, packing, and storage needs. If you are comparing affordable removals near me or cheap removals near me, our quote form gives us what we need to prepare a clear estimate."],
+  ["How far in advance should I book?", "Two to six weeks is ideal for most moves, but we can often help with same day removals and last minute removals depending on crew availability."],
+  ["Can Removlo help with local removals near me?", "Yes. If you are searching for a removal company near me, removals near me, house removals near me, moving company near me, or local movers near me, Removlo supports local and UK-wide moves through one clear booking process."],
+  ["Do you offer man and van services?", "For smaller moves, we can help customers looking for man and van near me or man with a van near me, alongside larger house removal company and home removals company services."],
+  ["Can I book and get a quote online?", "Yes. Use Removlo to request a removal quote online, get removal quote details from our team, and book removal company online once the plan is confirmed."],
+  ["What is included in the quote?", "Your quote itemises crew time, loading, transport, unloading, and any selected extras such as packing or storage."],
+  ["Do you offer packing services?", "Yes. You can book full packing, fragile-only packing, materials, labelling, and inventory support."],
+  ["Are my items insured?", "We explain protection options before booking so you can choose the level that fits your move."]
+] %>
+<% asset_image = ->(file) { "images/#{file}" } %>
+<% content_for :title, "Removlo — Removal Company Near Me | UK House Removals" %>
+<% content_for :meta_description, "Find a local removal company for house removals, man and van help, local movers, same day removals, and last minute removals. Get a removal quote online with Removlo." %>
+<% content_for :head do %>
+  <link rel="preload" as="image" href="<%= asset_path(asset_image.call("van.webp")) %>" type="image/webp" media="(min-width: 1360px)" fetchpriority="high">
+  <% structured_data = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "#{root_url}#organization",
+        "name": "Removlo",
+        "url": root_url,
+        "logo": image_url(asset_image.call("logo.svg")),
+        "sameAs": []
+      },
+      {
+        "@type": "MovingCompany",
+        "@id": "#{root_url}#moving-company",
+        "name": "Removlo",
+        "url": root_url,
+        "image": image_url(asset_image.call("logo.svg")),
+        "telephone": "+447950202441",
+        "email": "support@removlo.co.uk",
+        "areaServed": {
+          "@type": "Country",
+          "name": "United Kingdom"
+        },
+        "priceRange": "££",
+        "description": "UK removal company near me for local removals, house removals, home removals, man and van moves, affordable removals, transparent online removal quotes, and live move tracking.",
+        "makesOffer": service_cards.map do |title, description, _icon, _image|
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": title,
+              "description": description,
+              "areaServed": "United Kingdom"
+            }
+          }
+        end
+      },
+      {
+        "@type": "WebSite",
+        "@id": "#{root_url}#website",
+        "name": "Removlo",
+        "url": root_url,
+        "publisher": {
+          "@id": "#{root_url}#organization"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "#{root_url}#faq",
+        "mainEntity": faqs.map do |question, answer|
+          {
+            "@type": "Question",
+            "name": question,
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": answer
+            }
+          }
+        end
+      }
+    ]
+  } %>
+  <script type="application/ld+json"><%= JSON.generate(structured_data).html_safe %></script>
+<% end %>
+
+<main data-controller="cursor-glow reveal" class="relative flex-1 overflow-hidden bg-[#f7f9ff] text-slate-800">
+  <div class="cursor-glow pointer-events-none fixed inset-0 z-0 opacity-40"></div>
+  <div class="pointer-events-none absolute inset-x-0 top-0 z-0 h-[48rem] bg-[radial-gradient(circle_at_18%_20%,rgba(37,99,235,0.14),transparent_26%),radial-gradient(circle_at_80%_16%,rgba(124,58,237,0.13),transparent_28%),linear-gradient(180deg,#fbfdff_0%,#eef5ff_58%,#ffffff_100%)]"></div>
+  <div class="pointer-events-none absolute left-1/2 top-28 z-0 h-[38rem] w-[58rem] -translate-x-1/2 rounded-full bg-blue-200/25 blur-3xl"></div>
+
+  <section class="relative isolate z-10 overflow-hidden px-4 pb-7 pt-32 sm:px-6 sm:pt-36 min-[1360px]:pt-40 lg:px-10 2xl:px-14">
+    <div class="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(37,99,235,0.055)_1px,transparent_1px),linear-gradient(to_bottom,rgba(37,99,235,0.055)_1px,transparent_1px)] bg-[size:3rem_3rem]"></div>
+    <div class="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_45%_24%,rgba(96,165,250,0.16),transparent_34%),radial-gradient(circle_at_78%_22%,rgba(124,58,237,0.10),transparent_34%),linear-gradient(180deg,rgba(255,255,255,0.30),rgba(239,246,255,0.25)_55%,rgba(255,255,255,0.65))]"></div>
+    <div class="mx-auto w-full max-w-[1600px]">
+      <div class="relative">
+        <div class="pointer-events-none absolute -inset-x-8 -inset-y-10 bg-[radial-gradient(circle_at_45%_24%,rgba(96,165,250,0.22),transparent_32%),radial-gradient(circle_at_78%_22%,rgba(124,58,237,0.12),transparent_32%),linear-gradient(180deg,rgba(255,255,255,0.45),rgba(239,246,255,0.35)_55%,rgba(255,255,255,0.35))]"></div>
+        <div class="absolute -top-12 -bottom-12 left-[18%] right-[17%] hidden min-[1360px]:block" aria-hidden="true">
+          <div class="relative h-full w-full">
+            <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_48%_54%,rgba(96,165,250,0.16),transparent_48%)]"></div>
+            <%= marketing_picture_image "van.png", alt: "", loading: "eager", fetchpriority: "high", decoding: "async", class: "pointer-events-none absolute inset-0 h-full w-full object-cover object-[center_62%] opacity-90 contrast-105 saturate-105 [mask-image:radial-gradient(ellipse_at_center,black_34%,rgba(0,0,0,0.72)_54%,transparent_76%)]" %>
+
+            <div class="float-slower pointer-events-auto absolute left-[54%] top-[11%] z-20 flex max-w-[min(15.5rem,36%)] -translate-x-1/2 items-center gap-2 rounded-2xl border border-white/85 bg-white/94 px-3 py-2.5 shadow-xl shadow-blue-950/10 backdrop-blur-xl min-[1536px]:left-[49%] min-[1536px]:top-[12%] min-[1536px]:max-w-[18rem]">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-50">
+                <%= image_tag asset_image.call("route-pin.svg"), alt: "", class: "h-5 w-5", aria: { hidden: true } %>
+              </span>
+              <span class="min-w-0">
+                <span class="block text-[9px] font-black uppercase tracking-wide text-slate-400">Live tracking</span>
+                <span class="block truncate text-[11px] font-black text-slate-950 min-[1536px]:text-xs">London to Leeds <span class="text-emerald-600">In progress</span></span>
+              </span>
+            </div>
+
+            <div class="float-slow pointer-events-auto absolute left-[37%] top-[24%] z-20 rounded-2xl border border-white/85 bg-white/94 p-3 shadow-xl shadow-blue-950/10 backdrop-blur-xl min-[1536px]:left-[18%] min-[1536px]:top-[26%]">
+              <p class="text-[9px] font-black uppercase tracking-wide text-slate-400">Crew ETA</p>
+              <p class="mt-1 text-xs font-black text-slate-950">08:30 AM</p>
+              <p class="mt-0.5 text-[10px] font-bold text-emerald-600">Today</p>
+            </div>
+
+            <div class="pointer-events-auto absolute bottom-[17%] left-[28%] z-20 flex max-w-[min(12rem,31%)] items-center gap-2 rounded-2xl border border-white/85 bg-white/94 px-3 py-2 shadow-xl shadow-blue-950/10 backdrop-blur-xl min-[1536px]:bottom-[20%] min-[1536px]:left-[22%] min-[1536px]:max-w-[13rem]">
+              <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-emerald-50">
+                <%= image_tag asset_image.call("shield-protection.svg"), alt: "", class: "h-4 w-4", aria: { hidden: true } %>
+              </span>
+              <span class="min-w-0">
+                <span class="block text-[9px] font-black uppercase tracking-wide text-slate-400">Protected move</span>
+                <span class="block text-[10px] font-bold text-slate-700">Fully insured</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative grid min-w-0 gap-6 sm:gap-7 min-[1360px]:min-h-[31rem] min-[1360px]:grid-cols-[minmax(21rem,0.95fr)_minmax(31rem,1.1fr)_minmax(22rem,0.92fr)] min-[1360px]:items-center">
+          <div class="relative isolate z-20 min-w-0 overflow-hidden pb-4 sm:pb-6 min-[1360px]:overflow-visible min-[1360px]:pb-0">
+            <%= marketing_picture_image "van.png", alt: "", loading: "lazy", fetchpriority: "low", decoding: "async", class: "pointer-events-none absolute -right-16 top-12 -z-10 h-52 w-[105%] object-contain object-right-bottom opacity-30 mix-blend-multiply contrast-105 saturate-105 [mask-image:linear-gradient(to_left,black_0%,rgba(0,0,0,0.72)_46%,transparent_100%)] min-[380px]:top-10 min-[380px]:h-60 sm:-right-24 sm:top-0 sm:h-[24rem] sm:w-[82%] sm:opacity-40 md:w-[72%] min-[1360px]:hidden", aria: { hidden: true } %>
+            <div class="inline-flex max-w-full items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/90 px-2.5 py-1.5 text-[8px] font-black uppercase tracking-[0.13em] text-slate-700 shadow-sm shadow-blue-950/5 backdrop-blur min-[380px]:gap-2 min-[380px]:px-3 min-[380px]:text-[10px]">
+              <%= image_tag asset_image.call("route-pin.svg"), alt: "", class: "h-3.5 w-3.5 shrink-0 min-[380px]:h-4 min-[380px]:w-4", aria: { hidden: true } %>
+              UK's smartest way to move
+            </div>
+
+            <h1 class="mt-4 max-w-2xl text-[2.05rem] font-black leading-[0.98] tracking-[-0.055em] text-slate-950 min-[380px]:text-[2.35rem] min-[420px]:text-[2.6rem] sm:text-[3.2rem] xl:text-[3.95rem]">
+              <span class="sm:whitespace-nowrap">Moving home,</span> <span class="relative inline-block bg-gradient-to-r from-blue-700 via-indigo-600 to-violet-600 bg-clip-text pb-3 text-transparent">made smart<svg class="absolute -bottom-0.5 left-0 h-3 w-full text-blue-600" viewBox="0 0 280 18" fill="none" preserveAspectRatio="none" aria-hidden="true"><path d="M4 13C64 4 204 4 276 12" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></svg></span>
+            </h1>
+            <p class="mt-3 max-w-md text-[13px] font-medium leading-6 text-slate-600 sm:text-[0.95rem] sm:leading-7">
+              Removlo blends intelligent logistics with real human support. Get a transparent quote, track your move live, and relax knowing your move is in safe hands.
+            </p>
+
+            <div class="mt-4 flex flex-wrap gap-x-3 gap-y-2 sm:mt-5 sm:gap-x-5">
+              <% [["Fully insured", "shield-protection.svg"], ["No hidden fees", "price-receipt.svg"], ["UK-wide coverage", "route-pin.svg"]].each do |label, icon| %>
+                <div class="inline-flex items-center gap-1.5 text-[10px] font-bold text-slate-600 sm:gap-2 sm:text-xs">
+                  <span class="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-blue-600 sm:h-5 sm:w-5">
+                    <%= image_tag asset_image.call(icon), alt: "", class: "h-2.5 w-2.5 brightness-0 invert sm:h-3 sm:w-3", aria: { hidden: true } %>
+                  </span>
+                  <%= label %>
+                </div>
+              <% end %>
+            </div>
+
+            <div class="mt-5 flex flex-col gap-2.5 min-[380px]:gap-3 sm:flex-row sm:items-center">
+              <% if user_signed_in? %>
+                <%= link_to current_user.customer? ? new_quotation_path : dashboard_path, class: "soft-shine inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 px-4 py-3 text-[11px] font-black text-white shadow-xl shadow-blue-600/25 transition hover:-translate-y-0.5 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-blue-200 sm:px-5 sm:text-xs" do %>
+                  <%= current_user.customer? ? "Start your free quote" : "Open dashboard" %>
+                  <%= image_tag asset_image.call("arrow-right.svg"), alt: "", class: "h-4 w-4 brightness-0 invert", aria: { hidden: true } %>
+                <% end %>
+              <% else %>
+                <%= link_to marketing_quote_path, class: "soft-shine inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 px-4 py-3 text-[11px] font-black text-white shadow-xl shadow-blue-600/25 transition hover:-translate-y-0.5 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-blue-200 sm:px-5 sm:text-xs" do %>
+                  Get your free quote
+                  <%= image_tag asset_image.call("arrow-right.svg"), alt: "", class: "h-4 w-4 brightness-0 invert", aria: { hidden: true } %>
+                <% end %>
+              <% end %>
+              <%= link_to how_it_works_path, class: "inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white/90 px-4 py-3 text-[11px] font-black text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:text-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100 sm:px-5 sm:text-xs" do %>
+                See how it works
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 5v14l11-7z"/></svg>
+              <% end %>
+            </div>
+
+            <div class="relative mt-4 max-w-full overflow-hidden rounded-2xl border border-white/80 bg-white/75 p-1.5 shadow-lg shadow-blue-950/5 backdrop-blur-xl sm:max-w-md sm:p-2">
+              <div class="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-white to-transparent"></div>
+              <div class="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-white to-transparent"></div>
+              <div class="route-marquee flex w-max items-center gap-2">
+                <% (["London to Leeds", "Bristol to Bath", "Cardiff to Swansea", "Edinburgh to Glasgow"] * 2).each do |route| %>
+                  <span class="inline-flex items-center gap-2 rounded-xl bg-white px-2.5 py-2 text-[10px] font-black text-slate-600 shadow-sm ring-1 ring-slate-100 sm:px-3 sm:text-[11px]">
+                    <span class="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_0_4px_rgba(52,211,153,0.12)]"></span>
+                    <%= route %>
+                  </span>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="mt-5 flex flex-col gap-3 sm:mt-6 sm:flex-row sm:items-center sm:gap-4">
+              <div class="flex -space-x-3">
+                <% ["SM", "JR", "AK", "OP"].each_with_index do |initials, index| %>
+                  <span class="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br <%= index.even? ? 'from-blue-600 to-indigo-600' : 'from-violet-600 to-fuchsia-600' %> text-[9px] font-black text-white shadow-md sm:h-9 sm:w-9 sm:text-[10px]"><%= initials %></span>
+                <% end %>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-slate-500">Trusted by thousands across the UK</p>
+                <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <span class="text-sm font-black text-slate-950">4.9/5</span>
+                  <span class="flex text-amber-400" aria-label="Five star rating"><% 5.times do %><svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path d="M9.05 2.93c.3-.92 1.6-.92 1.9 0l1.07 3.29a1 1 0 00.95.69h3.46c.97 0 1.37 1.24.59 1.81l-2.8 2.03a1 1 0 00-.36 1.12l1.07 3.29c.3.92-.76 1.69-1.54 1.12l-2.8-2.03a1 1 0 00-1.18 0l-2.8 2.03c-.78.57-1.84-.2-1.54-1.12l1.07-3.29a1 1 0 00-.36-1.12l-2.8-2.03c-.78-.57-.38-1.81.59-1.81h3.46a1 1 0 00.95-.69l1.07-3.29z"/></svg><% end %></span>
+                  <span class="text-xs font-bold text-emerald-600">Trustpilot</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hidden min-[1360px]:block min-[1360px]:min-h-[30rem]" aria-hidden="true"></div>
+
+          <aside id="quote" class="relative z-20 rounded-[1.25rem] border border-white/85 bg-white/95 p-4 shadow-[0_24px_70px_rgba(30,64,175,0.16)] ring-1 ring-blue-100/80 backdrop-blur-2xl sm:rounded-[1.5rem] sm:p-6">
+            <div class="flex items-start justify-between gap-3 sm:gap-4">
+              <div class="min-w-0">
+                <span class="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.16em] text-blue-700">
+                  <%= image_tag asset_image.call("quote-document.svg"), alt: "", class: "h-4 w-4", aria: { hidden: true } %>
+                  2-min instant quote
+                </span>
+                <h2 class="mt-4 text-xl font-black tracking-[-0.03em] text-slate-950 sm:text-2xl">Get your quick quote</h2>
+                <p class="mt-1 text-xs font-semibold text-slate-500">Tell us the basics and we will shape the plan.</p>
+                <p data-google-places-target="status" class="mt-2 text-[11px] font-bold text-slate-500">Start typing a postcode or use current location.</p>
+              </div>
+              <div class="shrink-0 rounded-2xl bg-gradient-to-br from-blue-600 to-violet-600 p-2.5 shadow-lg shadow-blue-600/25 sm:p-3">
+                <%= image_tag asset_image.call("price-receipt.svg"), alt: "", class: "h-5 w-5 brightness-0 invert sm:h-6 sm:w-6", aria: { hidden: true } %>
+              </div>
+            </div>
+
+            <%= form_with scope: :quotation, url: quotations_path, method: :post, local: true, data: { controller: "google-places" }, class: "mt-5 space-y-4" do |f| %>
+              <% field_class = "block w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm font-semibold text-slate-900 placeholder-slate-400 shadow-sm transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 sm:px-4" %>
+              <% label_class = "mb-1.5 block text-[10px] font-black uppercase tracking-wide text-slate-500" %>
+              <% inline_label_class = "block text-[10px] font-black uppercase tracking-wide text-slate-500" %>
+
+              <% unless user_signed_in? %>
+                <div>
+                  <%= f.label :customer_email, "Email address", class: label_class %>
+                  <%= f.email_field :customer_email, required: true, autocomplete: "email", placeholder: "you@example.com", class: field_class %>
+                </div>
+              <% end %>
+
+              <div class="grid gap-3 sm:grid-cols-2 min-[1360px]:grid-cols-1 2xl:grid-cols-2">
+                <div>
+                  <div class="mb-1.5 flex items-center justify-between gap-3">
+                    <%= f.label :pickup_postcode, "From", class: inline_label_class %>
+                    <button type="button" data-action="google-places#useCurrentLocation" data-google-places-input-param="quotation_pickup_postcode" class="text-[9px] font-black uppercase tracking-wide text-blue-700 transition hover:text-blue-900">Use current</button>
+                  </div>
+                  <%= f.text_field :pickup_postcode, required: true, placeholder: "SW1A 1AA", data: { google_places_target: "postcode" }, class: field_class %>
+                </div>
+                <div>
+                  <div class="mb-1.5 flex items-center justify-between gap-3">
+                    <%= f.label :delivery_postcode, "To", class: inline_label_class %>
+                    <button type="button" data-action="google-places#useCurrentLocation" data-google-places-input-param="quotation_delivery_postcode" class="text-[9px] font-black uppercase tracking-wide text-blue-700 transition hover:text-blue-900">Use current</button>
+                  </div>
+                  <%= f.text_field :delivery_postcode, required: true, placeholder: "M1 1AD", data: { google_places_target: "postcode" }, class: field_class %>
+                </div>
+              </div>
+
+              <div class="grid gap-3 sm:grid-cols-2 min-[1360px]:grid-cols-1 2xl:grid-cols-2">
+                <div>
+                  <%= f.label :move_size, "Move size", class: label_class %>
+                  <%= f.select :move_size, [["Select size", ""], ["Studio", "studio"], ["1 bedroom", "one_bed"], ["2 bedrooms", "two_bed"], ["3 bedrooms", "three_bed"], ["4+ bedrooms", "four_plus"], ["Office / commercial", "office"]], {}, class: field_class %>
+                </div>
+                <div>
+                  <%= f.label :preferred_move_date, "Move date", class: label_class %>
+                  <%= f.date_field :preferred_move_date, class: field_class %>
+                </div>
+              </div>
+
+              <div>
+                <%= f.label :customer_notes, "Additional services", class: label_class %>
+                <%= f.text_field :customer_notes, placeholder: "Packing, storage, fragile items...", class: field_class %>
+              </div>
+
+              <%= f.hidden_field :service_level, value: "standard" %>
+              <%= f.submit "Get my instant quote", class: "w-full cursor-pointer rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 px-4 py-3.5 text-sm font-black text-white shadow-xl shadow-blue-600/25 transition hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-blue-600/30 focus:outline-none focus:ring-4 focus:ring-blue-200 sm:px-6" %>
+              <p class="text-center text-[11px] font-semibold text-slate-500">No obligation. Response within 24 hours.</p>
+            <% end %>
+          </aside>
+        </div>
+      </div>
+
+      <div class="reveal mt-6 grid gap-4 lg:grid-cols-[0.74fr_1fr]">
+        <div class="rounded-[1.5rem] border border-white bg-white/90 p-4 shadow-xl shadow-blue-950/5 backdrop-blur sm:p-5">
+          <p class="text-center text-[9px] font-black uppercase tracking-[0.18em] text-slate-400 sm:text-left sm:text-[10px]">Trusted by thousands across the UK</p>
+          <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-4">
+            <% trust_logos.each do |name, rating, logo| %>
+              <div class="rounded-2xl bg-slate-50/70 p-3 text-center ring-1 ring-slate-100 transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md hover:shadow-blue-950/5 min-[1360px]:rounded-none min-[1360px]:bg-transparent min-[1360px]:p-0 min-[1360px]:text-left min-[1360px]:ring-0 min-[1360px]:border-r min-[1360px]:border-slate-100 min-[1360px]:last:border-r-0">
+                <%= marketing_picture_image logo, alt: "#{name} logo", loading: "lazy", decoding: "async", class: "mx-auto h-5 w-auto object-contain sm:h-6 lg:mx-0" %>
+                <div class="mt-1.5 flex justify-center text-amber-400 min-[1360px]:justify-start" aria-hidden="true"><% 5.times do %><svg class="h-3 w-3 sm:h-3.5 sm:w-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.05 2.93c.3-.92 1.6-.92 1.9 0l1.07 3.29a1 1 0 00.95.69h3.46c.97 0 1.37 1.24.59 1.81l-2.8 2.03a1 1 0 00-.36 1.12l1.07 3.29c.3.92-.76 1.69-1.54 1.12l-2.8-2.03a1 1 0 00-1.18 0l-2.8 2.03c-.78.57-1.84-.2-1.54-1.12l1.07-3.29a1 1 0 00-.36-1.12l-2.8-2.03c-.78-.57-.38-1.81.59-1.81h3.46a1 1 0 00.95-.69l1.07-3.29z"/></svg><% end %></div>
+                <p class="mt-1 text-[9px] font-bold uppercase tracking-wide text-slate-400 sm:text-[10px]"><%= rating %></p>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 rounded-[1.5rem] border border-white bg-white/90 p-4 shadow-xl shadow-blue-950/5 backdrop-blur sm:grid-cols-4 lg:grid-cols-4">
+          <% [["15K+", "Moves completed", "users-customers.svg"], ["4.9/5", "Average rating", "rating-star.svg"], ["50+", "Trained movers", "shield-protection.svg"], ["20+", "UK locations", "location-contact.svg"]].each do |stat, label, icon| %>
+            <div class="flex flex-col items-center justify-center gap-2 rounded-2xl bg-slate-50/70 px-2 py-3 text-center ring-1 ring-slate-100 sm:bg-transparent sm:ring-0 min-[1360px]:flex-row min-[1360px]:justify-start min-[1360px]:gap-3 min-[1360px]:text-left min-[1360px]:border-r min-[1360px]:border-slate-100 min-[1360px]:last:border-r-0">
+              <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-blue-50 sm:h-10 sm:w-10">
+                <%= image_tag asset_image.call(icon), alt: "", class: "h-5 w-5 sm:h-6 sm:w-6", aria: { hidden: true } %>
+              </span>
+              <span>
+                <span class="block text-lg font-black tracking-tight text-slate-950 sm:text-xl"><%= stat %></span>
+                <span class="block text-[10px] font-bold text-slate-500 sm:text-[11px]"><%= label %></span>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="services" class="relative z-10 px-4 py-7 sm:px-6 sm:py-9 lg:px-10 2xl:px-14">
+    <div class="mx-auto w-full max-w-[1600px]">
+      <div class="reveal rounded-[2rem] border border-white/90 bg-white/80 p-4 shadow-[0_24px_80px_rgba(30,64,175,0.10)] ring-1 ring-blue-100/70 backdrop-blur-xl sm:p-6 lg:p-7">
+        <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <h2 class="text-2xl font-black tracking-[-0.04em] text-slate-950 sm:text-3xl">Our services</h2>
+          </div>
+          <%= link_to services_path, class: "inline-flex items-center gap-2 text-xs font-black text-blue-700 sm:text-sm" do %>
+            View all services
+            <%= image_tag asset_image.call("arrow-right.svg"), alt: "", class: "h-4 w-4", aria: { hidden: true } %>
+          <% end %>
+        </div>
+
+        <div class="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <% service_paths = [home_removals_path, office_removals_path, packing_services_path, storage_solutions_path] %>
+          <% service_cards.each_with_index do |(title, desc, icon, image), index| %>
+            <article class="group relative min-h-[18rem] overflow-hidden rounded-[1.45rem] border border-blue-100/80 bg-white shadow-[0_14px_45px_rgba(30,64,175,0.07)] transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-950/10 sm:min-h-[18.5rem] xl:min-h-[15.5rem]">
+              <div class="relative z-10 flex items-start gap-4 px-5 pt-5 sm:px-6 sm:pt-6 xl:gap-3 xl:px-4 xl:pt-4">
+                <span class="flex h-12 w-12 shrink-0 items-center justify-center text-blue-700 xl:h-11 xl:w-11">
+                  <%= image_tag asset_image.call(icon), alt: "", class: "h-10 w-10 xl:h-9 xl:w-9", aria: { hidden: true } %>
+                </span>
+                <div class="min-w-0 pt-1">
+                  <h3 class="text-base font-black tracking-tight text-slate-950 xl:text-sm"><%= title %></h3>
+                  <p class="mt-2 max-w-[12rem] text-sm font-semibold leading-6 text-slate-500 xl:max-w-[9.5rem] xl:text-[11px] xl:leading-5"><%= desc %></p>
+                </div>
+              </div>
+              <div class="absolute inset-x-0 bottom-0 h-[58%] overflow-hidden bg-slate-100">
+                <%= marketing_picture_image image, alt: "#{title} service", loading: "lazy", decoding: "async", class: "h-full w-full object-cover object-bottom transition duration-700 group-hover:scale-105" %>
+              </div>
+              <%= link_to service_paths[index], class: "absolute bottom-5 right-5 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white text-blue-700 shadow-lg shadow-blue-950/15 ring-1 ring-slate-200 transition group-hover:-translate-y-0.5 group-hover:bg-blue-600 group-hover:text-white xl:bottom-4 xl:right-4 xl:h-10 xl:w-10", aria: { label: "Learn more about #{title}" } do %>
+                <%= image_tag asset_image.call("arrow-right.svg"), alt: "", class: "h-4 w-4 transition group-hover:brightness-0 group-hover:invert", aria: { hidden: true } %>
+              <% end %>
+            </article>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how-it-works" class="relative z-10 px-4 py-7 sm:px-6 sm:py-9 lg:px-10 2xl:px-14">
+    <div class="reveal relative mx-auto w-full max-w-[1600px] overflow-hidden rounded-[2rem] border border-white/90 bg-white/88 p-5 shadow-[0_24px_90px_rgba(30,64,175,0.12)] ring-1 ring-blue-100/70 backdrop-blur-xl sm:p-7">
+      <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_14%_18%,rgba(37,99,235,0.12),transparent_28%),radial-gradient(circle_at_78%_16%,rgba(124,58,237,0.10),transparent_30%),linear-gradient(135deg,rgba(239,246,255,0.70),rgba(255,255,255,0.35)_45%,rgba(238,242,255,0.55))]"></div>
+      <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(37,99,235,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(37,99,235,0.04)_1px,transparent_1px)] bg-[size:2.75rem_2.75rem] [mask-image:radial-gradient(ellipse_at_center,black_0%,transparent_72%)]"></div>
+      <div class="grid gap-6 min-[1360px]:grid-cols-[1fr_20rem] min-[1360px]:items-stretch">
+        <div class="relative z-10">
+          <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div>
+              <span class="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-blue-700 ring-1 ring-blue-100">
+                <span class="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_0_4px_rgba(52,211,153,0.14)]"></span>
+                Simple process
+              </span>
+              <h2 class="mt-3 text-2xl font-black tracking-[-0.04em] text-slate-950 sm:text-3xl">How it works</h2>
+              <p class="mt-1 max-w-2xl text-sm font-bold leading-6 text-slate-500">From a quick route estimate to live driver tracking, Removlo keeps every step clear before moving day.</p>
+            </div>
+            <div class="hidden rounded-2xl border border-blue-100 bg-white/80 px-4 py-3 text-right shadow-sm shadow-blue-950/5 sm:block">
+              <p class="text-lg font-black text-slate-950">2 min</p>
+              <p class="text-[10px] font-black uppercase tracking-wide text-slate-400">quote setup</p>
+            </div>
+          </div>
+
+          <div class="mt-6 grid gap-3 sm:grid-cols-3">
+            <% [["Instant route check", "Google distance + ETA"], ["Human-reviewed price", "No auto-surprises"], ["Live move feed", "Driver ETA updates"]].each do |title, copy| %>
+              <div class="rounded-2xl border border-white/80 bg-white/70 px-4 py-3 shadow-sm shadow-blue-950/5 ring-1 ring-blue-50/80">
+                <p class="text-xs font-black text-slate-950"><%= title %></p>
+                <p class="mt-1 text-[11px] font-bold text-slate-500"><%= copy %></p>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="mt-5 grid gap-5 md:grid-cols-3">
+            <% [["Set your quote", "Postcodes, move size, date, and extras give us the route context.", "quote-document.svg", ["Google route estimate", "Packing/storage options", "No obligation"]], ["Book your move", "A coordinator reviews the details, sends your quote, and confirms the plan.", "calendar-check.svg", ["Clear itemised quote", "Deposit protection", "Move-day schedule"]], ["We move you", "Your driver follows the route plan and shares live progress when the job starts.", "moving-truck.svg", ["Pickup navigation", "Customer ETA feed", "Proof of progress"]]].each_with_index do |(title, copy, icon, points), index| %>
+              <div class="group relative overflow-hidden rounded-[1.65rem] border border-white/85 bg-white/78 p-5 shadow-lg shadow-blue-950/5 ring-1 ring-blue-50/80 transition duration-300 hover:-translate-y-1.5 hover:bg-white hover:shadow-2xl hover:shadow-blue-950/10">
+                <div class="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-blue-50/80 to-transparent"></div>
+                <% unless index == 2 %>
+                  <div class="absolute left-[64%] top-12 hidden h-px w-[72%] border-t-2 border-dashed border-blue-200 md:block"></div>
+                <% end %>
+                <div class="relative z-10 flex items-start justify-between gap-4">
+                  <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-blue-100/80 shadow-[0_12px_30px_rgba(37,99,235,0.16)] ring-4 ring-blue-50 transition duration-300 group-hover:bg-blue-100 group-hover:shadow-[0_18px_40px_rgba(37,99,235,0.24)]">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-violet-600 shadow-lg shadow-blue-700/25 transition duration-300 group-hover:scale-105 group-hover:from-violet-600 group-hover:to-blue-600">
+                      <%= image_tag asset_image.call(icon), alt: "", class: "h-6 w-6 brightness-0 invert transition duration-300 group-hover:scale-110", aria: { hidden: true } %>
+                    </div>
+                  </div>
+                  <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-[10px] font-black text-white shadow-md shadow-blue-600/20 transition duration-300 group-hover:bg-violet-600"><%= index + 1 %></span>
+                </div>
+                <div class="relative z-10 mt-5">
+                  <h3 class="text-base font-black text-slate-950 transition duration-300 group-hover:text-blue-700"><%= title %></h3>
+                  <p class="mt-2 text-xs font-semibold leading-5 text-slate-500 transition duration-300 group-hover:text-slate-600"><%= copy %></p>
+                  <ul class="mt-4 space-y-2">
+                    <% points.each do |point| %>
+                      <li class="flex items-center gap-2 text-[11px] font-black text-slate-600">
+                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_0_4px_rgba(52,211,153,0.10)]"></span>
+                        <%= point %>
+                      </li>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="mt-5 grid gap-3 rounded-[1.5rem] border border-white/80 bg-white/72 p-3 shadow-lg shadow-blue-950/5 ring-1 ring-blue-50/80 sm:grid-cols-3">
+            <% [["Route", "Postcode to postcode mapped"], ["Crew", "Driver matched after booking"], ["Updates", "ETA visible when moving"]].each do |title, copy| %>
+              <div class="flex items-center gap-3 rounded-2xl bg-slate-50/80 px-3 py-3">
+                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-blue-100">
+                  <%= image_tag asset_image.call("route-pin.svg"), alt: "", class: "h-5 w-5", aria: { hidden: true } %>
+                </span>
+                <div>
+                  <p class="text-xs font-black text-slate-950"><%= title %></p>
+                  <p class="mt-0.5 text-[11px] font-semibold text-slate-500"><%= copy %></p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="relative z-10 flex flex-col gap-4">
+          <div class="rounded-[1.5rem] border border-white/90 bg-white/88 p-5 shadow-xl shadow-blue-950/8 ring-1 ring-blue-100/80">
+            <div class="mb-4 flex items-center gap-3">
+              <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-violet-600 shadow-lg shadow-blue-600/20">
+                <%= image_tag asset_image.call("route-tracking.svg"), alt: "", class: "h-5 w-5 brightness-0 invert", aria: { hidden: true } %>
+              </span>
+              <div>
+                <h3 class="text-sm font-black text-slate-950">Live move plan</h3>
+                <p class="text-xs font-semibold text-slate-500">Estimate to arrival</p>
+              </div>
+            </div>
+            <div class="rounded-2xl bg-slate-950 p-4 text-white shadow-lg shadow-slate-950/15">
+              <div class="flex items-center justify-between gap-3">
+                <div>
+                  <p class="text-[10px] font-black uppercase tracking-wide text-blue-200">Example route</p>
+                  <p class="mt-1 text-sm font-black">London → Leeds</p>
+                </div>
+                <span class="rounded-full bg-emerald-400/15 px-3 py-1 text-[10px] font-black text-emerald-200 ring-1 ring-emerald-300/20">On time</span>
+              </div>
+              <div class="mt-4 grid grid-cols-2 gap-3">
+                <div class="rounded-xl bg-white/10 p-3">
+                  <p class="text-[10px] font-bold text-slate-300">Drive ETA</p>
+                  <p class="mt-1 text-lg font-black">3h 40m</p>
+                </div>
+                <div class="rounded-xl bg-white/10 p-3">
+                  <p class="text-[10px] font-bold text-slate-300">Distance</p>
+                  <p class="mt-1 text-lg font-black">195 mi</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-[1.5rem] border border-white/90 bg-white/86 p-5 shadow-xl shadow-blue-950/8 ring-1 ring-blue-100/80">
+            <div class="mb-4 flex items-center gap-3">
+              <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50">
+                <%= image_tag asset_image.call("shield-protection.svg"), alt: "", class: "h-6 w-6", aria: { hidden: true } %>
+              </span>
+              <div>
+                <h3 class="text-sm font-black text-slate-950">Move confidence</h3>
+                <p class="text-xs font-semibold text-slate-500">Built into every booking</p>
+              </div>
+            </div>
+            <div class="grid gap-3">
+              <% benefits.each do |title, copy, icon| %>
+                <div class="group flex gap-3 rounded-2xl border border-transparent p-2 transition duration-300 hover:-translate-y-0.5 hover:border-blue-100 hover:bg-blue-50/70">
+                  <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 transition duration-300 group-hover:bg-white group-hover:shadow-md group-hover:shadow-blue-950/10">
+                    <%= image_tag asset_image.call(icon), alt: "", class: "h-6 w-6 transition duration-300 group-hover:scale-110", aria: { hidden: true } %>
+                  </span>
+                  <div>
+                    <h3 class="text-sm font-black text-slate-950 transition duration-300 group-hover:text-blue-700"><%= title %></h3>
+                    <p class="mt-1 text-xs font-semibold leading-5 text-slate-500 transition duration-300 group-hover:text-slate-600"><%= copy %></p>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="reviews" class="relative z-10 px-4 py-7 sm:px-6 sm:py-9 lg:px-10 2xl:px-14">
+    <div class="mx-auto w-full max-w-[1600px]">
+      <div class="reveal rounded-[2rem] border border-white/90 bg-white/80 p-4 shadow-[0_24px_80px_rgba(30,64,175,0.10)] ring-1 ring-blue-100/70 backdrop-blur-xl sm:p-6 lg:p-7">
+        <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <h2 class="text-2xl font-black tracking-[-0.04em] text-slate-950 sm:text-3xl">What our customers say</h2>
+          </div>
+          <%= link_to reviews_path, class: "inline-flex items-center gap-2 text-xs font-black text-blue-700 sm:text-sm" do %>
+            View all reviews
+            <%= image_tag asset_image.call("arrow-right.svg"), alt: "", class: "h-4 w-4", aria: { hidden: true } %>
+          <% end %>
+        </div>
+
+        <div class="mt-5 grid gap-5 min-[1360px]:grid-cols-[1fr_1.1fr]">
+        <article class="rounded-[1.5rem] border border-slate-200/80 bg-white p-5 shadow-sm shadow-blue-950/5 sm:p-6">
+          <div id="reviews-carousel" class="relative" data-carousel="static">
+            <div class="relative h-56 overflow-hidden sm:h-44">
+              <% reviews.each_with_index do |(name, route, quote), index| %>
+                <% initials = name.split.map { |part| part.first }.join.first(2).upcase %>
+                <div class="<%= index.zero? ? '' : 'hidden' %> duration-500 ease-in-out" data-carousel-item="<%= index.zero? ? 'active' : '' %>">
+                  <div class="absolute inset-0 flex flex-col justify-between">
+                    <div>
+                      <div class="flex text-amber-400" aria-label="Five star review">
+                        <% 5.times do %>
+                          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path d="M9.05 2.93c.3-.92 1.6-.92 1.9 0l1.07 3.29a1 1 0 00.95.69h3.46c.97 0 1.37 1.24.59 1.81l-2.8 2.03a1 1 0 00-.36 1.12l1.07 3.29c.3.92-.76 1.69-1.54 1.12l-2.8-2.03a1 1 0 00-1.18 0l-2.8 2.03c-.78.57-1.84-.2-1.54-1.12l1.07-3.29a1 1 0 00-.36-1.12l-2.8-2.03c-.78-.57-.38-1.81.59-1.81h3.46a1 1 0 00.95-.69l1.07-3.29z"/></svg>
+                        <% end %>
+                      </div>
+                      <blockquote class="mt-3 max-w-xl text-sm font-bold leading-6 text-slate-800">
+                        <%= quote %>
+                      </blockquote>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                      <span class="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-blue-100 to-violet-100 ring-2 ring-white">
+                        <span class="text-xs font-black text-blue-700"><%= initials %></span>
+                      </span>
+                      <div>
+                        <p class="text-sm font-black text-slate-950"><%= name %></p>
+                        <p class="text-xs font-semibold text-slate-500"><%= route.gsub(" to ", " → ") %></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+
+            <div class="mt-4 flex items-center justify-between gap-5 sm:absolute sm:bottom-0 sm:right-0 sm:mt-0">
+              <button type="button" class="flex h-9 w-9 items-center justify-center rounded-full text-slate-300 transition hover:bg-blue-50 hover:text-blue-700" data-carousel-prev aria-label="Previous review">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 19l-7-7 7-7"/></svg>
+              </button>
+              <div class="flex items-center gap-2" aria-label="Review slide indicators">
+                <% reviews.each_with_index do |_, index| %>
+                  <button type="button" class="h-2 w-2 rounded-full <%= index.zero? ? 'bg-blue-600' : 'bg-slate-300' %>" aria-label="Show review <%= index + 1 %>" data-carousel-slide-to="<%= index %>"></button>
+                <% end %>
+              </div>
+              <button type="button" class="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 transition hover:bg-blue-50 hover:text-blue-700" data-carousel-next aria-label="Next review">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <div class="rounded-[1.5rem] border border-slate-200/80 bg-white p-5 shadow-sm shadow-blue-950/5 sm:p-6">
+          <div class="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+            <% [["Fully insured", "Your move is protected.", "shield-protection.svg"], ["Careful & experienced", "Trained, vetted movers.", "careful-experienced.svg"], ["On-time guarantee", "We stick to the plan.", "clock-check.svg"], ["Eco-friendly", "We care for the planet.", "eco-friendly.svg"]].each do |title, copy, icon| %>
+              <div class="group flex gap-4 rounded-2xl p-2 transition hover:bg-blue-50/60">
+                <span class="flex h-12 w-12 shrink-0 items-center justify-center text-blue-700 transition group-hover:scale-110">
+                  <%= image_tag asset_image.call(icon), alt: "", class: "h-9 w-9", aria: { hidden: true } %>
+                </span>
+                <div>
+                  <h3 class="text-sm font-black text-slate-950 transition group-hover:text-blue-700"><%= title %></h3>
+                  <p class="mt-1 text-xs font-semibold leading-5 text-slate-500"><%= copy %></p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="relative z-10 px-4 py-7 sm:px-6 sm:py-9 lg:px-10 2xl:px-14">
+    <div class="mx-auto grid w-full max-w-[1600px] gap-5 min-[1360px]:grid-cols-[1.52fr_1fr] min-[1360px]:items-stretch">
+      <div class="reveal overflow-hidden rounded-[2rem] border border-white/90 bg-white/85 p-5 shadow-[0_24px_80px_rgba(30,64,175,0.09)] ring-1 ring-blue-100/70 backdrop-blur-xl sm:p-7">
+        <div class="grid gap-7 md:grid-cols-[0.82fr_0.72fr_1fr] md:items-center">
+          <div>
+            <h2 class="text-2xl font-black tracking-[-0.04em] text-slate-950 sm:text-3xl">Take Removlo with you</h2>
+            <p class="mt-3 max-w-sm text-sm font-semibold leading-6 text-slate-600">Get updates, manage your move and chat with our team on the go.</p>
+
+            <div class="mt-6 flex flex-wrap gap-3">
+              <a href="#" class="inline-flex items-center gap-2 rounded-lg bg-slate-950 px-3.5 py-2 text-xs font-black text-white transition hover:-translate-y-0.5">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 1.51c0 1.06-.43 2.08-1.12 2.85-.72.82-1.9 1.45-2.95 1.36-.13-1.02.38-2.11 1.04-2.86.73-.84 2.02-1.45 3.03-1.35zM20.56 17.2c-.55 1.26-.82 1.82-1.53 2.94-.99 1.51-2.38 3.4-4.1 3.42-1.53.02-1.93-.99-4.01-.98-2.08.01-2.51 1.01-4.04.99-1.72-.02-3.03-1.72-4.02-3.23-2.77-4.23-3.06-9.2-1.35-11.84 1.21-1.87 3.12-2.97 4.92-2.97 1.83 0 2.98 1 4.49 1 1.47 0 2.36-1 4.48-1 1.6 0 3.3.87 4.5 2.37-3.95 2.17-3.31 7.81.66 9.3z"/></svg>
+                App Store
+              </a>
+              <a href="#" class="inline-flex items-center gap-2 rounded-lg bg-slate-950 px-3.5 py-2 text-xs font-black text-white transition hover:-translate-y-0.5">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.6 2.38c-.37.2-.6.6-.6 1.12v17c0 .52.23.92.6 1.12l9.94-9.62L3.6 2.38zm11.08 10.72l2.33 2.25-10.8 6.16 8.47-8.41zm3.7-1.1l-2.6-1.48-2.35 2.31 2.35 2.31 2.6-1.48c1.3-.74 1.3-1.92 0-2.66zM6.2 2.49l10.8 6.16-2.33 2.25L6.2 2.49z"/></svg>
+                Google Play
+              </a>
+            </div>
+
+            <div class="mt-5 flex items-center gap-4">
+              <div class="grid h-20 w-20 grid-cols-5 gap-0.5 rounded-xl border border-slate-200 bg-white p-2 shadow-sm" aria-label="QR code placeholder">
+                <% 25.times do |index| %>
+                  <span class="rounded-[2px] <%= [0, 1, 3, 4, 5, 9, 11, 13, 15, 19, 20, 21, 23, 24].include?(index) ? 'bg-slate-950' : 'bg-slate-200' %>"></span>
+                <% end %>
+              </div>
+              <p class="text-xs font-semibold text-slate-500">Scan to download</p>
+            </div>
+          </div>
+
+          <div class="relative mx-auto hidden h-72 w-44 overflow-hidden rounded-t-[2.5rem] border-[9px] border-slate-950 bg-gradient-to-b from-blue-50 to-white shadow-2xl shadow-slate-950/20 md:block">
+            <div class="absolute left-1/2 top-0 h-5 w-20 -translate-x-1/2 rounded-b-2xl bg-slate-950"></div>
+            <div class="p-5 pt-9">
+              <p class="text-center text-sm font-black text-blue-700">REMOVLO</p>
+              <div class="mt-7 rounded-2xl bg-white p-3 shadow-lg shadow-blue-950/10">
+                <p class="text-[10px] font-black uppercase text-slate-400">Your move</p>
+                <p class="mt-2 text-xs font-black">London → Leeds</p>
+                <p class="mt-3 inline-flex rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-black text-emerald-600">In progress</p>
+              </div>
+              <div class="mt-4 rounded-2xl bg-blue-50 p-3">
+                <p class="text-[10px] font-black text-slate-500">Today, 09:30</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid gap-5">
+            <% [["Live move tracking", "See exactly where we are.", "route-tracking.svg"], ["In-app chat", "Message your moving team.", "chat-message.svg"], ["Manage bookings", "Change details with ease.", "calendar-check.svg"]].each do |title, copy, icon| %>
+              <div class="flex items-center gap-4">
+                <span class="flex h-[3.25rem] w-[3.25rem] shrink-0 items-center justify-center rounded-full bg-white shadow-lg shadow-blue-950/10 ring-1 ring-blue-100">
+                  <%= image_tag asset_image.call(icon), alt: "", class: "h-7 w-7", aria: { hidden: true } %>
+                </span>
+                <div>
+                  <h3 class="text-sm font-black text-slate-950"><%= title %></h3>
+                  <p class="mt-1 text-xs font-semibold text-slate-500"><%= copy %></p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <div id="faq" class="reveal rounded-[2rem] border border-white/90 bg-white/85 p-5 shadow-[0_24px_80px_rgba(30,64,175,0.09)] ring-1 ring-blue-100/70 backdrop-blur-xl sm:p-7">
+        <div class="mb-4 flex items-center justify-between gap-4">
+          <h2 class="text-xl font-black tracking-[-0.03em] text-slate-950 sm:text-2xl">Frequently asked questions</h2>
+          <%= link_to "#{root_path}#faq", class: "hidden items-center gap-2 text-xs font-black text-blue-700 sm:inline-flex" do %>
+            View all FAQs
+            <%= image_tag asset_image.call("arrow-right.svg"), alt: "", class: "h-4 w-4", aria: { hidden: true } %>
+          <% end %>
+        </div>
+        <div id="landing-faq" data-accordion="collapse" class="space-y-3">
+          <% faqs.each_with_index do |(question, answer), index| %>
+            <div class="rounded-xl border border-slate-200/80 bg-white">
+              <h3 id="landing-faq-heading-<%= index %>">
+                <button type="button" class="flex w-full items-center justify-between gap-4 px-4 py-3 text-left text-xs font-black text-slate-950 transition hover:text-blue-700 sm:text-sm" data-accordion-target="#landing-faq-body-<%= index %>" aria-expanded="<%= index.zero? ? 'true' : 'false' %>" aria-controls="landing-faq-body-<%= index %>">
+                  <span><%= question %></span>
+                  <span class="text-lg leading-none text-blue-700">+</span>
+                </button>
+              </h3>
+              <div id="landing-faq-body-<%= index %>" class="<%= index.zero? ? '' : 'hidden' %>" aria-labelledby="landing-faq-heading-<%= index %>">
+                <p class="px-4 pb-4 text-sm font-medium leading-6 text-slate-600"><%= answer %></p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="relative z-10 px-4 pb-9 pt-3 sm:px-6 sm:pb-12 lg:px-10 2xl:px-14">
+    <div class="reveal mx-auto w-full max-w-[1600px] overflow-hidden rounded-[1.5rem] bg-gradient-to-r from-blue-700 via-indigo-700 to-violet-700 p-5 text-white shadow-2xl shadow-blue-950/20 sm:p-6 lg:p-7">
+      <div class="grid gap-6 min-[1360px]:grid-cols-[1fr_auto] min-[1360px]:items-center">
+        <div class="flex gap-4">
+          <span class="hidden h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/15 ring-1 ring-white/20 sm:flex">
+            <%= image_tag asset_image.call("home-removals.svg"), alt: "", class: "h-8 w-8 brightness-0 invert", aria: { hidden: true } %>
+          </span>
+          <div>
+            <h2 class="text-2xl font-black tracking-[-0.04em] sm:text-3xl">Ready to move smarter?</h2>
+            <p class="mt-2 max-w-2xl text-sm font-semibold leading-6 text-blue-100">Get your free instant quote now and let us take care of the rest.</p>
+          </div>
+        </div>
+        <div>
+          <%= link_to marketing_quote_path, class: "inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-black text-slate-950 shadow-xl shadow-blue-950/20 transition hover:-translate-y-0.5 hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-white/25 sm:w-auto" do %>
+            Get your free quote
+            <%= image_tag asset_image.call("arrow-right.svg"), alt: "", class: "h-4 w-4", aria: { hidden: true } %>
+          <% end %>
+          <p class="mt-2 text-center text-[10px] font-bold text-blue-100">No obligation. Response within 24 hours.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%= render "shared/marketing_footer" %>

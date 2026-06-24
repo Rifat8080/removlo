@@ -6,6 +6,10 @@ class PagesController < ApplicationController
   def landing
   end
 
+  def seo_landing
+    @seo_page = SeoLandingPage.find!(params[:slug])
+  end
+
   def services
   end
 
