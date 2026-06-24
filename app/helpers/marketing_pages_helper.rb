@@ -97,7 +97,7 @@ module MarketingPagesHelper
       ]],
       ["Contact", [
         ["+44 7950 202441", "tel:+447950202441"],
-        ["info.removlo@gmail.com", "mailto:info.removlo@gmail.com"],
+        ["support@removlo.co.uk", "mailto:support@removlo.co.uk"],
         ["UK-wide coverage", services_path],
         ["Mon-Fri, 8am-8pm", contact_path]
       ]]

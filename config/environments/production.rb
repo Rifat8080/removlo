@@ -77,7 +77,7 @@ Rails.application.configure do
   }
 
   config.action_mailer.default_options = {
-    from: ENV.fetch("DEFAULT_FROM_EMAIL", "Removlo <info.removlo@gmail.com>")
+    from: ENV.fetch("DEFAULT_FROM_EMAIL", "Removlo <support@removlo.co.uk>")
   }
 
   smtp_starttls = ENV.fetch("SMTP_ENABLE_STARTTLS_AUTO", "true").to_s.downcase.in?(["true", "1", "yes"])

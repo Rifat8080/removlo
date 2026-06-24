@@ -84,6 +84,6 @@ class WebPushNotificationJob < ApplicationJob
   end
 
   def vapid_subject
-    ENV.fetch("VAPID_SUBJECT", "mailto:hello@removlo.co.uk").strip.gsub(/\Amailto:\s+/, "mailto:")
+    ENV.fetch("VAPID_SUBJECT", "mailto:support@removlo.co.uk").strip.gsub(/\Amailto:\s+/, "mailto:")
   end
 end

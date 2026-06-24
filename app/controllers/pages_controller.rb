@@ -77,7 +77,7 @@ class PagesController < ApplicationController
       ["Request a new quote", new_quotation_path, "Start a detailed request"],
       ["View my quotations", quotations_path, "Review prices and status"],
       ["Download invoices", customer_invoices_path, "Payments and refunds"],
-      ["Contact support", "mailto:hello@removlo.co.uk", "Ask the Removlo team"]
+      ["Contact support", "mailto:support@removlo.co.uk", "Ask the Removlo team"]
     ]
   end
 
