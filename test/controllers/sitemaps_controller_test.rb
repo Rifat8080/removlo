@@ -16,3 +16,14 @@ class SitemapsControllerTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, "/admin/"
   end
 end
+
+class SitemapRendererTest < ActiveSupport::TestCase
+  test "renderer returns sitemap xml without a layout" do
+    xml = Sitemap::Renderer.call
+
+    assert_includes xml, '<?xml version="1.0" encoding="UTF-8"?>'
+    assert_includes xml, "<urlset"
+    assert_includes xml, "removlo.co.uk/services"
+    assert_not_includes xml, "<html"
+  end
+end

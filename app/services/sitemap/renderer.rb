@@ -9,6 +9,7 @@ module Sitemap
         template: "sitemaps/show",
         formats: [:xml],
         handlers: [:builder],
+        layout: false,
         assigns: { entries: Builder.new.entries }
       )
     end
