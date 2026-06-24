@@ -5,6 +5,10 @@ class Rack::Attack
     request.path == "/up"
   end
 
+  safelist("sitemap") do |request|
+    request.path == "/sitemap.xml"
+  end
+
   throttle("logins/ip", limit: 5, period: 20.seconds) do |request|
     request.ip if request.post? && request.path == "/users/sign_in"
   end

@@ -64,7 +64,7 @@ Rails.application.configure do
 
   # Keep /up accessible for health checks.
   config.host_authorization = {
-    exclude: ->(request) { request.path == "/up" }
+    exclude: ->(request) { request.path.in?(%w[/up /sitemap.xml]) }
   }
 
   # Mailer host.

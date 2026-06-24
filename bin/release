@@ -16,4 +16,7 @@ FileUtils.chdir(APP_ROOT) do
 
   puts "== Compiling assets =="
   system! "bin/rails assets:precompile"
+
+  puts "== Generating sitemap =="
+  system! "bin/rails sitemap:refresh"
 end
