@@ -10,11 +10,11 @@ Rails.application.configure do
   config.content_security_policy do |policy|
     policy.default_src :self, :https
     policy.font_src    :self, :https, :data
-    policy.img_src     :self, :https, :data, :blob
+    policy.img_src     :self, :https, :data, :blob, "https://www.google-analytics.com", "https://www.googletagmanager.com"
     policy.object_src  :none
-    policy.script_src  :self, :https, :unsafe_inline, "https://js.stripe.com", "https://maps.googleapis.com", "https://maps.gstatic.com"
+    policy.script_src  :self, :https, :unsafe_inline, "https://js.stripe.com", "https://maps.googleapis.com", "https://maps.gstatic.com", "https://www.googletagmanager.com"
     policy.style_src   :self, :https, :unsafe_inline, "https://fonts.googleapis.com"
-    policy.connect_src :self, :https, "wss:", "https://api.stripe.com", "https://maps.googleapis.com"
+    policy.connect_src :self, :https, "wss:", "https://api.stripe.com", "https://maps.googleapis.com", "https://www.google-analytics.com", "https://www.googletagmanager.com", "https://region1.google-analytics.com"
     policy.frame_src   :self, "https://js.stripe.com", "https://hooks.stripe.com"
     policy.form_action :self, "https://checkout.stripe.com"
     policy.frame_ancestors :none

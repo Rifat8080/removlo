@@ -1,0 +1,21 @@
+<% if google_analytics_enabled? %>
+  <% measurement_id = google_analytics_id %>
+  <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=<%= measurement_id %>"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("js", new Date());
+    gtag("config", "<%= measurement_id %>", { send_page_view: false });
+
+    function trackGoogleAnalyticsPageView() {
+      gtag("event", "page_view", {
+        page_path: window.location.pathname + window.location.search,
+        page_location: window.location.href,
+        page_title: document.title
+      });
+    }
+
+    document.addEventListener("turbo:load", trackGoogleAnalyticsPageView);
+  </script>
+<% end %>
