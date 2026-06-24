@@ -8,8 +8,12 @@ def system!(*args)
 end
 
 FileUtils.chdir(APP_ROOT) do
+  bundle_without = ENV.fetch("BUNDLE_WITHOUT", "development:test")
+
   puts "== Installing dependencies =="
-  system("bundle check") || system!("bundle install")
+  unless system({ "BUNDLE_WITHOUT" => bundle_without }, "bundle check")
+    system!({ "BUNDLE_WITHOUT" => bundle_without }, "bundle install")
+  end
 
   puts "== Preparing database =="
   system! "bin/rails db:prepare"

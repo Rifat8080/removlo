@@ -12,7 +12,7 @@ echo "== Pulling latest code =="
 git pull --ff-only origin main
 
 echo "== Installing, migrating, and precompiling =="
-bin/release
+RAILS_ENV=production BUNDLE_WITHOUT=development:test bin/release
 
 echo "== Restarting app =="
 sudo systemctl restart removlo
