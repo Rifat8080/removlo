@@ -1,21 +1,78 @@
 <% if google_analytics_enabled? %>
   <% measurement_id = google_analytics_id %>
+  <% consent_region = consent_region_user? %>
   <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=<%= measurement_id %>"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    gtag("js", new Date());
-    gtag("config", "<%= measurement_id %>", { send_page_view: false });
 
-    function trackGoogleAnalyticsPageView() {
+  window.RemoAnalytics = {
+    consentRegion: <%= consent_region %>,
+    measurementId: "<%= measurement_id %>",
+    storageKey: "<%= AnalyticsHelper::CONSENT_STORAGE_KEY %>",
+    consentState: function() {
+      if (!this.consentRegion) return "granted";
+      try {
+        return localStorage.getItem(this.storageKey);
+      } catch (_error) {
+        return null;
+      }
+    },
+    analyticsGranted: function() {
+      if (!this.consentRegion) return true;
+      return this.consentState() === "granted";
+    },
+    deniedConsent: function() {
+      return {
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied",
+        analytics_storage: "denied",
+        functionality_storage: "denied",
+        personalization_storage: "denied"
+      };
+    },
+    grantedConsent: function() {
+      return {
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied",
+        analytics_storage: "granted",
+        functionality_storage: "denied",
+        personalization_storage: "denied"
+      };
+    },
+    applyConsent: function(granted) {
+      gtag("consent", "update", granted ? this.grantedConsent() : this.deniedConsent());
+    },
+    trackPageView: function() {
+      if (!this.analyticsGranted()) return;
+
       gtag("event", "page_view", {
         page_path: window.location.pathname + window.location.search,
         page_location: window.location.href,
         page_title: document.title
       });
     }
+  };
 
-    document.addEventListener("turbo:load", trackGoogleAnalyticsPageView);
+  gtag("consent", "default", Object.assign(
+    { security_storage: "granted", wait_for_update: <%= consent_region ? 500 : 0 %> },
+    <%= consent_region ? "RemoAnalytics.deniedConsent()" : "RemoAnalytics.grantedConsent()" %>
+  ));
+
+  (function restoreStoredConsent() {
+    const state = RemoAnalytics.consentState();
+    if (state === "granted") RemoAnalytics.applyConsent(true);
+    if (state === "denied") RemoAnalytics.applyConsent(false);
+  })();
+
+  gtag("js", new Date());
+  gtag("config", "<%= measurement_id %>", { send_page_view: false });
+
+  document.addEventListener("turbo:load", function() {
+    RemoAnalytics.trackPageView();
+  });
   </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=<%= measurement_id %>"></script>
 <% end %>

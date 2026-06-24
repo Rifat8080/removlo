@@ -108,3 +108,13 @@ html {
     scroll-behavior: auto !important;
   }
 }
+
+html.cookie-consent-visible [data-controller~="scroll-top"] {
+  bottom: 8.75rem;
+}
+
+@media (min-width: 640px) {
+  html.cookie-consent-visible [data-controller~="scroll-top"] {
+    bottom: 7.5rem;
+  }
+}

@@ -37,6 +37,9 @@
       <div class="sm:flex sm:items-center sm:justify-between">
         <span class="text-sm font-semibold text-slate-500 sm:text-center">
           © <%= Time.current.year %> <%= link_to "Removlo Ltd", root_path, class: "hover:text-blue-700 hover:underline" %>. All Rights Reserved.
+          <% if google_analytics_enabled? && consent_region_user? %>
+            <button type="button" class="ms-2 font-semibold text-slate-500 underline decoration-slate-300 underline-offset-2 transition hover:text-blue-700" onclick="document.dispatchEvent(new CustomEvent('cookie-consent:open'))">Cookie settings</button>
+          <% end %>
         </span>
 
         <div class="mt-4 flex sm:mt-0 sm:justify-center">
