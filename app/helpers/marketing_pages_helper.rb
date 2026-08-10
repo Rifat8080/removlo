@@ -18,14 +18,14 @@ module MarketingPagesHelper
 
   def marketing_nav_links
     [
-      ["Home", root_path],
-      ["Services", services_path],
-      ["How it works", how_it_works_path],
-      ["About us", about_path],
-      ["Reviews", reviews_path],
-      ["Resources", blog_posts_path],
-      ["Shop", shop_products_path],
-      ["Contact", contact_path]
+      [ "Home", root_path ],
+      [ "Services", services_path ],
+      [ "How it works", how_it_works_path ],
+      [ "About us", about_path ],
+      [ "Reviews", reviews_path ],
+      [ "Resources", blog_posts_path ],
+      [ "Shop", shop_products_path ],
+      [ "Contact", contact_path ]
     ]
   end
 
@@ -54,53 +54,53 @@ module MarketingPagesHelper
 
   def marketing_benefits
     [
-      ["Real-time tracking", "Know your route, ETA, and crew status.", "route-tracking.svg"],
-      ["Dedicated support", "One friendly coordinator from quote to keys.", "headset-support.svg"],
-      ["Care & protection", "Careful crews, insurance options, and item notes.", "shield-protection.svg"],
-      ["Transparent pricing", "No surprises, no pressure, no hidden extras.", "price-receipt.svg"]
+      [ "Real-time tracking", "Know your route, ETA, and crew status.", "route-tracking.svg" ],
+      [ "Dedicated support", "One friendly coordinator from quote to keys.", "headset-support.svg" ],
+      [ "Care & protection", "Careful crews, insurance options, and item notes.", "shield-protection.svg" ],
+      [ "Transparent pricing", "No surprises, no pressure, no hidden extras.", "price-receipt.svg" ]
     ]
   end
 
   def marketing_how_it_works_steps
     [
-      ["Set your quote", "Tell us the basics and get an instant price.", "quote-document.svg"],
-      ["Book your move", "Pick a date that suits you. We'll handle the rest.", "calendar-check.svg"],
-      ["We move you", "Sit back while our team moves you smoothly.", "moving-truck.svg"]
+      [ "Set your quote", "Tell us the basics and get an instant price.", "quote-document.svg" ],
+      [ "Book your move", "Pick a date that suits you. We'll handle the rest.", "calendar-check.svg" ],
+      [ "We move you", "Sit back while our team moves you smoothly.", "moving-truck.svg" ]
     ]
   end
 
   def marketing_footer_columns
     [
-      ["Services", [
-        ["Home Removals", home_removals_path],
-        ["Office Removals", office_removals_path],
-        ["Packing Services", packing_services_path],
-        ["Storage Solutions", storage_solutions_path]
-      ]],
-      ["Company", [
-        ["About us", about_path],
-        ["Why Removlo?", about_path],
-        ["Our team", "#{about_path}#team"],
-        ["Careers", contact_path]
-      ]],
-      ["Support", [
-        ["Contact us", contact_path],
-        ["Help centre", contact_path],
-        ["FAQs", "#{root_path}#faq"],
-        ["Moving guides", blog_posts_path]
-      ]],
-      ["Resources", [
-        ["Moving checklist", blog_posts_path],
-        ["Packing tips", packing_services_path],
-        ["Storage guide", storage_solutions_path],
-        ["Blog", blog_posts_path]
-      ]],
-      ["Contact", [
-        ["+44 7376 374040", "tel:+447376374040"],
-        ["support@removlo.co.uk", "mailto:support@removlo.co.uk"],
-        ["UK-wide coverage", services_path],
-        ["Mon-Fri, 8am-8pm", contact_path]
-      ]]
+      [ "Services", [
+        [ "Home Removals", home_removals_path ],
+        [ "Office Removals", office_removals_path ],
+        [ "Packing Services", packing_services_path ],
+        [ "Storage Solutions", storage_solutions_path ]
+      ] ],
+      [ "Company", [
+        [ "About us", about_path ],
+        [ "Why Removlo?", about_path ],
+        [ "Our team", "#{about_path}#team" ],
+        [ "Careers", contact_path ]
+      ] ],
+      [ "Support", [
+        [ "Contact us", contact_path ],
+        [ "Help centre", contact_path ],
+        [ "FAQs", "#{root_path}#faq" ],
+        [ "Moving guides", blog_posts_path ]
+      ] ],
+      [ "Resources", [
+        [ "Moving checklist", blog_posts_path ],
+        [ "Packing tips", packing_services_path ],
+        [ "Storage guide", storage_solutions_path ],
+        [ "Blog", blog_posts_path ]
+      ] ],
+      [ "Contact", [
+        [ "+44 7376 374040", "tel:+447376374040" ],
+        [ "support@removlo.co.uk", "mailto:support@removlo.co.uk" ],
+        [ "UK-wide coverage", services_path ],
+        [ "Mon-Fri, 8am-8pm", contact_path ]
+      ] ]
     ]
   end
 end
