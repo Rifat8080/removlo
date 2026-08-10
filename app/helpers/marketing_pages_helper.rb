@@ -96,7 +96,7 @@ module MarketingPagesHelper
         ["Blog", blog_posts_path]
       ]],
       ["Contact", [
-        ["+44 7950 202441", "tel:+447950202441"],
+        ["+44 7376 374040", "tel:+447376374040"],
         ["support@removlo.co.uk", "mailto:support@removlo.co.uk"],
         ["UK-wide coverage", services_path],
         ["Mon-Fri, 8am-8pm", contact_path]
