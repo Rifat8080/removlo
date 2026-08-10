@@ -12,6 +12,8 @@ export default class extends Controller {
     this.openHandler = () => this.showBanner()
     document.addEventListener("cookie-consent:open", this.openHandler)
 
+    this.resizeObserver = new ResizeObserver(() => this.updateBannerOffset())
+
     if (!this.regionValue || this.storedConsent) {
       this.hideBanner()
       return
@@ -22,6 +24,8 @@ export default class extends Controller {
 
   disconnect() {
     document.removeEventListener("cookie-consent:open", this.openHandler)
+    this.stopObservingBanner()
+    this.clearBannerOffset()
   }
 
   accept() {
@@ -42,11 +46,32 @@ export default class extends Controller {
 
     this.bannerTarget.classList.remove("hidden")
     document.documentElement.classList.add("cookie-consent-visible")
+    this.resizeObserver.observe(this.bannerTarget)
+    this.updateBannerOffset()
   }
 
   hideBanner() {
     if (this.hasBannerTarget) this.bannerTarget.classList.add("hidden")
     document.documentElement.classList.remove("cookie-consent-visible")
+    this.stopObservingBanner()
+    this.clearBannerOffset()
+  }
+
+  updateBannerOffset() {
+    if (!this.hasBannerTarget || this.bannerTarget.classList.contains("hidden")) return
+
+    document.documentElement.style.setProperty(
+      "--cookie-consent-height",
+      `${Math.ceil(this.bannerTarget.getBoundingClientRect().height)}px`
+    )
+  }
+
+  stopObservingBanner() {
+    if (this.hasBannerTarget) this.resizeObserver?.unobserve(this.bannerTarget)
+  }
+
+  clearBannerOffset() {
+    document.documentElement.style.removeProperty("--cookie-consent-height")
   }
 
   persistConsent(value) {

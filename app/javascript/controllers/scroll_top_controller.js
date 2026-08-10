@@ -4,6 +4,7 @@ export default class extends Controller {
   static targets = ["button"]
 
   connect() {
+    this.visible = null
     this.onScroll = this.onScroll.bind(this)
     window.addEventListener("scroll", this.onScroll, { passive: true })
     this.onScroll()
@@ -14,14 +15,26 @@ export default class extends Controller {
   }
 
   scroll() {
-    window.scrollTo({ top: 0, behavior: "smooth" })
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" })
   }
 
   onScroll() {
     if (!this.hasButtonTarget) return
 
-    this.buttonTarget.classList.toggle("opacity-0", window.scrollY < 300)
-    this.buttonTarget.classList.toggle("pointer-events-none", window.scrollY < 300)
-    this.buttonTarget.classList.toggle("translate-y-2", window.scrollY < 300)
+    const visible = window.scrollY >= 300
+    if (visible === this.visible) return
+
+    this.visible = visible
+    this.buttonTarget.classList.toggle("opacity-0", !visible)
+    this.buttonTarget.classList.toggle("pointer-events-none", !visible)
+    this.buttonTarget.classList.toggle("translate-y-2", !visible)
+    this.buttonTarget.setAttribute("aria-hidden", String(!visible))
+
+    if (visible) {
+      this.buttonTarget.removeAttribute("tabindex")
+    } else {
+      this.buttonTarget.setAttribute("tabindex", "-1")
+    }
   }
 }
