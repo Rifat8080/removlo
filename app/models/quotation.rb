@@ -145,7 +145,7 @@ class Quotation < ApplicationRecord
   end
 
   def remaining_balance_cents
-    [quoted_price_cents.to_i - paid_amount_cents, 0].max
+    [ quoted_price_cents.to_i - paid_amount_cents, 0 ].max
   end
 
   def confirmed_for_driver_assignment?
@@ -174,16 +174,16 @@ class Quotation < ApplicationRecord
 
   def admin_transition_options
     statuses = case status
-               when "requested" then %w[draft quoted cancelled]
-               when "draft" then %w[quoted cancelled]
-               when "quoted" then %w[negotiating accepted rejected cancelled]
-               when "negotiating" then %w[quoted accepted rejected cancelled]
-               when "accepted" then ready_to_schedule? ? %w[scheduled cancelled] : %w[cancelled]
-               when "scheduled" then ready_to_start? ? %w[in_progress cancelled] : %w[cancelled]
-               when "in_progress" then ready_to_complete? ? %w[completed cancelled] : %w[cancelled]
-               when "rejected" then %w[quoted cancelled]
-               else []
-               end
+    when "requested" then %w[draft quoted cancelled]
+    when "draft" then %w[quoted cancelled]
+    when "quoted" then %w[negotiating accepted rejected cancelled]
+    when "negotiating" then %w[quoted accepted rejected cancelled]
+    when "accepted" then ready_to_schedule? ? %w[scheduled cancelled] : %w[cancelled]
+    when "scheduled" then ready_to_start? ? %w[in_progress cancelled] : %w[cancelled]
+    when "in_progress" then ready_to_complete? ? %w[completed cancelled] : %w[cancelled]
+    when "rejected" then %w[quoted cancelled]
+    else []
+    end
 
     statuses.map do |next_status|
       {
@@ -249,7 +249,7 @@ class Quotation < ApplicationRecord
 
     update!(
       quoted_price_cents: pending_quoted_price_cents,
-      admin_margin_cents: [pending_quoted_price_cents.to_i - driver_cost_cents.to_i, 0].max,
+      admin_margin_cents: [ pending_quoted_price_cents.to_i - driver_cost_cents.to_i, 0 ].max,
       negotiated_price_approval_status: "approved",
       negotiated_price_approved_by: actor,
       negotiated_price_approved_at: Time.current
@@ -334,9 +334,9 @@ class Quotation < ApplicationRecord
     recognized_scope = AccountingTransaction.income.where(quotation: self)
     recognized_scope = recognized_scope.where.not(quotation_payment_id: payment.id) if payment.id.present?
     already_recognized = recognized_scope.sum(:amount_cents)
-    remaining_margin = [margin - already_recognized, 0].max
+    remaining_margin = [ margin - already_recognized, 0 ].max
 
-    [proportional, remaining_margin].min
+    [ proportional, remaining_margin ].min
   end
 
   def workflow_step_for_customer
@@ -407,11 +407,11 @@ class Quotation < ApplicationRecord
   private
 
   def pickup_query
-    [pickup_address, pickup_postcode].compact_blank.join(", ")
+    [ pickup_address, pickup_postcode ].compact_blank.join(", ")
   end
 
   def delivery_query
-    [delivery_address, delivery_postcode].compact_blank.join(", ")
+    [ delivery_address, delivery_postcode ].compact_blank.join(", ")
   end
 
   def should_estimate_route?

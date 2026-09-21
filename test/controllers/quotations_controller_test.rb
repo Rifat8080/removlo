@@ -58,7 +58,7 @@ class QuotationsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "anonymous visitor cannot request quotation without phone or moving details" do
-    assert_no_difference ["User.count", "Quotation.count"] do
+    assert_no_difference [ "User.count", "Quotation.count" ] do
       post quotations_path, params: {
         quotation: {
           customer_email: "missing-details@example.com",

@@ -218,7 +218,7 @@ class QuotationsController < ApplicationController
   end
 
   def fallback_address(label, postcode)
-    [label, postcode.presence].compact.join(" postcode: ")
+    [ label, postcode.presence ].compact.join(" postcode: ")
   end
 
   def booking_details_present?
