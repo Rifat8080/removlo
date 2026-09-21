@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_13_144500) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_21_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -497,6 +497,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_13_144500) do
     t.datetime "negotiated_price_approved_at"
     t.uuid "negotiated_price_requested_by_id"
     t.uuid "negotiated_price_approved_by_id"
+    t.string "customer_phone"
     t.index ["assigned_driver_id"], name: "index_quotations_on_assigned_driver_id"
     t.index ["assigned_staff_id"], name: "index_quotations_on_assigned_staff_id"
     t.index ["created_by_id"], name: "index_quotations_on_created_by_id"

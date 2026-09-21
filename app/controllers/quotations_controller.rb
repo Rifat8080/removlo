@@ -40,6 +40,11 @@ class QuotationsController < ApplicationController
   end
 
   def create
+    unless booking_details_present?
+      redirect_to get_quotation_path, alert: "Please add your phone number and moving details before requesting a quotation."
+      return
+    end
+
     customer = quotation_customer
     return unless customer
 
@@ -138,6 +143,7 @@ class QuotationsController < ApplicationController
       :move_size,
       :service_level,
       :preferred_move_date,
+      :customer_phone,
       :pickup_postcode,
       :delivery_postcode,
       :pickup_address,
@@ -213,6 +219,13 @@ class QuotationsController < ApplicationController
 
   def fallback_address(label, postcode)
     [label, postcode.presence].compact.join(" postcode: ")
+  end
+
+  def booking_details_present?
+    params.dig(:quotation, :customer_phone).to_s.strip.present? &&
+      params.dig(:quotation, :customer_notes).to_s.strip.present? &&
+      params.dig(:quotation, :move_size).to_s.strip.present? &&
+      params.dig(:quotation, :service_level).to_s.strip.present?
   end
 
   def notify_operators(title, body, quotation)

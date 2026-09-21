@@ -7,6 +7,7 @@ class QuotationsControllerTest < ActionDispatch::IntegrationTest
         post quotations_path, params: {
           quotation: {
             customer_email: "new-mover@example.com",
+            customer_phone: "+447700900123",
             move_size: "two_bed",
             service_level: "standard",
             pickup_postcode: "SW1A 1AA",
@@ -30,6 +31,8 @@ class QuotationsControllerTest < ActionDispatch::IntegrationTest
             quotation: {
               move_size: "studio",
               service_level: "standard",
+              customer_phone: "+447700900124",
+              customer_notes: "Sofa and boxes; please confirm parking access.",
               pickup_postcode: "M4",
               delivery_postcode: "B4",
               pickup_address: "10 New Pickup Street",
@@ -52,6 +55,23 @@ class QuotationsControllerTest < ActionDispatch::IntegrationTest
     assert quotation.awaiting_driver_offers?
     assert_equal "requested", quotation.status
     assert_equal "Sofa", quotation.quotation_items.first.name
+  end
+
+  test "anonymous visitor cannot request quotation without phone or moving details" do
+    assert_no_difference ["User.count", "Quotation.count"] do
+      post quotations_path, params: {
+        quotation: {
+          customer_email: "missing-details@example.com",
+          move_size: "studio",
+          service_level: "standard",
+          pickup_postcode: "M4",
+          delivery_postcode: "B4"
+        }
+      }
+    end
+
+    assert_redirected_to get_quotation_path
+    assert_equal "Please add your phone number and moving details before requesting a quotation.", flash[:alert]
   end
 
   test "customer can edit their pending quotation request and add items" do

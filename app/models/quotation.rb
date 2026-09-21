@@ -65,6 +65,7 @@ class Quotation < ApplicationRecord
   validates :reference, presence: true, uniqueness: true
   validates :public_share_token, presence: true, uniqueness: true
   validates :pickup_address, :delivery_address, :move_size, :service_level, presence: true
+  validate :customer_booking_details_required, on: :create
   validates :move_size, inclusion: { in: MOVE_SIZES }
   validates :service_level, inclusion: { in: SERVICE_LEVELS }
   validates :quoted_price_cents, :deposit_cents, :driver_cost_cents, :admin_margin_cents, numericality: { greater_than_or_equal_to: 0 }
@@ -451,6 +452,13 @@ class Quotation < ApplicationRecord
       token = SecureRandom.urlsafe_base64(24)
       break token unless self.class.exists?(public_share_token: token)
     end
+  end
+
+  def customer_booking_details_required
+    return if created_by.present?
+
+    errors.add(:customer_phone, "can't be blank") if customer_phone.blank?
+    errors.add(:customer_notes, "can't be blank") if customer_notes.blank?
   end
 
   def customer_must_be_customer

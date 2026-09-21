@@ -261,6 +261,11 @@
                 </div>
               <% end %>
 
+              <div>
+                <%= f.label :customer_phone, "Phone number", class: label_class %>
+                <%= f.telephone_field :customer_phone, required: true, autocomplete: "tel", placeholder: "+44...", class: field_class %>
+              </div>
+
               <div class="grid gap-3 sm:grid-cols-2 min-[1360px]:grid-cols-1 2xl:grid-cols-2">
                 <div>
                   <div class="mb-1.5 flex items-center justify-between gap-3">
@@ -281,7 +286,11 @@
               <div class="grid gap-3 sm:grid-cols-2 min-[1360px]:grid-cols-1 2xl:grid-cols-2">
                 <div>
                   <%= f.label :move_size, "Move size", class: label_class %>
-                  <%= f.select :move_size, [["Select size", ""], ["Studio", "studio"], ["1 bedroom", "one_bed"], ["2 bedrooms", "two_bed"], ["3 bedrooms", "three_bed"], ["4+ bedrooms", "four_plus"], ["Office / commercial", "office"]], {}, class: field_class %>
+                  <%= f.select :move_size, [["Select size", ""], ["Studio", "studio"], ["1 bedroom", "one_bed"], ["2 bedrooms", "two_bed"], ["3 bedrooms", "three_bed"], ["4+ bedrooms", "four_plus"], ["Office / commercial", "office"]], {}, required: true, class: field_class %>
+                </div>
+                <div>
+                  <%= f.label :service_level, "Service type", class: label_class %>
+                  <%= f.select :service_level, [["Select service", ""], ["Standard move", "standard"], ["Packing help", "packing"], ["Storage needed", "storage"], ["Full service", "full_service"]], {}, required: true, class: field_class %>
                 </div>
                 <div>
                   <%= f.label :preferred_move_date, "Move date", class: label_class %>
@@ -290,11 +299,10 @@
               </div>
 
               <div>
-                <%= f.label :customer_notes, "Additional services", class: label_class %>
-                <%= f.text_field :customer_notes, placeholder: "Packing, storage, fragile items...", class: field_class %>
+                <%= f.label :customer_notes, "Full moving details", class: label_class %>
+                <%= f.text_area :customer_notes, required: true, rows: 4, placeholder: "Property size, items, access, parking, packing, storage, and special requirements...", class: "#{field_class} resize-none" %>
               </div>
 
-              <%= f.hidden_field :service_level, value: "standard" %>
               <%= f.submit "Get my instant quote", class: "w-full cursor-pointer rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 px-4 py-3.5 text-sm font-black text-white shadow-xl shadow-blue-600/25 transition hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-blue-600/30 focus:outline-none focus:ring-4 focus:ring-blue-200 sm:px-6" %>
               <p class="text-center text-[11px] font-semibold text-slate-500">No obligation. Response within 24 hours.</p>
             <% end %>

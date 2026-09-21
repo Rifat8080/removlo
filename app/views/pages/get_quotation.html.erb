@@ -86,6 +86,11 @@
               </div>
             <% end %>
 
+            <div>
+              <%= f.label :customer_phone, "Phone number", class: label_class %>
+              <%= f.telephone_field :customer_phone, required: true, autocomplete: "tel", placeholder: "+44...", class: field_class %>
+            </div>
+
             <div class="grid gap-4 sm:grid-cols-2">
               <div>
                 <div class="mb-1.5 flex items-center justify-between gap-3">
@@ -130,8 +135,8 @@
             </div>
 
             <div>
-              <%= f.label :customer_notes, "Anything else we should know?", class: label_class %>
-              <%= f.text_area :customer_notes, rows: 5, placeholder: "Packing, storage, fragile items, stairs, parking, timing, or special instructions...", class: "#{field_class} resize-none" %>
+              <%= f.label :customer_notes, "Moving details", class: label_class %>
+              <%= f.text_area :customer_notes, required: true, rows: 5, placeholder: "Packing, storage, fragile items, stairs, parking, timing, or special instructions...", class: "#{field_class} resize-none" %>
             </div>
 
             <%= f.submit "Request my quotation", class: "w-full cursor-pointer rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 px-4 py-3.5 text-sm font-black text-white shadow-xl shadow-blue-600/25 transition hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-blue-600/30 focus:outline-none focus:ring-4 focus:ring-blue-200 sm:px-6" %>

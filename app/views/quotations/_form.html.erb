@@ -18,6 +18,10 @@
 
       <div class="mt-6 grid gap-4 sm:grid-cols-2">
         <div>
+          <%= form.label :customer_phone, "Customer phone", class: "mb-2 block text-sm font-semibold text-slate-700" %>
+          <%= form.telephone_field :customer_phone, required: true, autocomplete: "tel", class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500", placeholder: "+44..." %>
+        </div>
+        <div>
           <%= form.label :move_size, class: "mb-2 block text-sm font-semibold text-slate-700" %>
           <%= form.select :move_size, Quotation::MOVE_SIZES.map { |size| [size.humanize, size] }, {}, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500" %>
         </div>
@@ -62,8 +66,8 @@
           <%= form.text_area :access_notes, rows: 4, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Parking, stairs, lift access, timing limits" %>
         </div>
         <div>
-          <%= form.label :customer_notes, "Inventory and special requirements", class: "mb-2 block text-sm font-semibold text-slate-700" %>
-          <%= form.text_area :customer_notes, rows: 4, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Large items, fragile items, packing needs, storage needs" %>
+          <%= form.label :customer_notes, "Moving details", class: "mb-2 block text-sm font-semibold text-slate-700" %>
+          <%= form.text_area :customer_notes, required: true, rows: 4, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Large items, fragile items, packing needs, storage needs" %>
         </div>
       </div>
 
