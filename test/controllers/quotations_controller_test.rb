@@ -12,7 +12,7 @@ class QuotationsControllerTest < ActionDispatch::IntegrationTest
             service_level: "standard",
             pickup_postcode: "SW1A 1AA",
             delivery_postcode: "M1 1AD",
-            customer_notes: "Need packing help"
+            customer_notes: detailed_moving_notes
           }
         }
       end
@@ -32,7 +32,7 @@ class QuotationsControllerTest < ActionDispatch::IntegrationTest
               move_size: "studio",
               service_level: "standard",
               customer_phone: "+447700900124",
-              customer_notes: "Sofa and boxes; please confirm parking access.",
+              customer_notes: detailed_moving_notes,
               pickup_postcode: "M4",
               delivery_postcode: "B4",
               pickup_address: "10 New Pickup Street",
@@ -74,6 +74,25 @@ class QuotationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Please add your phone number and moving details before requesting a quotation.", flash[:alert]
   end
 
+  test "anonymous visitor cannot request quotation with fewer than fifty moving detail words" do
+    assert_no_difference [ "User.count", "Quotation.count" ] do
+      post quotations_path, params: {
+        quotation: {
+          customer_email: "short-details@example.com",
+          customer_phone: "+447700900125",
+          move_size: "studio",
+          service_level: "standard",
+          pickup_postcode: "M4",
+          delivery_postcode: "B4",
+          customer_notes: "Sofa and boxes; please confirm parking access."
+        }
+      }
+    end
+
+    assert_redirected_to get_quotation_path
+    assert_equal "Full moving details must be at least 50 words.", flash[:alert]
+  end
+
   test "customer can edit their pending quotation request and add items" do
     sign_in users(:customer)
     quotation = quotations(:marketplace_job)
@@ -90,7 +109,7 @@ class QuotationsControllerTest < ActionDispatch::IntegrationTest
           delivery_postcode: "B10",
           pickup_address: "10 Updated Pickup Street",
           delivery_address: "20 Updated Delivery Road",
-          customer_notes: "Please include packing",
+          customer_notes: detailed_moving_notes,
           quotation_items_attributes: {
             "0" => {
               name: "Dining table",
@@ -221,5 +240,11 @@ class QuotationsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match "Paid in full", response.body
     assert_no_match "Deposit</p>\n        <p class=\"mt-2 text-2xl font-black\">Pending", response.body
+  end
+
+  private
+
+  def detailed_moving_notes
+    "We are moving from a second floor flat with stair access only and limited parking outside the building. Items include two sofas, a dining table, six chairs, one double bed, wardrobes, kitchen boxes, books, framed pictures, fragile glassware, plants, lamps, and several suitcases. Please include careful handling, loading help, and time for parking arrangements."
   end
 end

@@ -294,6 +294,7 @@
               <div>
                 <%= f.label :customer_notes, "Full moving details", class: label_class %>
                 <%= f.text_area :customer_notes, required: true, rows: 4, placeholder: "Property size, items, access, parking, packing, storage, and special requirements...", class: "#{field_class} resize-none" %>
+                <p class="mt-2 text-[11px] font-semibold leading-5 text-amber-700">Minimum <%= Quotation::CUSTOMER_NOTES_MIN_WORDS %> words. Warning: if items do not match your description or exceed it on move day, extra charges may apply according to the situation.</p>
               </div>
 
               <%= f.submit "Get my instant quote", class: "w-full cursor-pointer rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 px-4 py-3.5 text-sm font-black text-white shadow-xl shadow-blue-600/25 transition hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-blue-600/30 focus:outline-none focus:ring-4 focus:ring-blue-200 sm:px-6" %>

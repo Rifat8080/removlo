@@ -45,6 +45,11 @@ class QuotationsController < ApplicationController
       return
     end
 
+    unless moving_details_long_enough?
+      redirect_to get_quotation_path, alert: "Full moving details must be at least #{Quotation::CUSTOMER_NOTES_MIN_WORDS} words."
+      return
+    end
+
     customer = quotation_customer
     return unless customer
 
@@ -226,6 +231,10 @@ class QuotationsController < ApplicationController
       params.dig(:quotation, :customer_notes).to_s.strip.present? &&
       params.dig(:quotation, :move_size).to_s.strip.present? &&
       params.dig(:quotation, :service_level).to_s.strip.present?
+  end
+
+  def moving_details_long_enough?
+    params.dig(:quotation, :customer_notes).to_s.scan(/\b[\p{Alnum}'-]+\b/).size >= Quotation::CUSTOMER_NOTES_MIN_WORDS
   end
 
   def notify_operators(title, body, quotation)

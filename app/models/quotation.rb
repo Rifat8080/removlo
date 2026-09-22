@@ -23,6 +23,7 @@ class Quotation < ApplicationRecord
   SERVICE_LEVELS = %w[standard packing storage full_service].freeze
   VEHICLE_TYPES = DriverProfile::VEHICLE_TYPES
   PROPERTY_TYPES = %w[studio flat house office storage].freeze
+  CUSTOMER_NOTES_MIN_WORDS = 50
   ADMIN_TRANSITION_LABELS = {
     "draft" => "Move to draft",
     "quoted" => "Send quote",
@@ -66,6 +67,7 @@ class Quotation < ApplicationRecord
   validates :public_share_token, presence: true, uniqueness: true
   validates :pickup_address, :delivery_address, :move_size, :service_level, presence: true
   validate :customer_booking_details_required, on: :create
+  validate :customer_notes_minimum_word_count
   validates :move_size, inclusion: { in: MOVE_SIZES }
   validates :service_level, inclusion: { in: SERVICE_LEVELS }
   validates :quoted_price_cents, :deposit_cents, :driver_cost_cents, :admin_margin_cents, numericality: { greater_than_or_equal_to: 0 }
@@ -459,6 +461,16 @@ class Quotation < ApplicationRecord
 
     errors.add(:customer_phone, "can't be blank") if customer_phone.blank?
     errors.add(:customer_notes, "can't be blank") if customer_notes.blank?
+  end
+
+  def customer_notes_minimum_word_count
+    return if customer_notes.blank?
+    return unless new_record? || will_save_change_to_customer_notes?
+
+    word_count = customer_notes.to_s.scan(/\b[\p{Alnum}'-]+\b/).size
+    return if word_count >= CUSTOMER_NOTES_MIN_WORDS
+
+    errors.add(:customer_notes, "must be at least #{CUSTOMER_NOTES_MIN_WORDS} words")
   end
 
   def customer_must_be_customer
