@@ -134,10 +134,10 @@
               </div>
             </div>
 
-            <div data-controller="word-count" data-word-count-minimum-value="<%= Quotation::CUSTOMER_NOTES_MIN_WORDS %>">
+            <div data-word-count data-word-count-minimum="<%= Quotation::CUSTOMER_NOTES_MIN_WORDS %>">
               <%= f.label :customer_notes, "Moving details", class: label_class %>
-              <%= f.text_area :customer_notes, required: true, rows: 5, placeholder: "Packing, storage, fragile items, stairs, parking, timing, or special instructions...", data: { word_count_target: "input", action: "input->word-count#update" }, class: "#{field_class} resize-none" %>
-              <p data-word-count-target="status" class="mt-2 text-xs font-semibold leading-5 text-amber-700"><span data-word-count-target="count">0</span> / <%= Quotation::CUSTOMER_NOTES_MIN_WORDS %> words. Warning: if items do not match your description or exceed it on move day, extra charges may apply according to the situation.</p>
+              <%= f.text_area :customer_notes, required: true, rows: 5, placeholder: "Packing, storage, fragile items, stairs, parking, timing, or special instructions...", data: { word_count_input: true }, class: "#{field_class} resize-none" %>
+              <p data-word-count-status class="mt-2 text-xs font-semibold leading-5 text-amber-700"><span data-word-count-count>0</span> / <%= Quotation::CUSTOMER_NOTES_MIN_WORDS %> words. Warning: if items do not match your description or exceed it on move day, extra charges may apply according to the situation.</p>
             </div>
 
             <%= f.submit "Request my quotation", class: "w-full cursor-pointer rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 px-4 py-3.5 text-sm font-black text-white shadow-xl shadow-blue-600/25 transition hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-blue-600/30 focus:outline-none focus:ring-4 focus:ring-blue-200 sm:px-6" %>
