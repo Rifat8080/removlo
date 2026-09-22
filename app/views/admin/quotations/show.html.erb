@@ -34,6 +34,15 @@
             <span class="inline-flex items-center rounded-full bg-amber-400/15 px-3 py-1.5 text-amber-100 ring-1 ring-amber-300/25">Phone not captured</span>
           <% end %>
         </div>
+        <% if current_user.admin? && customer_phone.blank? %>
+          <%= form_with(model: [:admin, @quotation], class: "mt-4 grid max-w-xl gap-2 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-3 sm:grid-cols-[1fr_auto] sm:items-end") do |form| %>
+            <div>
+              <%= form.label :customer_phone, "Add customer phone", class: "mb-1 block text-xs font-black uppercase tracking-wide text-amber-100" %>
+              <%= form.telephone_field :customer_phone, required: true, autocomplete: "tel", placeholder: "+44...", class: "block w-full rounded-xl border border-white/15 bg-white px-3 py-2.5 text-sm font-bold text-slate-950 placeholder-slate-400 focus:border-amber-300 focus:ring-amber-300" %>
+            </div>
+            <%= form.submit "Save phone", class: "inline-flex justify-center rounded-xl bg-amber-300 px-4 py-2.5 text-sm font-black text-slate-950 transition hover:bg-amber-200" %>
+          <% end %>
+        <% end %>
       </div>
       <div class="relative flex flex-col gap-2 sm:flex-row min-[1025px]:justify-end">
         <% if current_user.admin? %>
@@ -159,6 +168,19 @@
 
         <% if @quotation.route_estimate_error.present? %>
           <p class="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-800"><%= @quotation.route_estimate_error %></p>
+        <% end %>
+
+        <% if current_user.admin? && customer_phone.blank? %>
+          <div class="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+            <p class="text-sm font-black text-amber-900">Customer phone is missing on this quotation.</p>
+            <%= form_with(model: [:admin, @quotation], class: "mt-3 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end") do |form| %>
+              <div>
+                <%= form.label :customer_phone, "Customer phone", class: "mb-2 block text-sm font-bold text-amber-950" %>
+                <%= form.telephone_field :customer_phone, required: true, autocomplete: "tel", placeholder: "+44...", class: "block w-full rounded-xl border border-amber-200 bg-white px-3 py-2.5 text-sm font-bold text-slate-950 focus:border-amber-500 focus:ring-amber-500" %>
+              </div>
+              <%= form.submit "Save phone number", class: "inline-flex justify-center rounded-xl bg-amber-500 px-5 py-3 text-sm font-black text-white shadow-lg shadow-amber-500/20 transition hover:bg-amber-600" %>
+            <% end %>
+          </div>
         <% end %>
       </section>
 
