@@ -23,7 +23,7 @@ class Quotation < ApplicationRecord
   SERVICE_LEVELS = %w[standard packing storage full_service].freeze
   VEHICLE_TYPES = DriverProfile::VEHICLE_TYPES
   PROPERTY_TYPES = %w[studio flat house office storage].freeze
-  CUSTOMER_NOTES_MIN_WORDS = 25
+  CUSTOMER_NOTES_MIN_WORDS = 15
   ADMIN_TRANSITION_LABELS = {
     "draft" => "Move to draft",
     "quoted" => "Send quote",

@@ -74,7 +74,7 @@ class QuotationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Please add your phone number and moving details before requesting a quotation.", flash[:alert]
   end
 
-  test "anonymous visitor cannot request quotation with fewer than twenty-five moving detail words" do
+  test "anonymous visitor cannot request quotation with fewer than fifteen moving detail words" do
     assert_no_difference [ "User.count", "Quotation.count" ] do
       post quotations_path, params: {
         quotation: {
@@ -90,7 +90,7 @@ class QuotationsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to get_quotation_path
-    assert_equal "Full moving details must be at least 25 words.", flash[:alert]
+    assert_equal "Full moving details must be at least 15 words.", flash[:alert]
   end
 
   test "customer can edit their pending quotation request and add items" do
