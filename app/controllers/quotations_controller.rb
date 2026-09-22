@@ -58,14 +58,24 @@ class QuotationsController < ApplicationController
     authorize! :create, @quotation
 
     if @quotation.save
-      @quotation.quotation_status_events.create!(to_status: @quotation.status, user: current_user || customer, note: "Customer requested a quotation")
-      ::Quotations::PostForDrivers.call(quotation: @quotation, actor: current_user || customer)
-      notify_operators("New quotation request", "#{customer.email} requested a quotation.", @quotation)
+      record_customer_request_activity(@quotation, customer)
       sign_in(customer) if current_user.blank?
       redirect_to quotation_path(@quotation), notice: "Your quotation request has been sent."
     elsif current_user.blank?
       redirect_to get_quotation_path, alert: @quotation.errors.full_messages.to_sentence
     else
+      render :new, status: :unprocessable_entity
+    end
+  rescue ActiveModel::UnknownAttributeError, ActiveRecord::StatementInvalid, ActiveRecord::RecordInvalid => e
+    Rails.logger.error("[QuotationsController#create] #{e.class}: #{e.message}")
+
+    if @quotation&.persisted?
+      sign_in(customer) if current_user.blank? && customer&.persisted?
+      redirect_to quotation_path(@quotation), notice: "Your quotation request has been sent."
+    elsif current_user.blank?
+      redirect_to get_quotation_path, alert: "We could not submit your quotation right now. Please check the form and try again."
+    else
+      build_blank_item if @quotation
       render :new, status: :unprocessable_entity
     end
   end
@@ -144,19 +154,21 @@ class QuotationsController < ApplicationController
   end
 
   def quotation_request_params
-    attrs = params.require(:quotation).permit(
+    permitted_attributes = [
       :move_size,
       :service_level,
       :preferred_move_date,
-      :customer_phone,
       :pickup_postcode,
       :delivery_postcode,
       :pickup_address,
       :delivery_address,
       :access_notes,
-        :customer_notes,
-        quotation_items_attributes: %i[id name quantity fragile notes _destroy]
-    )
+      :customer_notes,
+      { quotation_items_attributes: %i[id name quantity fragile notes _destroy] }
+    ]
+    permitted_attributes.insert(3, :customer_phone) if Quotation.column_names.include?("customer_phone")
+
+    attrs = params.require(:quotation).permit(*permitted_attributes)
 
     attrs[:service_level] = attrs[:service_level].presence || "standard"
     attrs[:move_size] = attrs[:move_size].presence || "studio"
@@ -247,5 +259,26 @@ class QuotationsController < ApplicationController
       actor: current_user,
       notifiable: quotation
     )
+  end
+
+  def record_customer_request_activity(quotation, customer)
+    actor = current_user || customer
+
+    quotation.quotation_status_events.create!(to_status: quotation.status, user: actor, note: "Customer requested a quotation")
+    safely_run_quotation_side_effect("post_for_drivers", quotation) do
+      ::Quotations::PostForDrivers.call(quotation: quotation, actor: actor)
+    end
+    safely_run_quotation_side_effect("notify_operators", quotation) do
+      notify_operators("New quotation request", "#{customer.email} requested a quotation.", quotation)
+    end
+  rescue ActiveRecord::RecordInvalid => e
+    Rails.logger.error("[Quotation##{quotation.id}] Request activity failed: #{e.class}: #{e.record.errors.full_messages.to_sentence}")
+  end
+
+  def safely_run_quotation_side_effect(name, quotation)
+    yield
+  rescue StandardError => e
+    Rails.logger.error("[Quotation##{quotation.id}] #{name} failed: #{e.class}: #{e.message}")
+    nil
   end
 end

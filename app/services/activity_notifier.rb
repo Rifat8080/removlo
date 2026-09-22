@@ -18,20 +18,27 @@ class ActivityNotifier
     recipients.filter_map do |recipient|
       next if actor.present? && recipient == actor
 
-      Notification.create!(
-        user: recipient,
-        actor: actor,
-        event_type: event_type,
-        title: title,
-        body: body,
-        url: url,
-        notifiable: notifiable,
-        metadata: metadata
-      )
+      create_notification(recipient)
     end
   end
 
   private
 
   attr_reader :recipients, :event_type, :title, :body, :url, :actor, :notifiable, :metadata
+
+  def create_notification(recipient)
+    Notification.create!(
+      user: recipient,
+      actor: actor,
+      event_type: event_type,
+      title: title,
+      body: body,
+      url: url,
+      notifiable: notifiable,
+      metadata: metadata
+    )
+  rescue StandardError => e
+    Rails.logger.error("[ActivityNotifier] Notification failed for user #{recipient.id}: #{e.class}: #{e.message}")
+    nil
+  end
 end

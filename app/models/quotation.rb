@@ -461,7 +461,7 @@ class Quotation < ApplicationRecord
   def customer_booking_details_required
     return if created_by.present?
 
-    errors.add(:customer_phone, "can't be blank") if customer_phone.blank?
+    errors.add(:customer_phone, "can't be blank") if has_attribute?(:customer_phone) && customer_phone.blank?
     errors.add(:customer_notes, "can't be blank") if customer_notes.blank?
   end
 
