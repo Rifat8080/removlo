@@ -134,6 +134,7 @@ module Admin
         :service_level,
         :preferred_move_date,
         :scheduled_at,
+        :customer_phone,
         :pickup_postcode,
         :delivery_postcode,
         :pickup_address,

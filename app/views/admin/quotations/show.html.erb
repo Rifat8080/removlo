@@ -55,6 +55,101 @@
       <%= render "admin/quotations/share_job", quotation: @quotation if current_user.admin? %>
       <%= render "admin/quotations/bid_comparison", quotation: @quotation, comparison: @comparison %>
 
+      <section class="overflow-hidden rounded-[1.75rem] border border-white/80 bg-white p-5 shadow-[0_18px_60px_rgba(15,23,42,0.08)] ring-1 ring-slate-200/70">
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p class="text-xs font-black uppercase tracking-[0.16em] text-indigo-600">Full quotation request</p>
+            <h2 class="mt-1 text-xl font-black tracking-[-0.03em] text-slate-950">Complete submitted details</h2>
+          </div>
+          <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">Created <%= @quotation.created_at.to_fs(:short) %></span>
+        </div>
+
+        <div class="mt-5 grid gap-3 sm:grid-cols-2 min-[1025px]:grid-cols-4">
+          <% [
+            ["Customer email", @quotation.customer.email],
+            ["Customer phone", @quotation.customer_phone.presence || "Not provided"],
+            ["Move size", @quotation.move_size.humanize],
+            ["Service level", @quotation.service_level.humanize],
+            ["Preferred move date", @quotation.preferred_move_date&.to_fs(:long) || "Not set"],
+            ["Confirmed schedule", @quotation.scheduled_at&.to_fs(:long) || "Not scheduled"],
+            ["Pickup postcode", @quotation.pickup_postcode.presence || "Not provided"],
+            ["Delivery postcode", @quotation.delivery_postcode.presence || "Not provided"]
+          ].each do |label, value| %>
+            <div class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100">
+              <p class="text-xs font-black uppercase tracking-wide text-slate-400"><%= label %></p>
+              <p class="mt-2 break-words text-sm font-black text-slate-950"><%= value %></p>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="mt-5 grid gap-4 min-[1025px]:grid-cols-2">
+          <div class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100">
+            <p class="text-xs font-black uppercase tracking-wide text-slate-400">Full pickup address</p>
+            <p class="mt-2 whitespace-pre-line text-sm font-semibold leading-6 text-slate-900"><%= @quotation.pickup_address.presence || "Not provided" %></p>
+          </div>
+          <div class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100">
+            <p class="text-xs font-black uppercase tracking-wide text-slate-400">Full delivery address</p>
+            <p class="mt-2 whitespace-pre-line text-sm font-semibold leading-6 text-slate-900"><%= @quotation.delivery_address.presence || "Not provided" %></p>
+          </div>
+          <div class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100">
+            <p class="text-xs font-black uppercase tracking-wide text-slate-400">Access notes</p>
+            <p class="mt-2 whitespace-pre-line text-sm font-semibold leading-6 text-slate-900"><%= @quotation.access_notes.presence || "No access notes recorded." %></p>
+          </div>
+          <div class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100">
+            <p class="text-xs font-black uppercase tracking-wide text-slate-400">Moving details from customer</p>
+            <p class="mt-2 whitespace-pre-line text-sm font-semibold leading-6 text-slate-900"><%= @quotation.customer_notes.presence || "No moving details recorded." %></p>
+          </div>
+        </div>
+
+        <div class="mt-5 grid gap-3 sm:grid-cols-2 min-[1025px]:grid-cols-4">
+          <% [
+            ["Status", @quotation.status.humanize],
+            ["Payment status", @quotation.payment_status.humanize],
+            ["Quoted price", money_from_cents(@quotation.quoted_price_cents)],
+            ["Deposit", money_from_cents(@quotation.deposit_cents)],
+            ["Driver cost", money_from_cents(@quotation.driver_cost_cents)],
+            ["Admin margin", money_from_cents(@quotation.admin_margin_cents)],
+            ["Markup", "#{@quotation.markup_percentage.to_s.sub(/\.0+\z/, '')}%"],
+            ["Vehicle required", @quotation.vehicle_required.to_s.humanize.presence || "Not set"],
+            ["Property type", @quotation.property_type.to_s.humanize.presence || "Not set"],
+            ["Expected duration", @quotation.expected_duration_hours.present? ? pluralize(@quotation.expected_duration_hours, "hour") : "Not set"],
+            ["Assigned operator", @quotation.assigned_staff&.email || "Unassigned"],
+            ["Assigned driver", @quotation.assigned_driver&.email || "Unassigned"]
+          ].each do |label, value| %>
+            <div class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100">
+              <p class="text-xs font-black uppercase tracking-wide text-slate-400"><%= label %></p>
+              <p class="mt-2 break-words text-sm font-black text-slate-950"><%= value %></p>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="mt-5 grid gap-3 sm:grid-cols-2 min-[1025px]:grid-cols-4">
+          <% [
+            ["Marketplace open", @quotation.awaiting_driver_offers? ? "Yes" : "No"],
+            ["Customer details released", @quotation.customer_details_released? ? "Yes" : "No"],
+            ["Selected driver offer", @quotation.selected_driver_offer_id.presence || "None"],
+            ["Public share token", @quotation.public_share_token],
+            ["Quoted at", @quotation.quoted_at&.to_fs(:long) || "Not quoted"],
+            ["Accepted at", @quotation.accepted_at&.to_fs(:long) || "Not accepted"],
+            ["Completed at", @quotation.completed_at&.to_fs(:long) || "Not completed"],
+            ["Cancelled at", @quotation.cancelled_at&.to_fs(:long) || "Not cancelled"],
+            ["Route summary", @quotation.route_summary.presence || "Not estimated"],
+            ["Route distance", @quotation.route_distance_meters.present? ? number_to_human(@quotation.route_distance_meters, units: { unit: "m", thousand: "km" }) : "Not estimated"],
+            ["Route duration", @quotation.route_duration_seconds.present? ? distance_of_time_in_words(@quotation.route_duration_seconds) : "Not estimated"],
+            ["Route estimated at", @quotation.route_estimated_at&.to_fs(:long) || "Not estimated"]
+          ].each do |label, value| %>
+            <div class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100">
+              <p class="text-xs font-black uppercase tracking-wide text-slate-400"><%= label %></p>
+              <p class="mt-2 break-words text-sm font-black text-slate-950"><%= value %></p>
+            </div>
+          <% end %>
+        </div>
+
+        <% if @quotation.route_estimate_error.present? %>
+          <p class="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-800"><%= @quotation.route_estimate_error %></p>
+        <% end %>
+      </section>
+
       <% if @quotation.negotiating? || @quotation.pending_quoted_price_cents.present? %>
         <section class="overflow-hidden rounded-[1.75rem] border border-white/80 bg-white p-5 shadow-[0_18px_60px_rgba(15,23,42,0.08)] ring-1 ring-slate-200/70">
           <div class="flex flex-col gap-4 min-[1025px]:flex-row min-[1025px]:items-start min-[1025px]:justify-between">

@@ -48,6 +48,10 @@
           <%= form.datetime_local_field :scheduled_at, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500" %>
         </div>
         <div>
+          <%= form.label :customer_phone, "Customer phone", class: "mb-2 block text-sm font-semibold text-slate-700" %>
+          <%= form.telephone_field :customer_phone, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500", placeholder: "+44..." %>
+        </div>
+        <div>
           <%= form.label :pickup_postcode, class: "mb-2 block text-sm font-semibold text-slate-700" %>
           <%= form.text_field :pickup_postcode, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500", placeholder: "SW1A 1AA" %>
         </div>
