@@ -65,10 +65,10 @@
           <%= form.label :access_notes, class: "mb-2 block text-sm font-semibold text-slate-700" %>
           <%= form.text_area :access_notes, rows: 4, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Parking, stairs, lift access, timing limits" %>
         </div>
-        <div>
+        <div data-controller="word-count" data-word-count-minimum-value="<%= Quotation::CUSTOMER_NOTES_MIN_WORDS %>">
           <%= form.label :customer_notes, "Moving details", class: "mb-2 block text-sm font-semibold text-slate-700" %>
-          <%= form.text_area :customer_notes, required: true, rows: 4, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Large items, fragile items, packing needs, storage needs" %>
-          <p class="mt-2 text-xs font-semibold leading-5 text-amber-700">Minimum <%= Quotation::CUSTOMER_NOTES_MIN_WORDS %> words. Warning: if items do not match your description or exceed it on move day, extra charges may apply according to the situation.</p>
+          <%= form.text_area :customer_notes, required: true, rows: 4, data: { word_count_target: "input", action: "input->word-count#update" }, class: "block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Large items, fragile items, packing needs, storage needs" %>
+          <p data-word-count-target="status" class="mt-2 text-xs font-semibold leading-5 text-amber-700"><span data-word-count-target="count">0</span> / <%= Quotation::CUSTOMER_NOTES_MIN_WORDS %> words. Warning: if items do not match your description or exceed it on move day, extra charges may apply according to the situation.</p>
         </div>
       </div>
 
