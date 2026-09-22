@@ -25,6 +25,8 @@ class Notification < ApplicationRecord
 
   def deliver_email
     NotificationEmailJob.perform_later(id)
+  rescue StandardError => e
+    Rails.logger.error("[Notification##{id}] Email enqueue failed: #{e.class}: #{e.message}")
   end
 
   def deliver_web_push
@@ -33,6 +35,8 @@ class Notification < ApplicationRecord
     else
       WebPushNotificationJob.perform_later(id)
     end
+  rescue StandardError => e
+    Rails.logger.error("[Notification##{id}] Web push enqueue failed: #{e.class}: #{e.message}")
   end
 
   def immediate_web_push?
@@ -53,6 +57,8 @@ class Notification < ApplicationRecord
       partial: "notifications/notification",
       locals: { notification: self }
     )
+  rescue StandardError => e
+    Rails.logger.error("[Notification##{id}] Creation broadcast failed: #{e.class}: #{e.message}")
   end
 
   def broadcast_updates
@@ -64,6 +70,8 @@ class Notification < ApplicationRecord
       partial: "notifications/notification",
       locals: { notification: self }
     )
+  rescue StandardError => e
+    Rails.logger.error("[Notification##{id}] Update broadcast failed: #{e.class}: #{e.message}")
   end
 
   def broadcast_counts

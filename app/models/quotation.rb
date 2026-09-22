@@ -425,6 +425,8 @@ class Quotation < ApplicationRecord
 
   def enqueue_route_estimate
     GoogleMaps::EstimateRouteJob.perform_later(id)
+  rescue StandardError => e
+    Rails.logger.error("[Quotation##{id}] Route estimate enqueue failed: #{e.class}: #{e.message}")
   end
 
   def assign_selected_driver_if_releasable!

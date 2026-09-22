@@ -101,4 +101,8 @@ Rails.application.configure do
 
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [:id]
+
+  # This app does not ship Solid Queue tables/workers yet, so use the in-process
+  # async adapter to avoid background job enqueue failures during user requests.
+  config.active_job.queue_adapter = :async
 end
